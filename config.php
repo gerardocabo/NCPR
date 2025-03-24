@@ -22,7 +22,7 @@ $role_dashboard = [
     "ENGINEER"       => "engineer_dashboard.php",
     "SUPERVISOR"     => "supv&mgrDashboard.php",
     "MANAGER"        => "supv&mgrDashboard.php",
-    "REPRESENTATIVE" => "representative_dashboard.php",
+    "REPRESENTATIVE" => "representative_Dashboard.php",
     "GUEST"          => "guest_ncprfiling.php" // Guests can only access this page
 ];
 
@@ -32,7 +32,7 @@ $page_roles = [
     "admin_dashboard.php"         => ["ADMIN", "STAFF", "SUPERADMIN"],
     "engineer_dashboard.php"      => ["ENGINEER", "SUPERVISOR", "SUPERADMIN"],
     "supv&mgrDashboard.php"       => ["SUPERVISOR", "MANAGER", "SUPERADMIN"],
-    "representative_dashboard.php"=> ["REPRESENTATIVE", "SUPERADMIN"],
+    "representative_Dashboard.php"=> ["REPRESENTATIVE", "SUPERADMIN"],
     "guest_ncprfiling.php"        => ["GUEST"] // Only guests can access this
 ];
 

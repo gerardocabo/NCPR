@@ -16,13 +16,13 @@ function getPendingApprovals($user_role, $conn)
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
                   WHERE dispo_approval.approver_role = 'ENGINEER' AND dispo_approval.status = 'Approved'
                   AND ncpr_table.dispo_id IS NOT NULL
-                  AND ncpr_table.id NOT IN (SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('MANAGER', 'SUPERVISOR'))";
+                  AND ncpr_table.ncpr_num NOT IN (
+                SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('MANAGER', 'SUPERVISOR'))";
     } elseif ($user_role === 'REPRESENTATIVE') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
                   FROM ncpr_table
-                  JOIN approvals ON ncpr_table.id = approvals.ncpr_id
-                  WHERE approvals.approver_role IN ('MANAGER', 'SUPERVISOR') AND approvals.status = 'Approved'
-                  AND ncpr_table.id NOT IN (SELECT ncpr_id FROM approvals WHERE approver_role = 'REPRESENTATIVE')";
+                  JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
+                  WHERE dispo_approval.approver_role IN ('MANAGER', 'SUPERVISOR') AND dispo_approval.status = 'Approved'";
     } else {
         // Default case if role is unrecognized
         $query = "SELECT id, ncpr_num, initiator, status, `date` FROM ncpr_table WHERE dispo_id IS NULL";

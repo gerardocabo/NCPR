@@ -3,7 +3,7 @@ require "config.php";
 include 'connection.php'; // Ensure your database connection is included
 
 // Fetch data from the database
-$sql = "SELECT part_number, part_name FROM product_list";
+$sql = "SELECT part_number, part_name FROM product_list LIMIT 100";
 $result = $conn->query($sql);
 
 $products = [];
