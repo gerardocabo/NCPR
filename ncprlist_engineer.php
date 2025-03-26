@@ -621,12 +621,7 @@ $result = $conn->query($query);
             </div>
         </div>
     </div>
-
-    <?php if (file_exists('modal_dispo.php')) {
-        include 'modal_dispo.php';
-    } else {
-        echo "<p>Modal file not found!</p>";
-    } ?>
+    
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/bootstrap/js/all.min.js"></script>

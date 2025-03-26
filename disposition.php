@@ -9,7 +9,6 @@ if ($user_role !== 'ENGINEER') {
             .locked {
                 pointer-events: none;
                 /* Prevent clicking */
-                border: none; /* Remove the border */
             }
           </style>';
 }
@@ -38,15 +37,15 @@ if ($user_role !== 'ENGINEER') {
                 <strong class="me-2">Corrective Action Request:</strong>
                 <div class="d-flex gap-3">
                     <div class="form-check">
-                        <input class="locked form-check-input" type="radio" name="corrective_action" value="YES" id="corrective_yes">
+                        <input class="form-check-input locked" type="radio" name="corrective_action" value="YES" id="corrective_yes">
                         <label class="form-check-label" for="corrective_yes">YES</label>
                     </div>
                     <div class="form-check">
-                        <input class="locked form-check-input" type="radio" name="corrective_action" value="NO" id="corrective_no">
+                        <input class="form-check-input locked" type="radio" name="corrective_action" value="NO" id="corrective_no">
                         <label class="form-check-label" for="corrective_no">NO</label>
                     </div>
                     <div class="form-check">
-                        <input class="locked form-check-input" type="radio" name="corrective_action" value="NA" id="corrective_na">
+                        <input class="form-check-input locked" type="radio" name="corrective_action" value="NA" id="corrective_na">
                         <label class="form-check-label" for="corrective_na">NA</label>
                     </div>
                 </div>
@@ -60,9 +59,9 @@ if ($user_role !== 'ENGINEER') {
                     <div class="me-4">
                         <input class="locked" type="checkbox" name="cause[]" value="Man"> Man<br>
                         <label>ID No:</label>
-                        <input type="text" name="id_no" class="locked border-0 border-bottom w-75"><br>
+                        <input type="text" name="id_no" id="id_no" class="locked border-0 border-bottom w-75"><br>
                         <label>Name:</label>
-                        <input type="text" name="name" class="locked border-0 border-bottom w-75"><br>
+                        <input type="text" name="name" id="name" class="locked border-0 border-bottom w-75"><br>
                         <input class="locked" type="checkbox" name="cause[]" value="Method"> Method<br>
                         <input class="locked" type="checkbox" name="cause[]" value="Machine"> Machine<br>
                     </div>
@@ -194,7 +193,7 @@ if ($user_role !== 'ENGINEER') {
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
-                        <input type="text" name="document_alert" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="repair_DA" class="locked border-0 border-bottom w-25 ms-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">

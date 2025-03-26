@@ -163,6 +163,13 @@ require "config.php";
         border-left: 3px solid #3b7ddd;
         color: #3b7ddd;
     }
+    .hover-shadow:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+        transform: translateY(-5px);
+        transition: all 0.3s ease-in-out;
+        background-color: #0e2238 !important;
+        color: white;
+    }
 </style>
 
 <body class="bg-white">
