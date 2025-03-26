@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2025 at 11:45 AM
+-- Generation Time: Mar 26, 2025 at 01:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,84 +18,276 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
+-- Database: `database3`
+--
+CREATE DATABASE IF NOT EXISTS `database3` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `database3`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `category_tbl`
+--
+
+CREATE TABLE `category_tbl` (
+  `ID` int(255) NOT NULL,
+  `cat_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `category_tbl`
+--
+
+INSERT INTO `category_tbl` (`ID`, `cat_name`) VALUES
+(1, 'sorting'),
+(2, 'asdas'),
+(3, '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fpc`
+--
+
+CREATE TABLE `fpc` (
+  `ID` int(11) NOT NULL,
+  `FY` varchar(255) NOT NULL,
+  `MONTH` varchar(255) NOT NULL,
+  `DATE` date NOT NULL,
+  `CATEGORY_ID` varchar(255) NOT NULL,
+  `TRIGGER_ID` varchar(255) NOT NULL,
+  `NT_NF` varchar(255) NOT NULL,
+  `ISSUE` varchar(255) NOT NULL,
+  `PART_ID` varchar(255) NOT NULL,
+  `PRODUCT` varchar(255) NOT NULL,
+  `LOT_SUBLOT` varchar(255) NOT NULL,
+  `IN_VALUE` int(11) NOT NULL,
+  `OUT_VALUE` int(11) NOT NULL,
+  `REJECT` int(11) NOT NULL,
+  `MINUTES` int(11) NOT NULL,
+  `deleted_At` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `fpc`
+--
+
+INSERT INTO `fpc` (`ID`, `FY`, `MONTH`, `DATE`, `CATEGORY_ID`, `TRIGGER_ID`, `NT_NF`, `ISSUE`, `PART_ID`, `PRODUCT`, `LOT_SUBLOT`, `IN_VALUE`, `OUT_VALUE`, `REJECT`, `MINUTES`, `deleted_At`) VALUES
+(1, '', '', '0000-00-00', '3', '5', '', '', '', '', '', 0, 0, 0, 0, NULL),
+(2, '', '', '0000-00-00', '3', '5', '', '', '', '', '', 0, 0, 0, 0, NULL),
+(3, 'FY25', 'March', '2025-03-12', '1', '3', 'NFLD', 'asdas', '1', 'qc_fvi', 'asdasdas', 32, 21, 11, 0, '2025-03-14 13:27:15'),
+(4, 'FY25', 'March', '2025-03-14', '2', '4', 'NFLD', 'asdasdas', '6', 'dasdasdas', 'asdasdasd', 3, 2, 1, 0, '2025-03-14 13:31:18'),
+(5, 'FY25', 'March', '2025-03-14', '1', '2', '', 'rework', '', '', '1234-5678-90', 21, 2, 19, 0, NULL),
+(6, '', '', '0000-00-00', '3', '5', '', '', '', '', '', 0, 0, 0, 0, NULL),
+(7, 'FY25', 'March', '2025-03-12', '2', '3', 'NTPI', 'asdas', '5', 'asd', 'asdasdas', 32, 21, 11, 0, NULL),
+(8, 'FY25', 'March', '2025-03-12', '2', '3', 'NTPI', 'asdas', '5', 'asd', 'asdasdas', 32, 21, 11, 0, NULL),
+(9, 'FY25', 'March', '2025-03-12', '2', '3', 'NFLD', 'asdas', '5', 'asd', 'asdasdas', 32, 21, 11, 0, NULL),
+(10, 'FY25', 'February', '2025-03-12', '2', '3', 'NFLD', 'asdas', '5', 'asd', 'asdasdas', 32, 21, 11, 0, NULL),
+(11, 'FY25', 'March', '2025-03-12', '1', '1', 'NTPI', 'rework', '1', 'qc_fvi', 'asdasdas', 32, 21, 11, 0, '2025-03-23 12:10:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `issue_tbl`
+--
+
+CREATE TABLE `issue_tbl` (
+  `ID` int(255) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_list`
+--
+
+CREATE TABLE `product_list` (
+  `ID` int(255) NOT NULL,
+  `PARTNUMBER` varchar(255) NOT NULL,
+  `PARTNAME` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_list`
+--
+
+INSERT INTO `product_list` (`ID`, `PARTNUMBER`, `PARTNAME`) VALUES
+(1, '12345689-01', 'qc_fvi'),
+(2, '12345689-02', 'qc_fvi'),
+(3, '12345689-03', 're_entek'),
+(4, '12345689-04', 'relunctant'),
+(5, 'asdas', 'asd'),
+(6, 'asdasdas', 'dasdasdas');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `trigger_tbl`
+--
+
+CREATE TABLE `trigger_tbl` (
+  `ID` int(255) NOT NULL,
+  `trigger_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `trigger_tbl`
+--
+
+INSERT INTO `trigger_tbl` (`ID`, `trigger_name`) VALUES
+(1, 'trgigger'),
+(2, 'NCPR'),
+(3, 'asdas'),
+(4, 'sadsadasd'),
+(5, '');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `category_tbl`
+--
+ALTER TABLE `category_tbl`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `fpc`
+--
+ALTER TABLE `fpc`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `product_list`
+--
+ALTER TABLE `product_list`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `trigger_tbl`
+--
+ALTER TABLE `trigger_tbl`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `category_tbl`
+--
+ALTER TABLE `category_tbl`
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `fpc`
+--
+ALTER TABLE `fpc`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `product_list`
+--
+ALTER TABLE `product_list`
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `trigger_tbl`
+--
+ALTER TABLE `trigger_tbl`
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+--
 -- Database: `ncpr_db`
 --
+CREATE DATABASE IF NOT EXISTS `ncpr_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `ncpr_db`;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `car_tbl`
+-- Table structure for table `disposition_tbl`
 --
 
-CREATE TABLE `car_tbl` (
+CREATE TABLE `disposition_tbl` (
   `id` int(11) NOT NULL,
-  `car_is_approved` tinyint(1) DEFAULT 0,
-  `car_num_active` tinyint(1) DEFAULT 0,
-  `car_num` varchar(255) DEFAULT NULL,
-  `8d_report_active` varchar(255) DEFAULT NULL,
-  `scar_active` tinyint(1) DEFAULT 0,
-  `scar_num` varchar(255) DEFAULT NULL,
-  `DRF_id` int(11) NOT NULL,
+  `ncpr_num` varchar(255) NOT NULL,
+  `containment` text DEFAULT NULL,
+  `non_conformance` text DEFAULT NULL,
+  `id_no` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `car_no` varchar(50) DEFAULT NULL,
+  `scar_no` varchar(50) DEFAULT NULL,
+  `document_alert` varchar(255) DEFAULT NULL,
+  `contact_person` varchar(100) DEFAULT NULL,
+  `other_specify` varchar(255) DEFAULT NULL,
+  `yield_off` varchar(50) DEFAULT NULL,
+  `da_no` varchar(50) DEFAULT NULL,
+  `rework_da_no` varchar(50) DEFAULT NULL,
+  `wis_no` varchar(50) DEFAULT NULL,
+  `scrap_amount` decimal(10,2) DEFAULT NULL,
+  `shipment_date` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `car_tbl`
+-- Dumping data for table `disposition_tbl`
 --
 
-INSERT INTO `car_tbl` (`id`, `car_is_approved`, `car_num_active`, `car_num`, `8d_report_active`, `scar_active`, `scar_num`, `DRF_id`, `created_at`, `updated_at`) VALUES
-(1, 0, 0, NULL, NULL, 0, NULL, 6, '2025-03-20 10:33:19', '2025-03-20 10:33:19'),
-(2, 0, 0, NULL, NULL, 0, NULL, 7, '2025-03-20 10:36:12', '2025-03-20 10:36:12'),
-(3, 0, 0, NULL, NULL, 0, NULL, 8, '2025-03-20 10:44:52', '2025-03-20 10:44:52');
+INSERT INTO `disposition_tbl` (`id`, `ncpr_num`, `containment`, `non_conformance`, `id_no`, `name`, `car_no`, `scar_no`, `document_alert`, `contact_person`, `other_specify`, `yield_off`, `da_no`, `rework_da_no`, `wis_no`, `scrap_amount`, `shipment_date`, `created_at`, `updated_at`) VALUES
+(1, '25-0004', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 'nasave', 0.00, '0000-00-00', '2025-03-25 05:20:49', '2025-03-25 05:20:49'),
+(2, '25-0005', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-25 06:16:56', '2025-03-25 06:16:56');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cnc_mat_tbl`
+-- Table structure for table `dispo_approval`
 --
 
-CREATE TABLE `cnc_mat_tbl` (
+CREATE TABLE `dispo_approval` (
   `id` int(11) NOT NULL,
-  `nfld_item` tinyint(1) DEFAULT 0,
-  `nfld_item_pur_item` tinyint(1) DEFAULT 0,
-  `FE_expired` tinyint(1) DEFAULT 0,
-  `local_supp` tinyint(1) DEFAULT 0,
-  `imi` tinyint(1) DEFAULT 0,
-  `pff` varchar(255) DEFAULT NULL,
-  `CAR_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `ncpr_num` varchar(255) NOT NULL,
+  `approver_role` varchar(255) NOT NULL,
+  `approver_id` int(11) NOT NULL,
+  `status` enum('Approved','Rejected','Cancel') NOT NULL,
+  `approval_date` datetime DEFAULT current_timestamp(),
+  `remarks` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `cnc_mat_tbl`
+-- Dumping data for table `dispo_approval`
 --
 
-INSERT INTO `cnc_mat_tbl` (`id`, `nfld_item`, `nfld_item_pur_item`, `FE_expired`, `local_supp`, `imi`, `pff`, `CAR_id`, `created_at`, `updated_at`) VALUES
-(1, 0, 0, 0, 0, 0, NULL, 2, '2025-03-20 10:36:13', '2025-03-20 10:36:13'),
-(2, 0, 0, 0, 0, 0, NULL, 3, '2025-03-20 10:44:52', '2025-03-20 10:44:52');
+INSERT INTO `dispo_approval` (`id`, `ncpr_num`, `approver_role`, `approver_id`, `status`, `approval_date`, `remarks`) VALUES
+(1, '25-0004', 'ENGINEER', 5, 'Approved', '2025-03-25 20:20:51', NULL),
+(2, '25-0005', 'ENGINEER', 5, 'Approved', '2025-03-25 21:16:57', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dispo_sitioned`
+-- Table structure for table `dispo_radio_values`
 --
 
-CREATE TABLE `dispo_sitioned` (
+CREATE TABLE `dispo_radio_values` (
   `id` int(11) NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `approved_id` int(11) NOT NULL,
-  `approved_role` varchar(50) NOT NULL,
-  `action_date` datetime NOT NULL
+  `ncpr_num` varchar(50) NOT NULL,
+  `field_name` varchar(100) NOT NULL,
+  `field_value` enum('YES','NO','N/A') NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `dispo_sitioned`
+-- Dumping data for table `dispo_radio_values`
 --
 
-INSERT INTO `dispo_sitioned` (`id`, `status`, `approved_id`, `approved_role`, `action_date`) VALUES
-(1, 'Approve', 1, 'ENGINEER', '2025-03-20 18:44:52');
+INSERT INTO `dispo_radio_values` (`id`, `ncpr_num`, `field_name`, `field_value`, `created_at`, `updated_at`) VALUES
+(1, '25-0005', 'corrective_action', 'YES', '2025-03-25 14:16:56', '2025-03-25 14:16:56'),
+(2, '25-0005', 'potential_failure', 'YES', '2025-03-25 14:16:56', '2025-03-25 14:16:56'),
+(3, '25-0005', 'bd_report', 'YES', '2025-03-25 14:16:56', '2025-03-25 14:16:56'),
+(4, '25-0005', 'mrb', 'YES', '2025-03-25 14:16:56', '2025-03-25 14:16:56'),
+(5, '25-0005', 'customer_approval', 'YES', '2025-03-25 14:16:56', '2025-03-25 14:16:56');
 
 -- --------------------------------------------------------
 
@@ -105,54 +297,93 @@ INSERT INTO `dispo_sitioned` (`id`, `status`, `approved_id`, `approved_role`, `a
 
 CREATE TABLE `dispo_table` (
   `id` int(11) NOT NULL,
-  `QAVCIA` varchar(255) DEFAULT NULL,
-  `man` tinyint(1) DEFAULT 0,
-  `man_id_num` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `method` tinyint(1) DEFAULT 0,
-  `machine` tinyint(1) DEFAULT 0,
-  `CNC_mat_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `ncpr_num` varchar(50) NOT NULL,
+  `checkbox_id` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `dispo_table`
 --
 
-INSERT INTO `dispo_table` (`id`, `QAVCIA`, `man`, `man_id_num`, `name`, `method`, `machine`, `CNC_mat_id`, `created_at`, `updated_at`) VALUES
-(1, NULL, 0, NULL, NULL, 0, 0, 1, '2025-03-20 10:36:13', '2025-03-20 10:36:13'),
-(2, NULL, 0, NULL, NULL, 0, 0, 2, '2025-03-20 10:44:52', '2025-03-20 10:44:52');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `drf_tbl`
---
-
-CREATE TABLE `drf_tbl` (
-  `id` int(11) NOT NULL,
-  `NTPI_active` tinyint(1) DEFAULT 0,
-  `MRB_active` varchar(255) DEFAULT NULL,
-  `NFLD_active` tinyint(1) DEFAULT 0,
-  `cust_is_approve` varchar(255) DEFAULT NULL,
-  `doc_alert_num` varchar(255) DEFAULT NULL,
-  `prod_dispo_id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `drf_tbl`
---
-
-INSERT INTO `drf_tbl` (`id`, `NTPI_active`, `MRB_active`, `NFLD_active`, `cust_is_approve`, `doc_alert_num`, `prod_dispo_id`, `created_at`, `updated_at`) VALUES
-(3, 0, NULL, 0, NULL, NULL, 6, '2025-03-20 10:29:01', '2025-03-20 10:29:01'),
-(4, 0, NULL, 0, NULL, NULL, 7, '2025-03-20 10:30:11', '2025-03-20 10:30:11'),
-(5, 0, NULL, 0, NULL, NULL, 8, '2025-03-20 10:31:27', '2025-03-20 10:31:27'),
-(6, 0, NULL, 0, NULL, NULL, 9, '2025-03-20 10:33:19', '2025-03-20 10:33:19'),
-(7, 0, NULL, 0, NULL, NULL, 10, '2025-03-20 10:36:12', '2025-03-20 10:36:12'),
-(8, 0, NULL, 0, NULL, NULL, 11, '2025-03-20 10:44:52', '2025-03-20 10:44:52');
+INSERT INTO `dispo_table` (`id`, `ncpr_num`, `checkbox_id`, `created_at`, `updated_at`) VALUES
+(1, '25-0001', 1, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(2, '25-0001', 2, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(3, '25-0001', 3, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(4, '25-0001', 4, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(5, '25-0001', 5, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(6, '25-0001', 6, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(7, '25-0001', 7, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(8, '25-0001', 8, '2025-03-25 09:13:04', '2025-03-25 09:13:04'),
+(9, '25-0001', 1, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(10, '25-0001', 2, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(11, '25-0001', 3, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(12, '25-0001', 4, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(13, '25-0001', 5, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(14, '25-0001', 6, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(15, '25-0001', 7, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(16, '25-0001', 8, '2025-03-25 09:53:49', '2025-03-25 09:53:49'),
+(17, '25-0002', 1, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(18, '25-0002', 2, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(19, '25-0002', 3, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(20, '25-0002', 4, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(21, '25-0002', 5, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(22, '25-0002', 6, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(23, '25-0002', 7, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(24, '25-0002', 8, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(25, '25-0002', 10, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(26, '25-0002', 11, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(27, '25-0002', 16, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(28, '25-0002', 17, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(29, '25-0002', 12, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(30, '25-0002', 13, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(31, '25-0002', 14, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(32, '25-0002', 15, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(33, '25-0002', 18, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(34, '25-0002', 19, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(35, '25-0002', 20, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(36, '25-0002', 21, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(37, '25-0002', 22, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(38, '25-0002', 23, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(39, '25-0002', 24, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(40, '25-0002', 25, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(41, '25-0002', 26, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(42, '25-0002', 28, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(43, '25-0002', 27, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(44, '25-0002', 28, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(45, '25-0002', 29, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(46, '25-0002', 30, '2025-03-25 13:00:34', '2025-03-25 13:00:34'),
+(47, '25-0004', 1, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(48, '25-0004', 2, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(49, '25-0004', 3, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(50, '25-0004', 4, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(51, '25-0004', 5, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(52, '25-0004', 6, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(53, '25-0004', 7, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(54, '25-0004', 8, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(55, '25-0004', 10, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(56, '25-0004', 11, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(57, '25-0004', 16, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(58, '25-0004', 17, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(59, '25-0004', 12, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(60, '25-0004', 13, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(61, '25-0004', 14, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(62, '25-0004', 15, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(63, '25-0004', 18, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(64, '25-0004', 19, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(65, '25-0004', 20, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(66, '25-0004', 21, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(67, '25-0004', 22, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(68, '25-0004', 23, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(69, '25-0004', 24, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(70, '25-0004', 25, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(71, '25-0004', 26, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(72, '25-0004', 28, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(73, '25-0004', 27, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(74, '25-0004', 28, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(75, '25-0004', 29, '2025-03-25 13:20:50', '2025-03-25 13:20:50'),
+(76, '25-0004', 30, '2025-03-25 13:20:50', '2025-03-25 13:20:50');
 
 -- --------------------------------------------------------
 
@@ -291,7 +522,7 @@ CREATE TABLE `ncpr_table` (
   `mcs` varchar(255) NOT NULL,
   `mcs_details` varchar(255) NOT NULL,
   `customer_notif` varchar(255) NOT NULL,
-  `dispo_id` int(11) NOT NULL
+  `dispo_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -299,14 +530,14 @@ CREATE TABLE `ncpr_table` (
 --
 
 INSERT INTO `ncpr_table` (`id`, `initiator`, `ncpr_num`, `date`, `part_number`, `part_name`, `process`, `urgent`, `status`, `issue`, `awpi`, `dc`, `deviation`, `repeating`, `cavity`, `machine`, `ref`, `bg`, `one`, `one_one`, `two`, `two_one`, `three`, `three_one`, `four`, `five`, `six`, `seven`, `seven_one`, `seven_two`, `eight`, `eight_one`, `nine`, `nine_one`, `recall`, `fgparts`, `shipment`, `ship_sched`, `wip`, `stop_proc`, `location`, `mcs`, `mcs_details`, `customer_notif`, `dispo_id`) VALUES
-(100, 'a', '25-0001', '2025-03-12', 'a', 'a', 'a', 'on', 'open', 'a', '1', '1', 'Yes', 'Yes', '1', 'q', '1', 'a', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6),
-(101, 'Cabo, Gerardo', '25-0002', '2025-03-12', '196555', 'amsdnsad', 'Area 51', 'on', 'open', 'Laro laro', 'dog', 'bakit', 'Yes', 'Yes', 'Laro dog laro dog laro dog laro dog laro dog laro dog laro dog', 'a', 'awts', 'awts123', 'yes', 'yes', 'yes', 'a', 'yes', 'a', 'yes', 'yes', 'yes', 'yes', 'a', 'a', 'yes', 'a', 'yes', 'a', 'yes', 'yes', 'yes', 'a', 'yes', 'yes', 'a', 'yes', 'a', 'yes', 6),
-(102, 'MARK', '25-0003', '2025-03-17', '1234', 'amsdnsad', 'sadas', 'off', 'open', 'dasd', '', '', '', '', '', '', '21321', 'adasas', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6),
-(103, 'MARKI', '25-0004', '2025-03-17', '1234', 'amsdnsad', 'asdas', 'off', 'open', 'asdas', '', '', '', '', '', '', 'asd', 'adas', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6),
-(104, 'ASDAS', '25-0005', '2025-03-17', '1234', 'amsdnsad', 'asdas', 'off', 'open', 'asd', '', '', '', '', '', '', 'asd', 'asd', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6),
-(105, 'ADASD', '25-0006', '2025-03-17', '123', '1', 'sadsa', 'off', 'open', 'sadsafdsf', '', '', '', '', '', '', 'dsfd', 'dfsfd', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6),
-(106, 'ASDR', '25-0007', '2025-03-17', '187303-001', 'AB MIKRO', 'ASD', 'off', 'open', 'ASD', '', '', '', '', '', '', 'ASD', 'ASD', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6),
-(107, 'CADO', '25-0008', '2025-03-17', '187306-001', 'AB MIKRO', '213QSA', 'on', 'open', 'ASDAS', '', '', '', '', '', '', 'ASDASD', 'SADSA', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 1);
+(100, 'a', '25-0001', '2025-03-12', 'a', 'a', 'a', 'on', 'open', 'a', '1', '1', 'Yes', 'Yes', '1', 'q', '1', 'a', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0),
+(101, 'Cabo, Gerardo', '25-0002', '2025-03-12', '196555', 'amsdnsad', 'Area 51', 'on', 'open', 'Laro laro', 'dog', 'bakit', 'Yes', 'Yes', 'Laro dog laro dog laro dog laro dog laro dog laro dog laro dog', 'a', 'awts', 'awts123', 'yes', 'yes', 'yes', 'a', 'yes', 'a', 'yes', 'yes', 'yes', 'yes', 'a', 'a', 'yes', 'a', 'yes', 'a', 'yes', 'yes', 'yes', 'a', 'yes', 'yes', 'a', 'yes', 'a', 'yes', 0),
+(102, 'MARK', '25-0003', '2025-03-17', '1234', 'amsdnsad', 'sadas', 'off', 'open', 'dasd', '', '', '', '', '', '', '21321', 'adasas', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0),
+(103, 'MARKI', '25-0004', '2025-03-17', '1234', 'amsdnsad', 'asdas', 'off', 'open', 'asdas', '', '', '', '', '', '', 'asd', 'adas', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0),
+(104, 'ASDAS', '25-0005', '2025-03-17', '1234', 'amsdnsad', 'asdas', 'off', 'open', 'asd', '', '', '', '', '', '', 'asd', 'asd', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0),
+(105, 'ADASD', '25-0006', '2025-03-17', '123', '1', 'sadsa', 'off', 'open', 'sadsafdsf', '', '', '', '', '', '', 'dsfd', 'dfsfd', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', NULL),
+(106, 'ASDR', '25-0007', '2025-03-17', '187303-001', 'AB MIKRO', 'ASD', 'off', 'open', 'ASD', '', '', '', '', '', '', 'ASD', 'ASD', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', NULL),
+(107, 'CADO', '25-0008', '2025-03-17', '187306-001', 'AB MIKRO', '213QSA', 'on', 'open', 'ASDAS', '', '', '', '', '', '', 'ASDASD', 'SADSA', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', NULL);
 
 -- --------------------------------------------------------
 
@@ -320,21 +551,53 @@ CREATE TABLE `ncpr_temp_table` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `ncpr_temp_table`
+-- Table structure for table `predefined_checkboxes`
 --
 
-INSERT INTO `ncpr_temp_table` (`id`, `ncpr_num`, `created_at`) VALUES
-(1, '25-0019', '2025-03-12 01:53:11'),
-(7, '25-0020', '2025-03-12 01:55:43'),
-(8, '25-0021', '2025-03-12 01:55:56'),
-(9, '25-0022', '2025-03-12 01:56:03'),
-(10, '25-0001', '2025-03-12 02:01:34'),
-(11, '25-0002', '2025-03-12 02:01:37'),
-(12, '25-0003', '2025-03-12 02:01:38'),
-(13, '25-0004', '2025-03-12 02:01:42'),
-(14, '25-0005', '2025-03-12 02:02:35'),
-(15, '25-0006', '2025-03-12 02:03:44');
+CREATE TABLE `predefined_checkboxes` (
+  `id` int(11) NOT NULL,
+  `checkbox_name` varchar(255) NOT NULL,
+  `default_value` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `predefined_checkboxes`
+--
+
+INSERT INTO `predefined_checkboxes` (`id`, `checkbox_name`, `default_value`) VALUES
+(1, 'Man', 'yes'),
+(2, 'Method', 'yes'),
+(3, 'Machine', 'yes'),
+(4, 'NID Item', 'yes'),
+(5, 'NID Purchased Item', 'yes'),
+(6, 'For Expiry Expired', 'yes'),
+(7, 'Local Supplier', 'yes'),
+(8, 'Customer Furnish Material', 'yes'),
+(9, 'Potential Failure', 'yes'),
+(10, 'CAR', 'yes'),
+(11, 'SCAR', 'yes'),
+(12, 'NTPI', 'yes'),
+(13, 'NFLD', 'yes'),
+(14, 'Review of NCP FMEA', 'yes'),
+(15, 'Review of NCP Control Plan', 'yes'),
+(16, 'Affected business', 'yes'),
+(17, 'Other instructions', 'yes'),
+(18, 'Use as is', 'yes'),
+(19, 'Re-inspection', 'yes'),
+(20, 'Run under normal process', 'yes'),
+(21, 'Re-grade', 'yes'),
+(22, 'Rework', 'yes'),
+(23, 'Re-press', 'yes'),
+(24, 'Re-plate', 'yes'),
+(25, 'Re-Etest', 'yes'),
+(26, 'Re-measure', 'yes'),
+(27, 'Repair', 'yes'),
+(28, 'Rework Traveler', 'yes'),
+(29, 'Scrap', 'yes'),
+(30, 'RTV', 'yes');
 
 -- --------------------------------------------------------
 
@@ -1240,52 +1503,6 @@ INSERT INTO `product_list` (`product_id`, `part_number`, `part_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `prod_dispo_tbl`
---
-
-CREATE TABLE `prod_dispo_tbl` (
-  `id` int(11) NOT NULL,
-  `use_as_isActive` tinyint(1) DEFAULT 0,
-  `re_inspectionActive` tinyint(1) DEFAULT 0,
-  `run_normalActive` tinyint(1) DEFAULT 0,
-  `regrade_Active` tinyint(1) DEFAULT 0,
-  `rework_Active` tinyint(1) DEFAULT 0,
-  `repair_Active` tinyint(1) DEFAULT 0,
-  `rework_traveler_Active` tinyint(1) DEFAULT 0,
-  `scrap_Active` tinyint(1) DEFAULT 0,
-  `RTV_Active` tinyint(1) DEFAULT 0,
-  `yield_off` varchar(255) DEFAULT NULL,
-  `da_no` varchar(255) DEFAULT NULL,
-  `rework_da_no` varchar(255) DEFAULT NULL,
-  `wis_no` varchar(255) DEFAULT NULL,
-  `scrap_amount` decimal(10,2) DEFAULT NULL,
-  `shipment_date` date DEFAULT NULL,
-  `intervention_id` int(11) DEFAULT NULL,
-  `rework_type_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `prod_dispo_tbl`
---
-
-INSERT INTO `prod_dispo_tbl` (`id`, `use_as_isActive`, `re_inspectionActive`, `run_normalActive`, `regrade_Active`, `rework_Active`, `repair_Active`, `rework_traveler_Active`, `scrap_Active`, `RTV_Active`, `yield_off`, `da_no`, `rework_da_no`, `wis_no`, `scrap_amount`, `shipment_date`, `intervention_id`, `rework_type_id`, `created_at`, `updated_at`) VALUES
-(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:21:08', '2025-03-20 10:21:08'),
-(2, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:22:06', '2025-03-20 10:22:06'),
-(3, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:22:35', '2025-03-20 10:22:35'),
-(4, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:25:23', '2025-03-20 10:25:23'),
-(5, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:27:36', '2025-03-20 10:27:36'),
-(6, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:29:01', '2025-03-20 10:29:01'),
-(7, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:30:11', '2025-03-20 10:30:11'),
-(8, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:31:27', '2025-03-20 10:31:27'),
-(9, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:33:19', '2025-03-20 10:33:19'),
-(10, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:36:12', '2025-03-20 10:36:12'),
-(11, 0, 0, 0, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-03-20 10:44:52', '2025-03-20 10:44:52');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `register`
 --
 
@@ -1306,28 +1523,6 @@ INSERT INTO `register` (`user_id`, `email`, `first_name`, `last_name`, `pwd`, `o
 (1, 'jr.gerardo14@gmail.com', 'John', 'Doe', '123456', '815030'),
 (2, 'gerardocabojr@gmail.com', 'Alice', 'Smith', 'abcdef', '272532'),
 (3, 'user3@example.com', 'Bob', 'Johnson', 'password', '654321');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rework_type_tbl`
---
-
-CREATE TABLE `rework_type_tbl` (
-  `id` int(11) NOT NULL,
-  `type` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `rework_type_tbl`
---
-
-INSERT INTO `rework_type_tbl` (`id`, `type`) VALUES
-(3, 'Re-Etest'),
-(4, 'Re-measure'),
-(2, 'Re-plate'),
-(1, 'Re-press'),
-(5, 'Rework Traveler');
 
 -- --------------------------------------------------------
 
@@ -1419,7 +1614,11 @@ INSERT INTO `users` (`id`, `username`, `password`, `role_id`, `created_at`, `per
 (2, 'jr.gerardo14@gmail.com', '$2y$10$TYELwL2PhUlikVxs2kh6OeE.oDpj91gEooI2pKY1FPwRaj.MYKsH.', 2, '2025-03-17 06:53:25', 0),
 (3, 'Superadmin@gmail.com', '$2y$10$nqr.jgUU5knN8gEWd1YlB.2VGLDPCH.fhNHeFiYwD3nGGeIk.W28C', 1, '2025-03-17 06:55:18', 0),
 (4, 'qastaff1@ntphil.com', '$2y$10$./PMVLBHDHh05BPvTaON3.zvvvBFvD9RDhsZiC8zXeGNXGLVZoFVa', 7, '2025-03-17 07:02:11', 0),
-(5, 'engr_user', '$2y$10$MKfvuNI6yfh4/IGo.QkrjOlt0vg1w1r8uOLgRmNRZdTJfz/7.Wrgu', 6, '2025-03-19 02:30:54', 1);
+(5, 'engr_user', '$2y$10$MKfvuNI6yfh4/IGo.QkrjOlt0vg1w1r8uOLgRmNRZdTJfz/7.Wrgu', 6, '2025-03-19 02:30:54', 1),
+(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', 5, '2025-03-23 13:38:27', 0),
+(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', 6, '2025-03-23 13:38:44', 0),
+(8, 'admin', '$2y$10$sYkHASxQdYPQVu7GMwz1P.z21qPb6LWXPtvfLTohUNiPdqSwRzm3u', 7, '2025-03-23 13:38:50', 0),
+(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', 3, '2025-03-24 02:13:14', 0);
 
 -- --------------------------------------------------------
 
@@ -1451,38 +1650,29 @@ INSERT INTO `users_roles` (`id`, `name`) VALUES
 --
 
 --
--- Indexes for table `car_tbl`
+-- Indexes for table `disposition_tbl`
 --
-ALTER TABLE `car_tbl`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `DRF_id` (`DRF_id`);
+ALTER TABLE `disposition_tbl`
+  ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `cnc_mat_tbl`
+-- Indexes for table `dispo_approval`
 --
-ALTER TABLE `cnc_mat_tbl`
+ALTER TABLE `dispo_approval`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `CAR_id` (`CAR_id`);
+  ADD KEY `approver_id` (`approver_id`);
 
 --
--- Indexes for table `dispo_sitioned`
+-- Indexes for table `dispo_radio_values`
 --
-ALTER TABLE `dispo_sitioned`
+ALTER TABLE `dispo_radio_values`
   ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `dispo_table`
 --
 ALTER TABLE `dispo_table`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `CNC_mat_id` (`CNC_mat_id`);
-
---
--- Indexes for table `drf_tbl`
---
-ALTER TABLE `drf_tbl`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `prod_dispo_id` (`prod_dispo_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `fomo`
@@ -1525,6 +1715,13 @@ ALTER TABLE `ncpr_temp_table`
   ADD UNIQUE KEY `ncpr_num` (`ncpr_num`);
 
 --
+-- Indexes for table `predefined_checkboxes`
+--
+ALTER TABLE `predefined_checkboxes`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `checkbox_name` (`checkbox_name`);
+
+--
 -- Indexes for table `process_area`
 --
 ALTER TABLE `process_area`
@@ -1537,24 +1734,10 @@ ALTER TABLE `product_list`
   ADD PRIMARY KEY (`product_id`);
 
 --
--- Indexes for table `prod_dispo_tbl`
---
-ALTER TABLE `prod_dispo_tbl`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `rework_type_id` (`rework_type_id`);
-
---
 -- Indexes for table `register`
 --
 ALTER TABLE `register`
   ADD PRIMARY KEY (`user_id`);
-
---
--- Indexes for table `rework_type_tbl`
---
-ALTER TABLE `rework_type_tbl`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `type` (`type`);
 
 --
 -- Indexes for table `uploaded_file`
@@ -1595,34 +1778,28 @@ ALTER TABLE `users_roles`
 --
 
 --
--- AUTO_INCREMENT for table `car_tbl`
+-- AUTO_INCREMENT for table `disposition_tbl`
 --
-ALTER TABLE `car_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `cnc_mat_tbl`
---
-ALTER TABLE `cnc_mat_tbl`
+ALTER TABLE `disposition_tbl`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `dispo_sitioned`
+-- AUTO_INCREMENT for table `dispo_approval`
 --
-ALTER TABLE `dispo_sitioned`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `dispo_approval`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `dispo_radio_values`
+--
+ALTER TABLE `dispo_radio_values`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `dispo_table`
 --
 ALTER TABLE `dispo_table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `drf_tbl`
---
-ALTER TABLE `drf_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `fomo`
@@ -1658,6 +1835,12 @@ ALTER TABLE `ncpr_table`
 -- AUTO_INCREMENT for table `ncpr_temp_table`
 --
 ALTER TABLE `ncpr_temp_table`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `predefined_checkboxes`
+--
+ALTER TABLE `predefined_checkboxes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
@@ -1673,22 +1856,10 @@ ALTER TABLE `product_list`
   MODIFY `product_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=874;
 
 --
--- AUTO_INCREMENT for table `prod_dispo_tbl`
---
-ALTER TABLE `prod_dispo_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
 -- AUTO_INCREMENT for table `register`
 --
 ALTER TABLE `register`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `rework_type_tbl`
---
-ALTER TABLE `rework_type_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `uploaded_file`
@@ -1712,7 +1883,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users_roles`
@@ -1725,28 +1896,10 @@ ALTER TABLE `users_roles`
 --
 
 --
--- Constraints for table `car_tbl`
+-- Constraints for table `dispo_approval`
 --
-ALTER TABLE `car_tbl`
-  ADD CONSTRAINT `car_tbl_ibfk_1` FOREIGN KEY (`DRF_id`) REFERENCES `drf_tbl` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `cnc_mat_tbl`
---
-ALTER TABLE `cnc_mat_tbl`
-  ADD CONSTRAINT `cnc_mat_tbl_ibfk_1` FOREIGN KEY (`CAR_id`) REFERENCES `car_tbl` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `dispo_table`
---
-ALTER TABLE `dispo_table`
-  ADD CONSTRAINT `dispo_table_ibfk_1` FOREIGN KEY (`CNC_mat_id`) REFERENCES `cnc_mat_tbl` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `drf_tbl`
---
-ALTER TABLE `drf_tbl`
-  ADD CONSTRAINT `drf_tbl_ibfk_1` FOREIGN KEY (`prod_dispo_id`) REFERENCES `prod_dispo_tbl` (`id`) ON DELETE CASCADE;
+ALTER TABLE `dispo_approval`
+  ADD CONSTRAINT `dispo_approval_ibfk_1` FOREIGN KEY (`approver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `fomo`
@@ -1761,12 +1914,6 @@ ALTER TABLE `material`
   ADD CONSTRAINT `fk_ncpr_material` FOREIGN KEY (`ncpr_id`) REFERENCES `ncpr_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `prod_dispo_tbl`
---
-ALTER TABLE `prod_dispo_tbl`
-  ADD CONSTRAINT `prod_dispo_tbl_ibfk_1` FOREIGN KEY (`rework_type_id`) REFERENCES `rework_type_tbl` (`id`);
-
---
 -- Constraints for table `uploaded_file`
 --
 ALTER TABLE `uploaded_file`
@@ -1777,6 +1924,462 @@ ALTER TABLE `uploaded_file`
 --
 ALTER TABLE `uploaded_files`
   ADD CONSTRAINT `uploaded_files_ibfk_1` FOREIGN KEY (`ncpr_id`) REFERENCES `ncpr_table` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+--
+-- Database: `phpmyadmin`
+--
+CREATE DATABASE IF NOT EXISTS `phpmyadmin` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+USE `phpmyadmin`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__bookmark`
+--
+
+CREATE TABLE `pma__bookmark` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `dbase` varchar(255) NOT NULL DEFAULT '',
+  `user` varchar(255) NOT NULL DEFAULT '',
+  `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `query` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Bookmarks';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__central_columns`
+--
+
+CREATE TABLE `pma__central_columns` (
+  `db_name` varchar(64) NOT NULL,
+  `col_name` varchar(64) NOT NULL,
+  `col_type` varchar(64) NOT NULL,
+  `col_length` text DEFAULT NULL,
+  `col_collation` varchar(64) NOT NULL,
+  `col_isNull` tinyint(1) NOT NULL,
+  `col_extra` varchar(255) DEFAULT '',
+  `col_default` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Central list of columns';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__column_info`
+--
+
+CREATE TABLE `pma__column_info` (
+  `id` int(5) UNSIGNED NOT NULL,
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `table_name` varchar(64) NOT NULL DEFAULT '',
+  `column_name` varchar(64) NOT NULL DEFAULT '',
+  `comment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `mimetype` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `transformation` varchar(255) NOT NULL DEFAULT '',
+  `transformation_options` varchar(255) NOT NULL DEFAULT '',
+  `input_transformation` varchar(255) NOT NULL DEFAULT '',
+  `input_transformation_options` varchar(255) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Column information for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__designer_settings`
+--
+
+CREATE TABLE `pma__designer_settings` (
+  `username` varchar(64) NOT NULL,
+  `settings_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Settings related to Designer';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__export_templates`
+--
+
+CREATE TABLE `pma__export_templates` (
+  `id` int(5) UNSIGNED NOT NULL,
+  `username` varchar(64) NOT NULL,
+  `export_type` varchar(10) NOT NULL,
+  `template_name` varchar(64) NOT NULL,
+  `template_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Saved export templates';
+
+--
+-- Dumping data for table `pma__export_templates`
+--
+
+INSERT INTO `pma__export_templates` (`id`, `username`, `export_type`, `template_name`, `template_data`) VALUES
+(1, 'root', 'server', 'ncpr_db', '{\"quick_or_custom\":\"quick\",\"what\":\"sql\",\"db_select[]\":[\"database3\",\"ncpr_db\",\"phpmyadmin\",\"test\"],\"aliases_new\":\"\",\"output_format\":\"sendit\",\"filename_template\":\"@SERVER@\",\"remember_template\":\"on\",\"charset\":\"utf-8\",\"compression\":\"none\",\"maxsize\":\"\",\"codegen_structure_or_data\":\"data\",\"codegen_format\":\"0\",\"csv_separator\":\",\",\"csv_enclosed\":\"\\\"\",\"csv_escaped\":\"\\\"\",\"csv_terminated\":\"AUTO\",\"csv_null\":\"NULL\",\"csv_columns\":\"something\",\"csv_structure_or_data\":\"data\",\"excel_null\":\"NULL\",\"excel_columns\":\"something\",\"excel_edition\":\"win\",\"excel_structure_or_data\":\"data\",\"json_structure_or_data\":\"data\",\"json_unicode\":\"something\",\"latex_caption\":\"something\",\"latex_structure_or_data\":\"structure_and_data\",\"latex_structure_caption\":\"Structure of table @TABLE@\",\"latex_structure_continued_caption\":\"Structure of table @TABLE@ (continued)\",\"latex_structure_label\":\"tab:@TABLE@-structure\",\"latex_relation\":\"something\",\"latex_comments\":\"something\",\"latex_mime\":\"something\",\"latex_columns\":\"something\",\"latex_data_caption\":\"Content of table @TABLE@\",\"latex_data_continued_caption\":\"Content of table @TABLE@ (continued)\",\"latex_data_label\":\"tab:@TABLE@-data\",\"latex_null\":\"\\\\textit{NULL}\",\"mediawiki_structure_or_data\":\"data\",\"mediawiki_caption\":\"something\",\"mediawiki_headers\":\"something\",\"htmlword_structure_or_data\":\"structure_and_data\",\"htmlword_null\":\"NULL\",\"ods_null\":\"NULL\",\"ods_structure_or_data\":\"data\",\"odt_structure_or_data\":\"structure_and_data\",\"odt_relation\":\"something\",\"odt_comments\":\"something\",\"odt_mime\":\"something\",\"odt_columns\":\"something\",\"odt_null\":\"NULL\",\"pdf_report_title\":\"\",\"pdf_structure_or_data\":\"data\",\"phparray_structure_or_data\":\"data\",\"sql_include_comments\":\"something\",\"sql_header_comment\":\"\",\"sql_use_transaction\":\"something\",\"sql_compatibility\":\"NONE\",\"sql_structure_or_data\":\"structure_and_data\",\"sql_create_table\":\"something\",\"sql_auto_increment\":\"something\",\"sql_create_view\":\"something\",\"sql_create_trigger\":\"something\",\"sql_backquotes\":\"something\",\"sql_type\":\"INSERT\",\"sql_insert_syntax\":\"both\",\"sql_max_query_size\":\"50000\",\"sql_hex_for_binary\":\"something\",\"sql_utc_time\":\"something\",\"texytext_structure_or_data\":\"structure_and_data\",\"texytext_null\":\"NULL\",\"yaml_structure_or_data\":\"data\",\"\":null,\"as_separate_files\":null,\"csv_removeCRLF\":null,\"excel_removeCRLF\":null,\"json_pretty_print\":null,\"htmlword_columns\":null,\"ods_columns\":null,\"sql_dates\":null,\"sql_relation\":null,\"sql_mime\":null,\"sql_disable_fk\":null,\"sql_views_as_tables\":null,\"sql_metadata\":null,\"sql_drop_database\":null,\"sql_drop_table\":null,\"sql_if_not_exists\":null,\"sql_simple_view_export\":null,\"sql_view_current_user\":null,\"sql_or_replace_view\":null,\"sql_procedure_function\":null,\"sql_truncate\":null,\"sql_delayed\":null,\"sql_ignore\":null,\"texytext_columns\":null}');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__favorite`
+--
+
+CREATE TABLE `pma__favorite` (
+  `username` varchar(64) NOT NULL,
+  `tables` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Favorite tables';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__history`
+--
+
+CREATE TABLE `pma__history` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `db` varchar(64) NOT NULL DEFAULT '',
+  `table` varchar(64) NOT NULL DEFAULT '',
+  `timevalue` timestamp NOT NULL DEFAULT current_timestamp(),
+  `sqlquery` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='SQL history for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__navigationhiding`
+--
+
+CREATE TABLE `pma__navigationhiding` (
+  `username` varchar(64) NOT NULL,
+  `item_name` varchar(64) NOT NULL,
+  `item_type` varchar(64) NOT NULL,
+  `db_name` varchar(64) NOT NULL,
+  `table_name` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Hidden items of navigation tree';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__pdf_pages`
+--
+
+CREATE TABLE `pma__pdf_pages` (
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `page_nr` int(10) UNSIGNED NOT NULL,
+  `page_descr` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='PDF relation pages for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__recent`
+--
+
+CREATE TABLE `pma__recent` (
+  `username` varchar(64) NOT NULL,
+  `tables` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Recently accessed tables';
+
+--
+-- Dumping data for table `pma__recent`
+--
+
+INSERT INTO `pma__recent` (`username`, `tables`) VALUES
+('root', '[{\"db\":\"ncpr_db\",\"table\":\"dispo_radio_values\"},{\"db\":\"ncpr_db\",\"table\":\"dispo_approval\"},{\"db\":\"ncpr_db\",\"table\":\"disposition_tbl\"},{\"db\":\"ncpr_db\",\"table\":\"dispo_table\"},{\"db\":\"ncpr_db\",\"table\":\"predefined_checkboxes\"},{\"db\":\"ncpr_db\",\"table\":\"ncpr_table\"},{\"db\":\"ncpr_db\",\"table\":\"users\"},{\"db\":\"ncpr_db\",\"table\":\"car_tbl\"},{\"db\":\"ncpr_db\",\"table\":\"cnc_mat_tbl\"},{\"db\":\"ncpr_db\",\"table\":\"iara\"}]');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__relation`
+--
+
+CREATE TABLE `pma__relation` (
+  `master_db` varchar(64) NOT NULL DEFAULT '',
+  `master_table` varchar(64) NOT NULL DEFAULT '',
+  `master_field` varchar(64) NOT NULL DEFAULT '',
+  `foreign_db` varchar(64) NOT NULL DEFAULT '',
+  `foreign_table` varchar(64) NOT NULL DEFAULT '',
+  `foreign_field` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Relation table';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__savedsearches`
+--
+
+CREATE TABLE `pma__savedsearches` (
+  `id` int(5) UNSIGNED NOT NULL,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `search_name` varchar(64) NOT NULL DEFAULT '',
+  `search_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Saved searches';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__table_coords`
+--
+
+CREATE TABLE `pma__table_coords` (
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `table_name` varchar(64) NOT NULL DEFAULT '',
+  `pdf_page_number` int(11) NOT NULL DEFAULT 0,
+  `x` float UNSIGNED NOT NULL DEFAULT 0,
+  `y` float UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Table coordinates for phpMyAdmin PDF output';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__table_info`
+--
+
+CREATE TABLE `pma__table_info` (
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `table_name` varchar(64) NOT NULL DEFAULT '',
+  `display_field` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Table information for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__table_uiprefs`
+--
+
+CREATE TABLE `pma__table_uiprefs` (
+  `username` varchar(64) NOT NULL,
+  `db_name` varchar(64) NOT NULL,
+  `table_name` varchar(64) NOT NULL,
+  `prefs` text NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Tables'' UI preferences';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__tracking`
+--
+
+CREATE TABLE `pma__tracking` (
+  `db_name` varchar(64) NOT NULL,
+  `table_name` varchar(64) NOT NULL,
+  `version` int(10) UNSIGNED NOT NULL,
+  `date_created` datetime NOT NULL,
+  `date_updated` datetime NOT NULL,
+  `schema_snapshot` text NOT NULL,
+  `schema_sql` text DEFAULT NULL,
+  `data_sql` longtext DEFAULT NULL,
+  `tracking` set('UPDATE','REPLACE','INSERT','DELETE','TRUNCATE','CREATE DATABASE','ALTER DATABASE','DROP DATABASE','CREATE TABLE','ALTER TABLE','RENAME TABLE','DROP TABLE','CREATE INDEX','DROP INDEX','CREATE VIEW','ALTER VIEW','DROP VIEW') DEFAULT NULL,
+  `tracking_active` int(1) UNSIGNED NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Database changes tracking for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__userconfig`
+--
+
+CREATE TABLE `pma__userconfig` (
+  `username` varchar(64) NOT NULL,
+  `timevalue` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `config_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User preferences storage for phpMyAdmin';
+
+--
+-- Dumping data for table `pma__userconfig`
+--
+
+INSERT INTO `pma__userconfig` (`username`, `timevalue`, `config_data`) VALUES
+('root', '2025-03-26 00:28:20', '{\"Console\\/Mode\":\"collapse\"}');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__usergroups`
+--
+
+CREATE TABLE `pma__usergroups` (
+  `usergroup` varchar(64) NOT NULL,
+  `tab` varchar(64) NOT NULL,
+  `allowed` enum('Y','N') NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User groups with configured menu items';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__users`
+--
+
+CREATE TABLE `pma__users` (
+  `username` varchar(64) NOT NULL,
+  `usergroup` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Users and their assignments to user groups';
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `pma__bookmark`
+--
+ALTER TABLE `pma__bookmark`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pma__central_columns`
+--
+ALTER TABLE `pma__central_columns`
+  ADD PRIMARY KEY (`db_name`,`col_name`);
+
+--
+-- Indexes for table `pma__column_info`
+--
+ALTER TABLE `pma__column_info`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `db_name` (`db_name`,`table_name`,`column_name`);
+
+--
+-- Indexes for table `pma__designer_settings`
+--
+ALTER TABLE `pma__designer_settings`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__export_templates`
+--
+ALTER TABLE `pma__export_templates`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `u_user_type_template` (`username`,`export_type`,`template_name`);
+
+--
+-- Indexes for table `pma__favorite`
+--
+ALTER TABLE `pma__favorite`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__history`
+--
+ALTER TABLE `pma__history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `username` (`username`,`db`,`table`,`timevalue`);
+
+--
+-- Indexes for table `pma__navigationhiding`
+--
+ALTER TABLE `pma__navigationhiding`
+  ADD PRIMARY KEY (`username`,`item_name`,`item_type`,`db_name`,`table_name`);
+
+--
+-- Indexes for table `pma__pdf_pages`
+--
+ALTER TABLE `pma__pdf_pages`
+  ADD PRIMARY KEY (`page_nr`),
+  ADD KEY `db_name` (`db_name`);
+
+--
+-- Indexes for table `pma__recent`
+--
+ALTER TABLE `pma__recent`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__relation`
+--
+ALTER TABLE `pma__relation`
+  ADD PRIMARY KEY (`master_db`,`master_table`,`master_field`),
+  ADD KEY `foreign_field` (`foreign_db`,`foreign_table`);
+
+--
+-- Indexes for table `pma__savedsearches`
+--
+ALTER TABLE `pma__savedsearches`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `u_savedsearches_username_dbname` (`username`,`db_name`,`search_name`);
+
+--
+-- Indexes for table `pma__table_coords`
+--
+ALTER TABLE `pma__table_coords`
+  ADD PRIMARY KEY (`db_name`,`table_name`,`pdf_page_number`);
+
+--
+-- Indexes for table `pma__table_info`
+--
+ALTER TABLE `pma__table_info`
+  ADD PRIMARY KEY (`db_name`,`table_name`);
+
+--
+-- Indexes for table `pma__table_uiprefs`
+--
+ALTER TABLE `pma__table_uiprefs`
+  ADD PRIMARY KEY (`username`,`db_name`,`table_name`);
+
+--
+-- Indexes for table `pma__tracking`
+--
+ALTER TABLE `pma__tracking`
+  ADD PRIMARY KEY (`db_name`,`table_name`,`version`);
+
+--
+-- Indexes for table `pma__userconfig`
+--
+ALTER TABLE `pma__userconfig`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__usergroups`
+--
+ALTER TABLE `pma__usergroups`
+  ADD PRIMARY KEY (`usergroup`,`tab`,`allowed`);
+
+--
+-- Indexes for table `pma__users`
+--
+ALTER TABLE `pma__users`
+  ADD PRIMARY KEY (`username`,`usergroup`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `pma__bookmark`
+--
+ALTER TABLE `pma__bookmark`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__column_info`
+--
+ALTER TABLE `pma__column_info`
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__export_templates`
+--
+ALTER TABLE `pma__export_templates`
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `pma__history`
+--
+ALTER TABLE `pma__history`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__pdf_pages`
+--
+ALTER TABLE `pma__pdf_pages`
+  MODIFY `page_nr` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__savedsearches`
+--
+ALTER TABLE `pma__savedsearches`
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+--
+-- Database: `test`
+--
+CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `test`;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
