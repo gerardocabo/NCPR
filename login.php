@@ -20,47 +20,49 @@ function handleGuestLogin($guestRole) {
 }
 
 // Admin Login Function
-function handleAdminLogin($username, $password, $conn) {
+function handleAdminLogin($username, $password, $pdo) {
     if (empty($username) || empty($password)) {
         return json_encode(["status" => "error", "message" => "Username or password cannot be empty."]);
     }
 
-    $stmt = $conn->prepare("SELECT users.password, users_roles.name FROM users 
-                            JOIN users_roles ON users.role_id = users_roles.id 
-                            WHERE users.username = ?");
-    if (!$stmt) {
-        return json_encode(["status" => "error", "message" => "Database error."]);
-    }
+    try {
+        // Prepare the SQL statement using PDO
+        $stmt = $pdo->prepare("SELECT users.password, users_roles.name FROM users 
+                               JOIN users_roles ON users.role_id = users_roles.id 
+                               WHERE users.username = :username");
+        
+        $stmt->execute(["username" => $username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return json_encode(["status" => "error", "message" => "User not found or incorrect credentials."]);
+        }
+
+        // Verify the password
+        if (!password_verify($password, $user["password"])) {
+            return json_encode(["status" => "error", "message" => "Incorrect password."]);
+        }
+
+        $_SESSION["user"] = $username;
+        $_SESSION["role"] = $user["name"];
+
+        $redirectPages = [
+            "SUPERADMIN" => "superadmin_dashboard.php",
+            "ADMIN" => "admin_dashboard.php",
+            "STAFF" => "admin_dashboard.php",
+            "ENGINEER" => "engineer_dashboard.php",
+            "SUPERVISOR" => "supv&mgrDashboard.php",
+            "MANAGER" => "supv&mgrDashboard.php",
+            "REPRESENTATIVE" => "representative_dashboard.php",
+            "GUEST" => "guest_dashboard.php"
+        ];
+
+        return json_encode(["status" => "success", "message" => ucfirst(strtolower($user["name"])) . " login successful.", "redirect" => $redirectPages[$user["name"]] ?? "error.php"]);
     
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->bind_result($hashed_password, $role_name);
-
-    if (!$stmt->fetch()) {
-        return json_encode(["status" => "error", "message" => "User not found or incorrect credentials."]);
+    } catch (PDOException $e) {
+        error_log("Database Error: " . $e->getMessage());
+        return json_encode(["status" => "error", "message" => "An error occurred while processing your request."]);
     }
-    
-    $stmt->close();
-
-    if (!password_verify($password, $hashed_password)) {
-        return json_encode(["status" => "error", "message" => "Incorrect password."]);
-    }
-
-    $_SESSION["user"] = $username;
-    $_SESSION["role"] = $role_name;
-
-    $redirectPages = [
-        "SUPERADMIN" => "superadmin_dashboard.php",
-        "ADMIN" => "admin_dashboard.php",
-        "STAFF" => "admin_dashboard.php",
-        "ENGINEER" => "engineer_dashboard.php",
-        "SUPERVISOR" => "supv&mgrDashboard.php",
-        "MANAGER" => "supv&mgrDashboard.php",
-        "REPRESENTATIVE" => "representative_dashboard.php",
-        "GUEST" => "guest_dashboard.php"
-    ];
-
-    return json_encode(["status" => "success", "message" => ucfirst(strtolower($role_name)) . " login successful.", "redirect" => $redirectPages[$role_name] ?? "error.php"]);
 }
 
 // Handle Requests
@@ -70,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
     if (isset($_POST["username"]) && isset($_POST["password"])) {
-        echo handleAdminLogin($_POST["username"], $_POST["password"], $conn);
+        echo handleAdminLogin($_POST["username"], $_POST["password"], $pdo);
         exit();
     }
 }

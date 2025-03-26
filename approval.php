@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'connection.php';
+require 'conn.php';
 
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
@@ -27,7 +27,7 @@ $allowed_roles = [
     "ENGINEER" => "QA Engineer",
     "SUPERVISOR" => "QA Manager",
     "MANAGER" => "QA Manager",
-    "REPRESENTATIVE" => "NT Representative"
+    "REPRESENTATIVE" => "Representative"
 ];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -77,37 +77,63 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Begin transaction
         $conn->begin_transaction();
-        
-        $inputs_sakses = include 'insert_dispo_input.php';
-        if(!$inputs_sakses){
-            throw new Exception("Execute dispo-input failed: " . $stmt->error);
+
+        // Execute only if user role is ENGINEER
+        if ($user_role === "ENGINEER" && $action !== "cancel") {
+            $inputs_sakses = include 'insert_dispo_input.php';
+            if (!$inputs_sakses) {
+                throw new Exception("Execute dispo-input failed: " . $stmt->error);
+            }
+
+            $dispo_sakses = include 'insert_dispo.php';
+            if (!$dispo_sakses) {
+                throw new Exception("Execute dispo failed: " . $stmt->error);
+            }
+
+            $radio_sakses = include 'insert_radio_dispo.php';
+            if (!$radio_sakses) {
+                throw new Exception("Execute radio failed: " . $stmt->error);
+            }
+        } else {
+            error_log("Skipping dispo execution as user role is not ENGINEER.");
         }
 
-        $dispo_sakses = include 'insert_dispo.php';
-        if(!$dispo_sakses){
-            throw new Exception("Execute dispo failed: " . $stmt->error);
-        }
-        
-        $radio_sakses = include 'insert_radio_dispo.php';
-        if(!$radio_sakses){
-            throw new Exception("Execute radio failed: " . $stmt->error);
-        }
+        if ($action !== "cancel" && $action !== "reject") {
+            // Convert certain actions to past tense
+            $action_map = [
+                "approve" => "approved",
+                "reject" => "rejected",
+                "submit" => "submitted",
+                "cancel" => "canceled"
+            ];
 
-        // Insert approval action into dispo_approval
-        $status = ucfirst(strtolower($action));
-        $stmt = $conn->prepare("INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) VALUES (?, ?, ?, ?, NOW())");
-        if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
-        $stmt->bind_param("ssis", $ncpr_num, $user_role, $person_id, $status);
-        $dispo_id = $stmt->insert_id;
-        if (!$stmt->execute()) throw new Exception("Execute failed: " . $stmt->error);
-        $stmt->close();
+            if (isset($action_map[strtolower($action)])) {
+                $action = $action_map[strtolower($action)];
+            }
 
-        // Update dispo_id in ncpr_table
-        $stmt = $conn->prepare("UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?");
-        if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
-        $stmt->bind_param("is", $dispo_id, $ncpr_num);
-        if (!$stmt->execute()) throw new Exception("Execute failed: " . $stmt->error);
-        $stmt->close();
+            $status = ucfirst(strtolower($action));
+
+            // Insert into dispo_approval
+            $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                      VALUES (?, ?, ?, ?, NOW())";
+            $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+
+            // Update dispo_id in ncpr_table
+            $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+            executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+
+            // If the user role is REPRESENTATIVE, update the status to Close
+            if ($user_role === "REPRESENTATIVE") {
+                $status = "Close";
+                $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$status, $ncpr_num], "ss");
+            }
+        } else {
+            // Update status in ncpr_table
+            $status = "Close";
+            $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
+            executeQuery($conn, $query, [$status, $ncpr_num], "ss");
+        }
 
         // Commit transaction
         $conn->commit();
@@ -120,4 +146,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $conn->close();
+}
+
+function executeQuery($conn, $query, $params, $types)
+{
+    $stmt = $conn->prepare($query);
+    if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
+
+    $stmt->bind_param($types, ...array_values($params));
+
+    if (!$stmt->execute()) throw new Exception("Execute failed: " . $stmt->error);
+
+    $insert_id = $stmt->insert_id; // Capture last inserted ID (if applicable)
+    $stmt->close();
+
+    return $insert_id;
 }

@@ -1,12 +1,6 @@
 <?php
 require "config.php";
 $user_role = $_SESSION['role'];
-// Function to check if the role is allowed
-function isAuthorized($allowed_roles)
-{
-    global $user_role;
-    return in_array($user_role, $allowed_roles);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +13,6 @@ function isAuthorized($allowed_roles)
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
-
 </head>
 
 <body class="bg-white">
@@ -219,7 +212,7 @@ function isAuthorized($allowed_roles)
                 </div>
                 <div class="modal-body">
                     <!-- Content will be loaded here  -->
-                    <?php include "disposition.php"; ?>
+                    <?php include "viewdisposition.php"; ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -321,6 +314,7 @@ function isAuthorized($allowed_roles)
         $(document).ready(function() {
             $('#ncprTable tbody').on('click', '.dispo-btn', function() {
                 var ncprNum = $(this).data('id');
+                $("#modal-id").text(ncprNum); // Display ID inside modal
 
                 $.ajax({
                     url: 'fetch_dispo_details.php', // New PHP script to fetch dispo_id
@@ -337,49 +331,71 @@ function isAuthorized($allowed_roles)
 
                         // Populate fields with existing data
                         $('#modal-id').text(response.ncpr_num);
-                        $('#containment').val(response.containment);
-                        $('#non-conformance').val(response.non_conformance);
+
+                        //$('#containment').val(response.containment);
+                        $('#containment').text(response.containment); // Sets the text content
+                        $('#non-conformance').text(response.non_conformance);
                         $('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
                         $('input[name="potential_failure"][value="' + response.pff + '"]').prop('checked', true);
 
                         // Populate multiple checkboxes for cause of non-conformance
                         $('input[name="cause[]"]').each(function() {
-                            $(this).prop('checked', response.cause.includes($(this).val()));
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
                         });
 
+
                         // Populate ID, name, CAR, SCAR fields
-                        $('#id_no').val(response.man_id_num);
-                        $('#name').val(response.man_name);
-                        $('input[name="car"]').prop('checked', response.car === 'CAR');
-                        $('input[name="scar"]').prop('checked', response.scar === 'SCAR');
-                        $('input[name="car_no"]').val(response.car_no);
-                        $('input[name="scar_no"]').val(response.scar_no);
+                        $('#id_no').text(response.id_no);
+                        $('#name').text(response.name);
+                        // Check CAR and SCAR based on the checkboxes array from the response
+                        $('input[name="car"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        $('input[name="scar"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+                        $('#car_no').text(response.car_no);
+                        $('#scar_no').text(response.scar_no);
+
+                        // sets checked for Dispo Required from
+                        // Populate dispo checkboxes
+                        $('input[name="dispo_from[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate IARA checkboxes
+                        $('input[name="impact_analysis[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        $('input[name="affected_business"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        $('input[name="other_instructions"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
 
                         // Set BD report and MRB radio buttons
                         $('input[name="bd_report"][value="' + response.bd_report + '"]').prop('checked', true);
                         $('input[name="mrb"][value="' + response.mrb + '"]').prop('checked', true);
+                        $('input[name="customer_approval"][value="' + response.customer_approval + '"]').prop('checked', true); // Added this
 
                         // Populate product disposition checkboxes
                         $('input[name="product_dispo[]"]').each(function() {
-                            $(this).prop('checked', response.product_dispo.includes($(this).val()));
-                        });
-
-                        // Populate product rework checkboxes
-                        $('input[name="product_rework[]"]').each(function() {
-                            $(this).prop('checked', response.product_rework.includes($(this).val()));
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
                         });
 
                         // Populate text fields
-                        $('input[name="yield_off"]').val(response.yield_off || "");
-                        $('input[name="da_no"]').val(response.da_no || "");
-                        $('input[name="rework_da_no"]').val(response.rework_da_no || "");
-                        $('input[name="wis_no"]').val(response.wis_no || "");
-                        $('input[name="scrap_amount"]').val(response.scrap_amount || "");
-                        $('input[name="shipment_date"]').val(response.shipment_date || "");
-                        $('input[name="document_alert"]').val(response.document_alert || "");
+                        $('#yield_off').text(response.yield_off || "");
+                        $('#da_no').text(response.da_no || "");
+                        $('#rework_da_no').text(response.rework_da_no || "");
+                        $('#wis_no').text(response.wis_no || "");
+                        $('#scrap_amount').text(response.scrap_amount || "");
+                        $('#shipment_date').text(response.shipment_date || "");
+                        $('#document_alert').text(response.document_alert || "");
 
                         // Disable all form elements to prevent modification
-                        $('.lock, .locked').prop('disabled', true);
+                        //$('.lock, .locked').prop('disabled', true);
                         $('#dispoModal').modal('show');
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
@@ -397,18 +413,7 @@ function isAuthorized($allowed_roles)
             });
         });
 
-        // Utility functions
-        function setCheckboxValue(selector, value) {
-            $(selector).prop("checked", value === "yes");
-        }
-
-        function setRadioButtonValue(name, value) {
-            if (value === "yes") {
-                $('input[name="' + name + '"][value="yes"]').prop("checked", true);
-            } else {
-                $('input[name="' + name + '"][value="no"]').prop("checked", true);
-            }
-        }
+        
     </script>
 
     <script>

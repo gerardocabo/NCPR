@@ -1,7 +1,7 @@
-<p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"><?= htmlspecialchars($ncpr_num ?? 'N/A') ?></span></p>
+<p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
 <div class="border mb-3 align-items-center p-2">
-    <span class="d-block">This space is intended for QA verification, containment and investigation activities</span>
-    <span id="containment" style="font-size: 10px"><?= htmlspecialchars($dipspo_num['QAVCIA'] ?? 'N/A') ?></span>
+    <span class="d-block"><strong>This space is intended for QA verification, containment and investigation activities.</strong></span>
+    <span id="containment" style="margin-left: 12px;"></span>
 </div>
 
 <!-- Cause of Non-Conformance Table -->
@@ -9,7 +9,7 @@
     <tr>
         <td>
             <span>Cause of Non-conformance:</span>
-            <span id="non-conformance" style="font-size: 10px"><?= htmlspecialchars($dipspo_num['CNC'] ?? 'N/A') ?></span>
+            <span id="non-conformance"></span>
         </td>
         <td>
             <strong>Potential Field Failure:</strong><br>
@@ -41,9 +41,9 @@
                 <div class="me-4">
                     <input class="locked" type="checkbox" name="cause[]" value="Man"> Man<br>
                     <label>ID No:</label>
-                    <span id="id_no" style="font-size: 10px"></span><br>
+                    <span id="id_no"></span><br>
                     <label>Name:</label>
-                    <span id="name" style="font-size: 10px"></span><br>
+                    <span id="name"></span><br>
                     <input class="locked" type="checkbox" name="cause[]" value="Method"> Method<br>
                     <input class="locked" type="checkbox" name="cause[]" value="Machine"> Machine<br>
                 </div>
@@ -61,20 +61,20 @@
             </div>
         </td>
         <td>
-            <input class="locked" type="radio" name="potential_failure" value="Yes" class="mb-5"> Yes<br>
-            <input class="locked" type="radio" name="potential_failure" value="No"> No<br>
+            <input class="locked" type="radio" name="potential_failure" value="YES" class="mb-5"> Yes<br>
+            <input class="locked" type="radio" name="potential_failure" value="NO"> No<br>
         </td>
         <td>
             <div class="d-flex align-items-center mb-2">
                 <input class="locked" type="checkbox" name="car" value="CAR"> CAR, CAR No:
-                <span id="car_no" style="font-size: 10px"></span><br>
+                <span id="car_no"></span><br>
                 <span class="me-2">8D Report:</span>
                 <input class="locked" type="radio" name="bd_report" value="YES" class="me-1"> YES
                 <input class="locked" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
             </div>
             <div class="d-flex align-items-center mt-5">
                 <input class="locked" type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
-                <span id="scar_no" style="font-size: 10px"></span><br>
+                <span id="scar_no"></span><br>
             </div>
         </td>
     </tr>
@@ -107,7 +107,7 @@
                 <input class="locked" type="radio" name="customer_approval" value="YES"> YES
                 <input class="locked" type="radio" name="customer_approval" value="NO"> NO
                 <span>Document Alert No:</span>
-                <span id="document_alert" style="font-size: 10px"></span>
+                <span id="document_alert"></span>
             </div>
 
         </td>
@@ -123,7 +123,7 @@
                     <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                 </div>
                 <label for="impact_analysis">Notes:</label>
-                <span id="impact_analysis" style="font-size: 10px"></span>
+                <span id="impact_analysis"></span>
             </td>
 
             <!-- Right Section (Spanning Rows) -->
@@ -131,12 +131,12 @@
                 <div class="h-100 d-flex flex-column justify-content-between">
                     <div class="mb-2">
                         <input class="locked" type="checkbox" name="affected_business" value="Affected business"> Affected business unit/ contact person <br>
-                        <span id="contact_person" style="font-size: 10px"></span>
+                        <span id="contact_person"></span>
                     </div>
                     <div>
                         <input class="locked" type="checkbox" name="other_instructions" value="Other instructions"> Other instructions,
                         <span>pls specify;</span><br>
-                        <span id="other_specify" style="font-size: 10px"></span>
+                        <span id="other_specify"></span>
                     </div>
                 </div>
             </td>
@@ -146,26 +146,30 @@
         <tr>
             <td colspan="2">
                 <strong>PRODUCT DISPOSITION:</strong>
-                <div class="d-flex gap-3 align-items-center flex-wrap mt-2">
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="Use as is"> Use as is
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="Re-inspection"> Re-inspection
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="Run under normal process"> Run under normal process
+                <div class="d-flex flex-column gap-2 mt-2">
+                    <div>
+                        <input class="locked" type="checkbox" name="product_dispo[]" value="Use as is"> Use as is
+                    </div>
+                    <div class="d-flex gap-3">
+                        <input class="locked  ms-4" type="checkbox" name="product_dispo[]" value="Re-inspection"> Re-inspection
+                        <input class="locked" type="checkbox" name="product_dispo[]" value="Run under normal process"> Run under normal process
+                    </div>
                 </div>
                 <div class="d-flex align-items-center mt-2">
-                    Yield-off $ <span id="yield_off" style="font-size: 10px"></span>
+                    Yield-off $<span id="yield_off"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Re-grade"> Re-grade, DA No:
-                    <span id="da_no" style="font-size: 10px"></span>
+                    <span id="da_no"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Rework"> Rework, DA No:
-                    <span id="rework_da_no" style="font-size: 10px"></span>
+                    <span id="rework_da_no"></span>
                     WIS No:
-                    <span id="wis_no" style="font-size: 10px"></span>
+                    <span id="wis_no"></span>
                 </div>
                 <div class="d-flex gap-3 align-items-center flex-wrap mt-2 gap-2">
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="Re-press"> Re-press
+                    <input class="locked  ms-4" type="checkbox" name="product_dispo[]" value="Re-press"> Re-press
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Re-plate"> Re-plate
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Re-Etest"> <span>Re-Etest</span>
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Re-measure"> Re-measure
@@ -173,16 +177,16 @@
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
-                    <span id="document_alert" style="font-size: 10px"></span>
+                    <span id="document_alert"></span>
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
-                    <span id="scrap_amount" style="font-size: 10px"></span>
+                    <span id="scrap_amount"></span>
                 </div>
-                <div class="d-flex align-items-center mt-2">
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date:</span>
-                    <span id="shipment_date" style="font-size: 10px"></span>
+                <div class="d-flex align-items-center mt-2 gap-2">
+                    <input class="locked" type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date: </span>
+                    <span id="shipment_date"></span>
                 </div>
             </td>
         </tr>
@@ -292,38 +296,48 @@
                 (Signature & Date)
 
             </td>
-            <td>
-                <strong>QA Manager or his/her appointee:</strong><br>
-                (Signature & Date)
-                <?php if ($user_role === 'MANAGER' || $user_role === 'SUPERVISOR'): ?>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select Action
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager">Approve</a></li>
-                            <li><a class="dropdown-item approval-action" href="#" data-action="reject" data-role="QA Manager">Reject</a></li>
-                            <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
-                        </ul>
+            <?php if ($user_role === 'MANAGER' || $user_role === 'SUPERVISOR'): ?>
+                <td colspan="2">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="me-3">
+                            <strong>QA Manager or his/her appointee:</strong><br>
+                            (Signature & Date)
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
+                            </ul>
+                        </div>
                     </div>
-                <?php endif; ?>
-            </td>
-            <td>
-                <strong>Sheilah / NT Representative:</strong><br>
-                (Signature & Date)
-                <?php if ($user_role === 'REPRESENTATIVE'): ?>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Select Action
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="NT Representative">Approve</a></li>
-                            <li><a class="dropdown-item approval-action" href="#" data-action="reject" data-role="NT Representative">Reject</a></li>
-                            <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="NT Representative">Cancel</a></li>
-                        </ul>
+                </td>
+                
+            <?php endif; ?>
+            <?php if ($user_role === 'REPRESENTATIVE'): ?>
+                <td colspan="2">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <div class="d-flex justify-content-end align-items-center">
+                            <div class="me-3">
+                                <strong>Sheldal / NT Representative:</strong><br>
+                                (Signature & Date)
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="Representative">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="reject" data-role="Representative">Reject</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="Representative">Cancel</a></li>
+                            </ul>
+                        </div>
                     </div>
-                <?php endif; ?>
-            </td>
+                </td>
+            <?php endif; ?>
         </tr>
 
         <tr>

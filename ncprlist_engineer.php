@@ -1,6 +1,6 @@
 <?php
 // Include your database connection file
-include 'connection.php'; // Make sure you have a proper database connection here
+include 'conn.php'; // Make sure you have a proper database connection here
 require "config.php";
 // Fetch data from ncpr_table
 $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table";

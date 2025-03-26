@@ -18,7 +18,13 @@ $(document).ready(function () {
             cancelButtonText: "Cancel"
         }).then((result) => {
             if (result.isConfirmed) {
-                sendApprovalRequest(action, role); // Call function to process approval
+                if (role === "QA Engineer") {
+                    sendApprovalRequest(action, role); // ENGINEER approval function
+                } else if (role === "QA Manager" || "Representative") {
+                    sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
+                } else {
+                    Swal.fire("Error", "You do not have permission to approve this request.", "error");
+                }
             }
         });
     });
@@ -158,12 +164,12 @@ $(document).ready(function () {
         });
     }
 
-    function sendUpperApproval(action, role) {
+    function sendSPMGRApproval(action, role) {
         let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
         console.log("Sending AJAX request for MANAGER/SUPERVISOR...");
 
         $.ajax({
-            url: "approval_M_S.php",
+            url: "approval.php",
             type: "POST",
             data: {
                 action: action,
@@ -173,9 +179,28 @@ $(document).ready(function () {
             success: function (response) {
                 console.log("Response received:", response);
                 // Handle success response
+                if (response.status === "success") {
+                    console.log("Parsed JSON:", response);
+
+                    Swal.fire({
+                        title: "Success",
+                        text: response.message,
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        location.reload(); // Reload the page after success
+                    });
+
+                } else {
+                    console.error("Error from server:", response.message);
+                    Swal.fire("Error", response.message, "error");
+                }
             },
-            error: function (xhr, status, error) {
+            /*error: function (xhr, status, error) {
                 console.error("Error:", error);
+            }*/error: function (xhr, status, error) {
+                console.error("AJAX Error:", error, xhr.responseText);
+                Swal.fire("Error", "AJAX request failed. Check console.", "error");
             }
         });
     }

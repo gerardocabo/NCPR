@@ -1,5 +1,5 @@
 <?php
-include 'connection.php';
+include 'conn.php';
 
 if (isset($_GET['query'])) {
     $search = $conn->real_escape_string($_GET['query']);

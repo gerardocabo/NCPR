@@ -18,160 +18,8 @@ function isAuthorized($allowed_roles)
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-
+    <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
-<style>
-    ::after,
-    ::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    a {
-        text-decoration: none;
-    }
-
-    li {
-        list-style: none;
-    }
-
-    h1 {
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
-
-    body {
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .wrapper {
-        display: flex;
-    }
-
-    .main {
-        min-height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        transition: all 0.35s ease-in-out;
-        background-color: #fafbfe;
-    }
-
-    #sidebar {
-        width: 70px;
-        min-width: 70px;
-        z-index: 1000;
-        transition: all .25s ease-in-out;
-        background-color: #0e2238;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #sidebar.expand {
-        width: 260px;
-        min-width: 260px;
-    }
-
-    .toggle-btn {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 1rem 1.5rem;
-    }
-
-    .toggle-btn i {
-        font-size: 1.5rem;
-        color: #FFF;
-    }
-
-    .sidebar-logo {
-        margin: auto 0;
-    }
-
-    .sidebar-logo a {
-        color: #FFF;
-        font-size: 1.15rem;
-        font-weight: 600;
-    }
-
-    #sidebar:not(.expand) .sidebar-logo,
-    #sidebar:not(.expand) a.sidebar-link span {
-        display: none;
-    }
-
-    .sidebar-nav {
-        padding: 2rem 0;
-        flex: 1 1 auto;
-    }
-
-    a.sidebar-link {
-        padding: .625rem 1.5rem;
-        color: #FFF;
-        display: block;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        border-left: 3px solid transparent;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-link i {
-        font-size: 1.2rem;
-        color: white;
-        margin-right: 10px;
-    }
-
-    a.sidebar-link:hover {
-        background-color: rgba(255, 255, 255, .075);
-        border-left: 3px solid #3b7ddd;
-    }
-
-    .sidebar-item {
-        position: relative;
-    }
-
-    #sidebar:not(.expand) .sidebar-link span {
-        display: none;
-        position: absolute;
-        left: 80px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #0e2238;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar:not(.expand) .sidebar-item:hover .sidebar-link span,
-    #sidebar:not(.expand) .sidebar-footer:hover .sidebar-link span {
-        display: block;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-item.active a {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-left: 3px solid #3b7ddd;
-        color: #3b7ddd;
-    }
-
-    .hover-shadow:hover {
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
-        transform: translateY(-5px);
-        transition: all 0.3s ease-in-out;
-        background-color: #0e2238 !important;
-        color: white;
-    }
-</style>
 
 <body class="bg-white">
     <div class="wrapper bg-white">
@@ -370,7 +218,7 @@ function isAuthorized($allowed_roles)
                 </div>
                 <div class="modal-body">
                     <!-- Content will be loaded here  -->
-                    <?php include "disposition.php"; ?>
+                    <?php include "viewdisposition.php"; ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -473,6 +321,7 @@ function isAuthorized($allowed_roles)
         $(document).ready(function() {
             $('#ncprTable tbody').on('click', '.dispo-btn', function() {
                 var ncprNum = $(this).data('id');
+                $("#modal-id").text(ncprNum); // Display ID inside modal
 
                 $.ajax({
                     url: 'fetch_dispo_details.php', // New PHP script to fetch dispo_id
@@ -482,60 +331,94 @@ function isAuthorized($allowed_roles)
                     },
                     dataType: 'json',
                     success: function(response) {
-                        if (response.dispo_id) {
-                            // If dispo_id exists, disable inputs
-                            $('#dispoModal input, #dispoModal select, #dispoModal textarea').prop('disabled', true);
-                        } else {
-                            // If dispo_id does not exist, allow user input
-                            $('#dispoModal input, #dispoModal select, #dispoModal textarea').prop('disabled', false);
-                        }
+                        // Log the full response for debugging
+                        console.log("Encoded JSON response:", response);
+
+                        console.log("Dispo ID found. Disabling inputs.", response);
 
                         // Populate fields with existing data
                         $('#modal-id').text(response.ncpr_num);
-                        $('#non-conformance').val(response.non_conformance);
+
+                        //$('#containment').val(response.containment);
+                        $('#containment').text(response.containment); // Sets the text content
+                        $('#non-conformance').text(response.non_conformance);
                         $('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
+                        $('input[name="potential_failure"][value="' + response.pff + '"]').prop('checked', true);
 
-                        // Populate checkboxes
-                        setCheckboxValue('input[name="car"]', response.car);
-                        setCheckboxValue('input[name="scar"]', response.scar);
-
-                        // Populate text fields
-                        $('input[name="car_no"]').val(response.car_no);
-                        $('input[name="scar_no"]').val(response.scar_no);
-                        $('input[name="id_no"]').val(response.id_no);
-                        $('input[name="name"]').val(response.name);
-
-                        // Populate multiple checkboxes
-                        $('input[name="cause[]"]').prop('checked', false);
-                        response.causes.forEach(function(cause) {
-                            $('input[name="cause[]"][value="' + cause + '"]').prop('checked', true);
+                        // Populate multiple checkboxes for cause of non-conformance
+                        $('input[name="cause[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
                         });
 
-                        // Handle radio buttons
-                        setRadioButtonValue('potential_failure', response.potential_failure);
-                        setRadioButtonValue('bd_report', response.bd_report);
 
+                        // Populate ID, name, CAR, SCAR fields
+                        $('#id_no').text(response.id_no);
+                        $('#name').text(response.name);
+                        // Check CAR and SCAR based on the checkboxes array from the response
+                        $('input[name="car"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        $('input[name="scar"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+                        $('#car_no').text(response.car_no);
+                        $('#scar_no').text(response.scar_no);
+
+                        // sets checked for Dispo Required from
+                        // Populate dispo checkboxes
+                        $('input[name="dispo_from[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate IARA checkboxes
+                        $('input[name="impact_analysis[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        $('input[name="affected_business"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        $('input[name="other_instructions"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+
+                        // Set BD report and MRB radio buttons
+                        $('input[name="bd_report"][value="' + response.bd_report + '"]').prop('checked', true);
+                        $('input[name="mrb"][value="' + response.mrb + '"]').prop('checked', true);
+                        $('input[name="customer_approval"][value="' + response.customer_approval + '"]').prop('checked', true); // Added this
+
+                        // Populate product disposition checkboxes
+                        $('input[name="product_dispo[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate text fields
+                        $('#yield_off').text(response.yield_off || "");
+                        $('#da_no').text(response.da_no || "");
+                        $('#rework_da_no').text(response.rework_da_no || "");
+                        $('#wis_no').text(response.wis_no || "");
+                        $('#scrap_amount').text(response.scrap_amount || "");
+                        $('#shipment_date').text(response.shipment_date || "");
+                        $('#document_alert').text(response.document_alert || "");
+
+                        // Disable all form elements to prevent modification
+                        //$('.lock, .locked').prop('disabled', true);
                         $('#dispoModal').modal('show');
                     },
-                    error: function() {
-                        alert('Failed to fetch disposition data.');
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error fetching disposition data:", {
+                            status: jqXHR.status,
+                            statusText: jqXHR.statusText,
+                            responseText: jqXHR.responseText,
+                            textStatus: textStatus,
+                            errorThrown: errorThrown
+                        });
+
+                        alert(`Failed to fetch disposition data.`);
                     }
                 });
             });
         });
-
-        // Utility functions
-        function setCheckboxValue(selector, value) {
-            $(selector).prop("checked", value === "yes");
-        }
-
-        function setRadioButtonValue(name, value) {
-            if (value === "yes") {
-                $('input[name="' + name + '"][value="yes"]').prop("checked", true);
-            } else {
-                $('input[name="' + name + '"][value="no"]').prop("checked", true);
-            }
-        }
     </script>
 
     <script>

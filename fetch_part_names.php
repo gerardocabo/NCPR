@@ -1,5 +1,5 @@
 <?php
-include 'connection.php'; // Ensure database connection
+include 'conn.php'; // Ensure database connection
 
 if (isset($_GET['query'])) {
     $query = $_GET['query'];

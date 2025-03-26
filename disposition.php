@@ -317,7 +317,6 @@ if ($user_role !== 'ENGINEER') {
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Engineer">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Reject" data-role="QA Engineer">Reject</a></li>
                                 <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Engineer">Cancel</a></li>
                             </ul>
                         </div>
@@ -333,7 +332,6 @@ if ($user_role !== 'ENGINEER') {
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Manager">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Reject" data-role="QA Manager">Reject</a></li>
                                 <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Manager">Cancel</a></li>
                             </ul>
                         </div>
@@ -348,9 +346,9 @@ if ($user_role !== 'ENGINEER') {
                                 Select Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="NT Representative">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Reject" data-role="NT Representative">Reject</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="NT Representative">Cancel</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="NT Representative">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="reject" data-role="NT Representative">Reject</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="NT Representative">Cancel</a></li>
                             </ul>
                         </div>
                     <?php endif; ?>

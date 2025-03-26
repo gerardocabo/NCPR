@@ -9,7 +9,7 @@ $name = $_SESSION["user"];
 <!DOCTYPE html>
 <html lang="en">
 
-<head>  
+<head>
     <title>NCPR FILING - GUEST</title>
 
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
@@ -17,160 +17,9 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-
+    <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
 <style>
-    ::after,
-    ::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    a {
-        text-decoration: none;
-    }
-
-    li {
-        list-style: none;
-    }
-
-    h1 {
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .wrapper {
-        display: flex;
-    }
-
-    .main {
-        min-height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        transition: all 0.35s ease-in-out;
-        background-color: #fafbfe;
-    }
-
-    #sidebar {
-        width: 70px;
-        min-width: 70px;
-        z-index: 1000;
-        transition: all .25s ease-in-out;
-        background-color: #0e2238;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #sidebar.expand {
-        width: 260px;
-        min-width: 260px;
-    }
-
-    .toggle-btn {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 1rem 1.5rem;
-    }
-
-    .toggle-btn i {
-        font-size: 1.5rem;
-        color: #FFF;
-    }
-
-    .sidebar-logo {
-        margin: auto 0;
-    }
-
-    .sidebar-logo a {
-        color: #FFF;
-        font-size: 1.15rem;
-        font-weight: 600;
-    }
-
-    #sidebar:not(.expand) .sidebar-logo,
-    #sidebar:not(.expand) a.sidebar-link span {
-        display: none;
-    }
-
-    .sidebar-nav {
-        padding: 2rem 0;
-        flex: 1 1 auto;
-    }
-
-    a.sidebar-link {
-        padding: .625rem 1.5rem;
-        color: #FFF;
-        display: block;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        border-left: 3px solid transparent;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-link i {
-        font-size: 1.2rem;
-        color: white;
-        margin-right: 10px;
-    }
-
-    a.sidebar-link:hover {
-        background-color: rgba(255, 255, 255, .075);
-        border-left: 3px solid #3b7ddd;
-    }
-
-    .sidebar-item {
-        position: relative;
-    }
-
-    #sidebar:not(.expand) .sidebar-link span {
-        display: none;
-        position: absolute;
-        left: 80px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #0e2238;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar:not(.expand) .sidebar-item:hover .sidebar-link span,
-    #sidebar:not(.expand) .sidebar-footer:hover .sidebar-link span {
-        display: block;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-item.active a {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-left: 3px solid #3b7ddd;
-        color: #3b7ddd;
-    }
-
-    .hover-shadow:hover {
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
-        transform: translateY(-5px);
-        transition: all 0.3s ease-in-out;
-        background-color: #0e2238 !important;
-        color: white;
-    }
-
     /* Hide the default spinner buttons on number input */
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button {
@@ -264,7 +113,7 @@ $name = $_SESSION["user"];
                                             <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
                                                 style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
                                                 <?php
-                                                include 'connection.php'; // Include your existing connection file
+                                                include 'conn.php'; // Include your existing connection file
 
                                                 // Fetch part numbers from the product_list table
                                                 $sql = "SELECT part_number FROM product_list";
@@ -863,7 +712,7 @@ $name = $_SESSION["user"];
     <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
-    
+
     <script>
         document.getElementById("addRowBtn").addEventListener("click", function() {
             var table = document.getElementById("materialTable").getElementsByTagName("tbody")[0];
@@ -978,92 +827,91 @@ $name = $_SESSION["user"];
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-    let ncprForm = document.getElementById("ncprForm");
-    
-    if (!ncprForm) {
-        console.error("Error: #ncprForm not found in the DOM!");
-        return;
-    }
+        document.addEventListener("DOMContentLoaded", function() {
+            let ncprForm = document.getElementById("ncprForm");
 
-    ncprForm.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent default form submission
-
-        let formData = new FormData(this); // Get form data
-        let originalNcprNum = document.getElementById("ncpr_num").value; // Store original NCPR number
-
-        fetch("insert.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => {
-            console.log("Raw response status:", response.status);
-            return response.text(); // Get raw text response for debugging
-        })
-        .then(text => {
-            console.log("Raw Response:", text); // Log the raw response
-
-            try {
-                let data = JSON.parse(text); // Attempt to parse JSON
-                console.log("Parsed JSON:", data); // Log parsed data
-                
-                if (data.status === "success") {
-                    if (data.new_ncpr_num && data.new_ncpr_num !== originalNcprNum) {
-                        Swal.fire({
-                            title: "Notice!",
-                            text: "Your NCPR number has been updated to " + data.new_ncpr_num + " because the previous number was taken.",
-                            icon: "info",
-                            confirmButtonText: "OK"
-                        }).then(() => {
-                            document.getElementById("ncpr_num").value = data.new_ncpr_num; // Update field
-                            window.location.href = "guest_ncprfiling.php"; // Redirect after acknowledging
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Success!",
-                            text: "Data successfully inserted!",
-                            icon: "success",
-                            confirmButtonText: "OK"
-                        }).then(() => {
-                            window.location.href = "guest_ncprfiling.php"; // Redirect after clicking OK
-                        });
-                    }
-                } else {
-                    Swal.fire({
-                        title: "Error!",
-                        text: data.message || "An unexpected error occurred.",
-                        icon: "error",
-                        confirmButtonText: "OK"
-                    });
-                }
-            } catch (jsonError) {
-                console.error("JSON Parsing Error:", jsonError);
-                Swal.fire({
-                    title: "Error!",
-                    text: "Invalid server response. Check console for details.",
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
+            if (!ncprForm) {
+                console.error("Error: #ncprForm not found in the DOM!");
+                return;
             }
-        })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            Swal.fire({
-                title: "Error!",
-                text: "An unexpected error occurred.",
-                icon: "error",
-                confirmButtonText: "OK"
+
+            ncprForm.addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                let formData = new FormData(this); // Get form data
+                let originalNcprNum = document.getElementById("ncpr_num").value; // Store original NCPR number
+
+                fetch("insert.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => {
+                        console.log("Raw response status:", response.status);
+                        return response.text(); // Get raw text response for debugging
+                    })
+                    .then(text => {
+                        console.log("Raw Response:", text); // Log the raw response
+
+                        try {
+                            let data = JSON.parse(text); // Attempt to parse JSON
+                            console.log("Parsed JSON:", data); // Log parsed data
+
+                            if (data.status === "success") {
+                                if (data.new_ncpr_num && data.new_ncpr_num !== originalNcprNum) {
+                                    Swal.fire({
+                                        title: "Notice!",
+                                        text: "Your NCPR number has been updated to " + data.new_ncpr_num + " because the previous number was taken.",
+                                        icon: "info",
+                                        confirmButtonText: "OK"
+                                    }).then(() => {
+                                        document.getElementById("ncpr_num").value = data.new_ncpr_num; // Update field
+                                        window.location.href = "guest_ncprfiling.php"; // Redirect after acknowledging
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        title: "Success!",
+                                        text: "Data successfully inserted!",
+                                        icon: "success",
+                                        confirmButtonText: "OK"
+                                    }).then(() => {
+                                        window.location.href = "guest_ncprfiling.php"; // Redirect after clicking OK
+                                    });
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: data.message || "An unexpected error occurred.",
+                                    icon: "error",
+                                    confirmButtonText: "OK"
+                                });
+                            }
+                        } catch (jsonError) {
+                            console.error("JSON Parsing Error:", jsonError);
+                            Swal.fire({
+                                title: "Error!",
+                                text: "Invalid server response. Check console for details.",
+                                icon: "error",
+                                confirmButtonText: "OK"
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch error:", error);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An unexpected error occurred.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    });
             });
         });
-    });
-});
 
-/** Auto-expand textarea */
-function autoExpand(textarea) {
-    textarea.style.height = "auto"; // Reset height
-    textarea.style.height = textarea.scrollHeight + "px"; // Set new height
-}
-
+        /** Auto-expand textarea */
+        function autoExpand(textarea) {
+            textarea.style.height = "auto"; // Reset height
+            textarea.style.height = textarea.scrollHeight + "px"; // Set new height
+        }
     </script>
 </body>
 

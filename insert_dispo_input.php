@@ -1,5 +1,5 @@
 <?php
-require 'connection.php';
+require 'conn.php';
 
 $dispo_id = !empty($_POST['dispo_id']) ? $_POST['dispo_id'] : NULL;
 $containment = !empty($_POST['containment']) ? $_POST['containment'] : NULL;

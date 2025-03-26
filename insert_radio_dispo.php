@@ -1,5 +1,5 @@
 <?php
-require 'connection.php';
+require 'conn.php';
 
 $ncpr_num = !empty($_POST['ncpr_num']) ? $_POST['ncpr_num'] : NULL;
 $created_at = date('Y-m-d H:i:s');

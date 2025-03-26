@@ -1,5 +1,5 @@
 <?php
-include 'connection.php'; // Database connection
+include 'conn.php'; // Database connection
 
 function getNextNcprNum($conn)
 {
