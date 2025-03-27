@@ -24,10 +24,7 @@ if ($user_role !== 'ENGINEER') {
     <table class="table table-bordered align-middle">
         <tr>
             <td>
-                <div class="form-floating">
-                    <input class="form-control lock" name="non-conformance" id="non-conformance">
-                    <label for="non-conformance">Cause of Non-conformance:</label>
-                </div>
+                <strong>Cause of Non-conformance:</strong><br>
             </td>
             <td>
                 <strong>Potential Field Failure:</strong><br>
@@ -310,14 +307,14 @@ if ($user_role !== 'ENGINEER') {
                 <td>
                     <strong>QA Engineer / NT Representative:</strong><br>
                     (Signature & Date)
-                    <?php if ($user_role === 'ENGINEER'): ?>
+                    <?php if ($user_role === 'QA ENGINEER'): ?>
                         <div class="btn-group">
                             <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Select Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Engineer">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Engineer">Cancel</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Engineer">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Engineer">Cancel</a></li>
                             </ul>
                         </div>
                     <?php endif; ?>
@@ -338,7 +335,7 @@ if ($user_role !== 'ENGINEER') {
                     <?php endif; ?>
                 </td>
                 <td>
-                    <strong>Sheilah / NT Representative:</strong><br>
+                    <strong>Sheildahl / NT Representative:</strong><br>
                     (Signature & Date)
                     <?php if ($user_role === 'REPRESENTATIVE'): ?>
                         <div class="btn-group">

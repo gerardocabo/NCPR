@@ -318,37 +318,16 @@ require "config.php";
                         <table id="ncprTable" class="table table-bordered table-hover" style="width:100%">
                             <thead class="table-secondary">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
+                                    <th hidden>ID</th>
+                                    <th>NCPR Number</th>
+                                    <th>Initiator</th>
                                     <th>Status</th>
-                                    <th>Created At</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Project A</td>
-                                    <td>Open</td>
-                                    <td>2024-03-01</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Project B</td>
-                                    <td>Closed</td>
-                                    <td>2024-02-28</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Project C</td>
-                                    <td>In Progress</td>
-                                    <td>2024-02-27</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Project D</td>
-                                    <td>Open</td>
-                                    <td>2024-02-26</td>
-                                </tr>
+                                <!-- Data will be loaded here -->
                             </tbody>
                         </table>
                     </div>
@@ -356,7 +335,7 @@ require "config.php";
             </div>
         </div>
     </div>
-    
+
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/bootstrap/js/all.min.js"></script>
@@ -388,7 +367,50 @@ require "config.php";
                         text: 'Print',
                         className: 'btn btn-warning'
                     }
-                ]
+                ],
+                "ajax": {
+                    "url": "fetch_ncpr.php",
+                    "type": "GET",
+                    "dataSrc": ""
+                },
+                "columns": [{
+                        "data": "id",
+                        "visible": false
+                    }, // Hides ID column
+                    {
+                        "data": "ncpr_num"
+                    },
+                    {
+                        "data": "initiator"
+                    },
+                    {
+                        "data": "status"
+                    },
+                    {
+                        "data": "date"
+                    },
+                    {
+                        "data": "id",
+                        "render": function(data, type, row) {
+                            return `
+                        <button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-success btn-sm add-btn" 
+                                data-id="${row.ncpr_num}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#dispoModal"><i class="fas fa-add"></i>
+                            Dispo
+                        </button>`;
+                        }
+                    }
+                ],
+                "order": [
+                    [0, "asc"]
+                ],
+                "language": {
+                    "emptyTable": "No Available NCPR Filing"
+                }
             });
         });
     </script>

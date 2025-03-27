@@ -296,7 +296,7 @@
                 (Signature & Date)
 
             </td>
-            <?php if ($user_role === 'MANAGER' || $user_role === 'SUPERVISOR'): ?>
+            <?php if ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR'): ?>
                 <td colspan="2">
                     <div class="d-flex justify-content-end align-items-center">
                         <div class="me-3">
@@ -316,12 +316,12 @@
                 </td>
                 
             <?php endif; ?>
-            <?php if ($user_role === 'REPRESENTATIVE'): ?>
+            <?php if ($user_role === 'SHELDAHL REPRESENTATIVE'): ?>
                 <td colspan="2">
                     <div class="d-flex justify-content-end align-items-center">
                         <div class="d-flex justify-content-end align-items-center">
                             <div class="me-3">
-                                <strong>Sheldal / NT Representative:</strong><br>
+                                <strong>Sheldahl / NT Representative:</strong><br>
                                 (Signature & Date)
                             </div>
                         </div>

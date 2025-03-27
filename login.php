@@ -10,7 +10,7 @@ function handleGuestLogin($guestRole) {
     $allowedGuestRoles = ["guest1", "guest2", "guest3"];
 
     if (!in_array($guestRole, $allowedGuestRoles)) {
-        return json_encode(["status" => "error", "message" => "Invalid guest role selected."]);
+        return json_encode(["status" => "error", "message" => "Invalid Guest Role Selected."]);
     }
 
     $_SESSION["user"] = ucfirst($guestRole);
@@ -22,12 +22,12 @@ function handleGuestLogin($guestRole) {
 // Admin Login Function
 function handleAdminLogin($username, $password, $pdo) {
     if (empty($username) || empty($password)) {
-        return json_encode(["status" => "error", "message" => "Username or password cannot be empty."]);
+        return json_encode(["status" => "error", "message" => "Username or Password cannot be Empty."]);
     }
 
     try {
         // Prepare the SQL statement using PDO
-        $stmt = $pdo->prepare("SELECT users.password, users_roles.name FROM users 
+        $stmt = $pdo->prepare("SELECT users.password, users_roles.role_name FROM users 
                                JOIN users_roles ON users.role_id = users_roles.id 
                                WHERE users.username = :username");
         
@@ -40,24 +40,24 @@ function handleAdminLogin($username, $password, $pdo) {
 
         // Verify the password
         if (!password_verify($password, $user["password"])) {
-            return json_encode(["status" => "error", "message" => "Incorrect password."]);
+            return json_encode(["status" => "error", "message" => "Incorrect Password."]);
         }
 
         $_SESSION["user"] = $username;
-        $_SESSION["role"] = $user["name"];
+        $_SESSION["role"] = $user["role_name"];
 
         $redirectPages = [
-            "SUPERADMIN" => "superadmin_dashboard.php",
-            "ADMIN" => "admin_dashboard.php",
-            "STAFF" => "admin_dashboard.php",
-            "ENGINEER" => "engineer_dashboard.php",
-            "SUPERVISOR" => "supv&mgrDashboard.php",
-            "MANAGER" => "supv&mgrDashboard.php",
-            "REPRESENTATIVE" => "representative_dashboard.php",
-            "GUEST" => "guest_dashboard.php"
+            "SUPERADMIN"                => "SuperAdmin_dashboard.php",
+            "ADMIN"                     => "admin_dashboard.php",
+            "QA STAFF"                  => "admin_dashboard.php",
+            "QA ENGINEER"               => "engineer_dashboard.php",
+            "QA SUPERVISOR"             => "supv_mgr_dashboard.php",
+            "QA MANAGER"                => "supv_mgr_dashboard.php",
+            "SHELDAHL REPRESENTATIVE"   => "representative_dashboard.php",
+            "GUEST"                     => "guest_ncprfiling.php",
         ];
 
-        return json_encode(["status" => "success", "message" => ucfirst(strtolower($user["name"])) . " login successful.", "redirect" => $redirectPages[$user["name"]] ?? "error.php"]);
+        return json_encode(["status" => "success", "message" => ucfirst(strtolower($user["role_name"])) . " Login Successful.", "redirect" => $redirectPages[$user["role_name"]] ?? "error.php"]);
     
     } catch (PDOException $e) {
         error_log("Database Error: " . $e->getMessage());
@@ -78,6 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 // Default Error Response
-echo json_encode(["status" => "error", "message" => "Invalid request."]);
+echo json_encode(["status" => "error", "message" => "Invalid Request."]);
 ob_end_flush();
 ?>

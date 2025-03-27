@@ -10,6 +10,11 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 header("Content-Type: application/json");
 
+define('ROLE_QA_ENGINEER', 'QA ENGINEER');
+define('ROLE_QA_SUPERVISOR', 'QA SUPERVISOR');
+define('ROLE_QA_MANAGER', 'QA MANAGER');
+define('ROLE_REPRESENTATIVE', 'SHELDAHL REPRESENTATIVE');
+
 // Check user session
 if (!isset($_SESSION['role']) || !isset($_SESSION["user"])) {
     echo json_encode(["status" => "error", "message" => "Unauthorized access."]);
@@ -24,10 +29,10 @@ error_log("Received Data: " . print_r($_POST, true));
 
 // Role-based permission mapping
 $allowed_roles = [
-    "ENGINEER" => "QA Engineer",
-    "SUPERVISOR" => "QA Manager",
-    "MANAGER" => "QA Manager",
-    "REPRESENTATIVE" => "Representative"
+    ROLE_QA_ENGINEER    => "QA Engineer",
+    ROLE_QA_SUPERVISOR  => "QA Manager",
+    ROLE_QA_MANAGER     => "QA Manager",
+    ROLE_REPRESENTATIVE => "Representative"
 ];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -79,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->begin_transaction();
 
         // Execute only if user role is ENGINEER
-        if ($user_role === "ENGINEER" && $action !== "cancel") {
+        if ($user_role === "QA ENGINEER" && $action !== "cancel") {
             $inputs_sakses = include 'insert_dispo_input.php';
             if (!$inputs_sakses) {
                 throw new Exception("Execute dispo-input failed: " . $stmt->error);
@@ -123,7 +128,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
 
             // If the user role is REPRESENTATIVE, update the status to Close
-            if ($user_role === "REPRESENTATIVE") {
+            if ($user_role === "SHELDAHL REPRESENTATIVE") {
                 $status = "Close";
                 $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$status, $ncpr_num], "ss");

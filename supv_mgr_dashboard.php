@@ -1,7 +1,6 @@
 <?php
 require "config.php";
 $user_role = $_SESSION['role'];
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -228,7 +227,6 @@ $user_role = $_SESSION['role'];
     <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
-    <script src="assets/js/viewmodal.js"></script>
     <script src="assets/js/approval.js"></script>
 
     <!-- DataTable Initialization -->
@@ -414,6 +412,8 @@ $user_role = $_SESSION['role'];
                 });
             });
         });
+
+        
     </script>
 
     <script>

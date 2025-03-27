@@ -1,5 +1,5 @@
 <?php
-include 'connection.php'; // Database connection
+include 'conn.php'; // Database connection
 
 if (isset($_GET['part_number'])) {
     $part_number = $_GET['part_number'];

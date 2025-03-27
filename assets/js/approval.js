@@ -18,7 +18,7 @@ $(document).ready(function () {
             cancelButtonText: "Cancel"
         }).then((result) => {
             if (result.isConfirmed) {
-                if (role === "QA Engineer") {
+                if (role === "QA_Engineer") {
                     sendApprovalRequest(action, role); // ENGINEER approval function
                 } else if (role === "QA Manager" || "Representative") {
                     sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
