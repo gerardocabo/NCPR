@@ -33,7 +33,6 @@ $(document).ready(function () {
         let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
 
         var Containment = $("#containment").val();
-        var nonConformance = $("#non-conformance").val();
         var causes = [];
         $("input[name='cause[]']:checked").each(function () {
             causes.push($(this).val());

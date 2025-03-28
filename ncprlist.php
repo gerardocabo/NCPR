@@ -4,7 +4,7 @@ include 'conn.php'; // Make sure you have a proper database connection here
 require "config.php";
 
 // Fetch data from ncpr_table
-$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table";
+$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id FROM ncpr_table";
 $result = $conn->query($query);
 
 ?>
@@ -19,7 +19,12 @@ $result = $conn->query($query);
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
-
+    <style>
+        .locked {
+            pointer-events: none;
+            /* Prevent clicking */
+        }
+    </style>
 </head>
 
 
@@ -86,6 +91,7 @@ $result = $conn->query($query);
                     <thead class="table-dark">
                         <tr>
                             <th hidden>ID</th>
+                            <th hidden>ID</th>
                             <th>NCPR Number</th>
                             <th>Initiator</th>
                             <th>Date</th>
@@ -100,6 +106,7 @@ $result = $conn->query($query);
                         <?php while ($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td hidden><?php echo $row['id']; ?></td>
+                                <td hidden><?php echo $row['dispo_id']; ?></td>
                                 <td><?php echo $row['ncpr_num']; ?></td>
                                 <td><?php echo $row['initiator']; ?></td>
                                 <td><?php echo $row['date']; ?></td>
@@ -109,48 +116,19 @@ $result = $conn->query($query);
                                 <td><?php echo $row['status']; ?></td>
                                 <td>
                                     <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                        View
+                                    <i class="fas fa-eye"></i> NCPR
                                     </button>
                                     <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                        <span>Edit</span>
+                                    <i class="fas fa-eye"></i> EDIT
                                     </button>
-                                    <button class="btn btn-success btn-sm add-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#addModal">
-                                        <span>Dispo</span>
+                                    <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                    <i class="fas fa-eye"></i> DISPO
                                     </button>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Add Modal -->
-            <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addModalLabel">Add New Record</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="addForm" action="process_add.php" method="POST">
-                                <div class="mb-3">
-                                    <label for="ncpr_num" class="form-label">NCPR Number</label>
-                                    <input type="text" class="form-control" id="add_ncpr_num" name="ncpr_num" readonly required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="part_name" class="form-label">Part Name</label>
-                                    <input type="text" class="form-control" id="part_name" name="part_name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="part_number" class="form-label">Part Number</label>
-                                    <input type="text" class="form-control" id="part_number" name="part_number" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Save Record</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -819,6 +797,25 @@ $result = $conn->query($query);
         </div>
     </div>
 
+    <!-- Dispo viewonly Modal -->
+    <div class="modal fade" id="dispoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Disposition Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be loaded here  -->
+                    <?php include "viewonlydisposition.php"; ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/bootstrap/js/all.min.js"></script>
@@ -1226,7 +1223,7 @@ $result = $conn->query($query);
         $(document).ready(function() {
             $('#ncprTable').DataTable({
                 "columnDefs": [{
-                    "targets": [0],
+                    "targets": [0, 1],
                     "visible": false
                 }]
             }); // Initialize DataTable for sorting, searching, and pagination
@@ -1244,6 +1241,128 @@ $result = $conn->query($query);
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            // Select the modal element
+            let dispoModal = document.getElementById("dispoModal");
+
+            // Listen for the modal close event
+            dispoModal.addEventListener("hidden.bs.modal", function() {
+                // Select all checkboxes and radio buttons inside the modal
+                let inputs = dispoModal.querySelectorAll("input[type='checkbox'], input[type='radio']");
+
+                // Loop through each input and uncheck it
+                inputs.forEach(input => {
+                    input.checked = false;
+                });
+            });
+
+            
+
+        });
+    </script>
+
+
+    <script>
+        //viewonly dispo modal script
+        $(document).ready(function() {
+            $('#ncprTable tbody').on('click', '.dispo-btn', function() {
+                var ncprNum = $(this).data('id');
+                $("#modal-id").text(ncprNum); // Display ID inside modal
+
+                $.ajax({
+                    url: 'fetch_dispo_details.php', // New PHP script to fetch dispo_id
+                    method: 'POST',
+                    data: {
+                        ncpr_num: ncprNum
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        // Log the full response for debugging
+                        console.log("Encoded JSON response:", response);
+
+                        console.log("Dispo ID found. Disabling inputs.", response);
+
+                        // Populate fields with existing data
+                        $('#modal-id').text(response.ncpr_num);
+
+                        //$('#containment').val(response.containment);
+                        $('#containment').text(response.containment); // Sets the text content
+                        $('#non-conformance').text(response.non_conformance);
+                        $('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
+                        $('input[name="potential_failure"][value="' + response.pff + '"]').prop('checked', true);
+
+                        // Populate multiple checkboxes for cause of non-conformance
+                        $('input[name="cause[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+
+                        // Populate ID, name, CAR, SCAR fields
+                        $('#id_no').text(response.id_no);
+                        $('#name').text(response.name);
+                        // Check CAR and SCAR based on the checkboxes array from the response
+                        $('input[name="car"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        $('input[name="scar"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+                        $('#car_no').text(response.car_no);
+                        $('#scar_no').text(response.scar_no);
+
+                        // sets checked for Dispo Required from
+                        // Populate dispo checkboxes
+                        $('input[name="dispo_from[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate IARA checkboxes
+                        $('input[name="impact_analysis[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        $('input[name="affected_business"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        $('input[name="other_instructions"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+
+                        // Set BD report and MRB radio buttons
+                        $('input[name="bd_report"][value="' + response.bd_report + '"]').prop('checked', true);
+                        $('input[name="mrb"][value="' + response.mrb + '"]').prop('checked', true);
+                        $('input[name="customer_approval"][value="' + response.customer_approval + '"]').prop('checked', true); // Added this
+
+                        // Populate product disposition checkboxes
+                        $('input[name="product_dispo[]"]').each(function() {
+                            let checkboxValue = $(this).val(); // Get the value of each checkbox
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate text fields
+                        $('#yield_off').text(response.yield_off || "");
+                        $('#da_no').text(response.da_no || "");
+                        $('#rework_da_no').text(response.rework_da_no || "");
+                        $('#wis_no').text(response.wis_no || "");
+                        $('#scrap_amount').text(response.scrap_amount || "");
+                        $('#shipment_date').text(response.shipment_date || "");
+                        $('#document_alert').text(response.document_alert || "");
+
+                        // Disable all form elements to prevent modification
+                        //$('.lock, .locked').prop('disabled', true);
+                        $('#dispoModal').modal('show');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error fetching disposition data:", {
+                            status: jqXHR.status,
+                            statusText: jqXHR.statusText,
+                            responseText: jqXHR.responseText,
+                            textStatus: textStatus,
+                            errorThrown: errorThrown
+                        });
+
+                        alert(`Failed to fetch disposition data.`);
+                    }
+                });
             });
         });
     </script>

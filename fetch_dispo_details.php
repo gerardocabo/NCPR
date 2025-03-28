@@ -37,7 +37,7 @@ try {
 
 
     $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':ncpr_num', $ncpr_num, is_numeric($ncpr_num) ? PDO::PARAM_INT : PDO::PARAM_STR);
+    $stmt->bindParam(':ncpr_num', $ncpr_num, PDO::PARAM_STR);
     $stmt->execute();
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

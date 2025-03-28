@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 header("Expires: 0");
 
 // Securely get the current page name
-$current_page = basename(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_SANITIZE_STRING));
+$current_page = basename(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_UNSAFE_RAW) ?? '');
 
 // Define Role Constants
 define('ROLE_SUPERADMIN', 'SUPERADMIN');
@@ -60,7 +60,7 @@ if (!$is_logged_in) {
         header("Location: loginform.php");
         exit();
     }
-} elseif (isset($page_roles[$current_page]) && !in_array($role, $page_roles[$current_page])) {
+} elseif (isset($page_roles[$current_page]) && !in_array($role, $page_roles[$current_page], true)) {
     header("Location: unauthorized.php");
     exit();
 }

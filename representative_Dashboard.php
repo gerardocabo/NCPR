@@ -336,7 +336,6 @@ $user_role = $_SESSION['role'];
 
                         //$('#containment').val(response.containment);
                         $('#containment').text(response.containment); // Sets the text content
-                        $('#non-conformance').text(response.non_conformance);
                         $('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
                         $('input[name="potential_failure"][value="' + response.pff + '"]').prop('checked', true);
 

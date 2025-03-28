@@ -3,25 +3,38 @@ include 'conn.php'; // Database connection
 
 function getNextNcprNum($conn)
 {
-    $year = date("y"); // Get the last two digits of the year (e.g., "25" for 2025)
+    $currentYear = date("y"); // Default current year
+    $currentMonth = date("m");
+    $currentDay = date("d");
+    $currentTime = date("H:i:s");
+
+    // If it's April 1st or later at 6:00 AM, increment the year
+    if ($currentMonth >= 4 && ($currentDay > 1 || $currentTime >= "06:00:00")) {
+        $currentYear += 1;
+    }
 
     mysqli_begin_transaction($conn); // Start transaction
 
+    // Check if there are existing records for the current year
+    $query = "SELECT MAX(ncpr_num) AS last_num FROM ncpr_table WHERE ncpr_num LIKE '$currentYear-%' FOR UPDATE";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+
+    // Reset the sequence if it's a new year
+    $newNum = ($row['last_num'] === NULL) ? 1 : intval(substr($row['last_num'], 3)) + 1;
+    $newNcprNum = $currentYear . '-' . str_pad($newNum, 4, "0", STR_PAD_LEFT);
+
+    // Ensure the new number does not already exist
     do {
-        // Get the latest NCPR number for the year
-        $query = "SELECT MAX(ncpr_num) AS last_num FROM ncpr_table WHERE ncpr_num LIKE '$year-%' FOR UPDATE";
-        $result = mysqli_query($conn, $query);
-        $row = mysqli_fetch_assoc($result);
-
-        $lastNum = $row['last_num'];
-        $newNum = ($lastNum === NULL) ? 1 : intval(substr($lastNum, 3)) + 1;
-        $newNcprNum = $year . '-' . str_pad($newNum, 4, "0", STR_PAD_LEFT);
-
-        // Check if the generated NCPR number already exists
         $checkQuery = "SELECT COUNT(*) AS count FROM ncpr_table WHERE ncpr_num = '$newNcprNum'";
         $checkResult = mysqli_query($conn, $checkQuery);
         $checkRow = mysqli_fetch_assoc($checkResult);
-    } while ($checkRow['count'] > 0); // Keep incrementing if duplicate exists
+
+        if ($checkRow['count'] > 0) {
+            $newNum++; // Increment to avoid duplicate
+            $newNcprNum = $currentYear . '-' . str_pad($newNum, 4, "0", STR_PAD_LEFT);
+        }
+    } while ($checkRow['count'] > 0);
 
     mysqli_commit($conn); // Commit transaction
 

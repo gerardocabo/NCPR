@@ -265,6 +265,7 @@ require "config.php";
                 }
             });
         });
+        sessionStorage.clear(); // Clears previous user data
     </script>
 </body>
 

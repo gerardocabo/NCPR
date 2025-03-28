@@ -64,8 +64,8 @@ $name = $_SESSION["user"];
                             <th>NCPR Number</th>
                             <th>Initiator</th>
                             <th>Date</th>
-                            <th>Part Number</th>
-                            <th>Part Name</th>
+                            <!-- <th>Part Number</th>
+                            <th>Part Name</th> -->
                             <th>Urgent</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -78,16 +78,16 @@ $name = $_SESSION["user"];
                                 <td><?php echo $row['ncpr_num']; ?></td>
                                 <td><?php echo $row['initiator']; ?></td>
                                 <td><?php echo $row['date']; ?></td>
-                                <td><?php echo $row['part_number']; ?></td>
-                                <td><?php echo $row['part_name']; ?></td>
+                                <!-- <td><?php echo $row['part_number']; ?></td>
+                                <td><?php echo $row['part_name']; ?></td> -->
                                 <td><?php echo $row['urgent'] ? 'Yes' : 'No'; ?></td>
                                 <td><?php echo $row['status']; ?></td>
                                 <td>
                                     <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                        View
+                                        <i class="fas fa-eye"></i> NCPR
                                     </button>
                                     <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                        <span>Edit</span>
+                                        <i class="fas fa-eye"></i> EDIT
                                     </button>
                                 </td>
                             </tr>
@@ -1122,7 +1122,6 @@ $name = $_SESSION["user"];
             qtyAffected.addEventListener("input", updateDefectRate);
             qtyAffected.addEventListener("blur", validateDefectRate); // Validate when user leaves the input field
         }
-
 
         // Apply defect rate calculation for existing rows on page load
         document.querySelectorAll("#materialTable tbody tr").forEach(row => {

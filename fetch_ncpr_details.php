@@ -1,5 +1,5 @@
 <?php
-include 'connection.php'; // Ensure this connects to your database
+include 'conn.php'; // Ensure this connects to your database
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['ncpr_num'])) {
     $ncpr_num = $_POST['ncpr_num'];

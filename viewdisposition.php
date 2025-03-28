@@ -8,8 +8,7 @@
 <table class="table table-bordered align-middle">
     <tr>
         <td>
-            <span>Cause of Non-conformance:</span>
-            <span id="non-conformance"></span>
+            <strong>Cause of Non-conformance:</strong><br>
         </td>
         <td>
             <strong>Potential Field Failure:</strong><br>

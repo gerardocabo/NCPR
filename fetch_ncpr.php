@@ -4,11 +4,13 @@ require 'connection.php'; // Database connection
 
 header('Content-Type: application/json');
 
-// Function to check approval status based on role
+// Function to get pending approvals based on the user's role
 function getPendingApprovals($user_role)
 {
+    // Default query: Fetch all NCPRs that haven't been disposed yet
     $query = "SELECT id, ncpr_num, initiator, status, `date` FROM ncpr_table WHERE dispo_id IS NULL";
 
+    // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
     if ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
                   FROM ncpr_table
@@ -18,7 +20,9 @@ function getPendingApprovals($user_role)
                   AND ncpr_table.dispo_id IS NOT NULL
                   AND ncpr_table.ncpr_num NOT IN (
                     SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))";
-    } elseif ($user_role === 'SHELDAHL REPRESENTATIVE') {
+    } 
+    // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
+    elseif ($user_role === 'SHELDAHL REPRESENTATIVE') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
                   FROM ncpr_table
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
@@ -33,26 +37,38 @@ try {
     // Establish database connection
     $pdo = require 'connection.php';
 
-    // Validate and assign user role
-    $valid_roles = ['QA ENGINEER', 'QA SUPERVISOR', 'QA MANAGER', 'SHELDAHL REPRESENTATIVE'];
-    $user_role = $_SESSION['role'] ?? 'QA ENGINEER'; // Default role
+    // Define the valid roles that can access the system
+    $valid_roles = ['QA STAFF', 'QA ENGINEER', 'QA SUPERVISOR', 'QA MANAGER', 'SHELDAHL REPRESENTATIVE'];
+    
+    // Get the user role from session, default to 'QA ENGINEER' if not set
+    $user_role = $_SESSION['role'] ?? 'QA ENGINEER'; 
 
+    // Validate the user role
     if (!in_array($user_role, $valid_roles)) {
         throw new Exception("Invalid user role: " . htmlspecialchars($user_role));
     }
 
-    // Get SQL query based on role
+    // Retrieve the last seen NCPR ID from the database for the logged-in user
+    $stmt = $pdo->prepare("SELECT last_seen_id FROM users WHERE username = ?");
+    $stmt->execute([$_SESSION['user']]);
+    $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    $lastSeenId = $userRow['last_seen_id'] ?? 0; // Default to 0 if no record is found
+
+    // Get the SQL query based on user role
     $sql = getPendingApprovals($user_role);
 
-    // Execute query
+    // Execute the query and fetch results
     $stmt = $pdo->query($sql);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch only associative arrays
+    $ncprs = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch associative arrays only
 
-    // Return JSON response
-    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    // Return JSON response including last seen ID for tracking unseen NCPRs
+    echo json_encode(["lastSeenId" => $lastSeenId, "ncprs" => $ncprs], JSON_UNESCAPED_UNICODE);
 } catch (PDOException $e) {
+    // Handle database errors
     echo json_encode(["error" => $e->getMessage()]);
 } catch (Exception $e) {
+    // Handle other exceptions (invalid role, etc.)
     echo json_encode(["error" => $e->getMessage()]);
 }
 ?>
+
