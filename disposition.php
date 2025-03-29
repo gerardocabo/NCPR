@@ -4,7 +4,7 @@
 $user_role = $_SESSION['role']; // This should return the current user's role
 
 // Check if the role is not "ENGINEER"
-if ($user_role !== 'ENGINEER') {
+if ($user_role !== 'QA ENGINEER') {
     echo '<style>
             .locked {
                 pointer-events: none;

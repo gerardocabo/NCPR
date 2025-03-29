@@ -1,34 +1,33 @@
-<form action="">
 <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
 <div class="border mb-3 align-items-center p-2">
     <span class="d-block"><strong>This space is intended for QA verification, containment and investigation activities.</strong></span>
-    <span id="containment" style="margin-left: 12px;"></span>
+    <span id="containment" style="margin-left: 12px;" class="fortyle"></span>
 </div>
 
 <!-- Cause of Non-Conformance Table -->
 <table class="table table-bordered align-middle">
     <tr>
-        <td>
-            <strong>Cause of Non-conformance:</strong><br>
+        <td class="mt-3">
+            <strong>Cause of Non-conformance:</strong>
         </td>
-        <td>
-            <strong>Potential Field Failure:</strong><br>
+        <td class="mt-3">
+            <strong>Potential Field Failure:</strong>
         </td>
         <!-- Corrective Action Request -->
-        <td class="d-flex align-items-center gap-3 mt-3">
-            <strong class="me-2">Corrective Action Request:</strong>
+        <td class="d-flex align-items-center gap-2 mt-3">
+            <strong>Corrective Action Request:</strong>
             <div class="d-flex gap-3">
                 <div class="form-check">
                     <input class="locked form-check-input" type="radio" name="corrective_action" value="YES" id="corrective_yes">
-                    <label class="form-check-label" for="corrective_yes">YES</label>
+                    <label class="form-check-label">YES</label>
                 </div>
                 <div class="form-check">
                     <input class="locked form-check-input" type="radio" name="corrective_action" value="NO" id="corrective_no">
-                    <label class="form-check-label" for="corrective_no">NO</label>
+                    <label class="form-check-label">NO</label>
                 </div>
                 <div class="form-check">
                     <input class="locked form-check-input" type="radio" name="corrective_action" value="NA" id="corrective_na">
-                    <label class="form-check-label" for="corrective_na">NA</label>
+                    <label class="form-check-label">NA</label>
                 </div>
             </div>
         </td>
@@ -41,15 +40,15 @@
                 <div class="me-4">
                     <input class="locked" type="checkbox" name="cause[]" value="Man"> Man<br>
                     <label>ID No:</label>
-                    <span id="id_no"></span><br>
+                    <span id="id_no" class="fortyle"></span><br>
                     <label>Name:</label>
-                    <span id="name"></span><br>
+                    <span id="name" class="fortyle"></span><br>
                     <input class="locked" type="checkbox" name="cause[]" value="Method"> Method<br>
                     <input class="locked" type="checkbox" name="cause[]" value="Machine"> Machine<br>
                 </div>
 
                 <!-- Right Side -->
-                <div>
+                <div style="margin-left: auto;">
                     <input class="locked" type="checkbox" name="cause[]" value="Material"> Material<br>
                     <input class="locked" type="checkbox" name="cause[]" value="NID Item"> N.I.D Item<br>
                     <input class="locked" type="checkbox" name="cause[]" value="NID Purchased Item"> N.I.D Purchased Item<br>
@@ -65,16 +64,16 @@
             <input class="locked form-check-input" type="radio" name="potential_failure" value="NO"> No<br>
         </td>
         <td>
-            <div class="d-flex align-items-center mb-2">
+            <div class="d-flex align-items-center mt-2">
                 <input class="locked" type="checkbox" name="car" value="CAR"> CAR, CAR No:
-                <span id="car_no"></span><br>
+                <span id="car_no" style="margin-right: auto; padding: 10px; text-decoration: underline;"></span><br>
                 <span class="me-2">8D Report:</span>
                 <input class="locked form-check-input" type="radio" name="bd_report" value="YES" class="me-1"> YES
                 <input class="locked form-check-input" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
             </div>
-            <div class="d-flex align-items-center mt-5">
+            <div class="d-flex align-items-center mt-2">
                 <input class="locked" type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
-                <span id="scar_no"></span><br>
+                <span id="scar_no" class="fortyle" style="padding: 10px; text-decoration: underline;"></span><br>
             </div>
         </td>
     </tr>
@@ -107,7 +106,7 @@
                 <input class="locked form-check-input" type="radio" name="customer_approval" value="YES"> YES
                 <input class="locked form-check-input" type="radio" name="customer_approval" value="NO"> NO
                 <span>Document Alert No:</span>
-                <span id="document_alert"></span>
+                <span id="document_alert" class="fortyle"></span>
             </div>
 
         </td>
@@ -123,7 +122,7 @@
                     <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                 </div>
                 <label for="impact_analysis">Notes:</label>
-                <span id="impact_analysis"></span>
+                <span id="impact_analysis" class="fortyle"></span>
             </td>
 
             <!-- Right Section (Spanning Rows) -->
@@ -131,12 +130,13 @@
                 <div class="h-100 d-flex flex-column justify-content-between">
                     <div class="mb-2">
                         <input class="locked" type="checkbox" name="affected_business" value="Affected business"> Affected business unit/ contact person <br>
-                        <span id="contact_person"></span>
+                        <span id="contact_person" class="fortyle"></span>
                     </div>
+                    <br>
                     <div>
                         <input class="locked" type="checkbox" name="other_instructions" value="Other instructions"> Other instructions,
                         <span>pls specify;</span><br>
-                        <span id="other_specify"></span>
+                        <span id="other_specify" class="fortyle"></span>
                     </div>
                 </div>
             </td>
@@ -156,17 +156,17 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center mt-2">
-                    Yield-off $<span id="yield_off"></span>
+                    Yield-off $<span id="yield_off" class="fortyle"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Re-grade"> Re-grade, DA No:
-                    <span id="da_no"></span>
+                    <span id="da_no" class="fortyle"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Rework"> Rework, DA No:
-                    <span id="rework_da_no"></span>
+                    <span id="rework_da_no" class="fortyle"></span>
                     WIS No:
-                    <span id="wis_no"></span>
+                    <span id="wis_no" class="fortyle"></span>
                 </div>
                 <div class="d-flex gap-3 align-items-center flex-wrap mt-2 gap-2">
                     <input class="locked  ms-4" type="checkbox" name="product_dispo[]" value="Re-press"> Re-press
@@ -177,16 +177,16 @@
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
-                    <span id="document_alert"></span>
+                    <span id="document_alert" class="fortyle"></span>
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
-                    <span id="scrap_amount"></span>
+                    <span id="scrap_amount" class="fortyle"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date: </span>
-                    <span id="shipment_date"></span>
+                    <span id="shipment_date" class="fortyle"></span>
                 </div>
             </td>
         </tr>
@@ -338,7 +338,4 @@
     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
     <div id="file-list" class="d-block flex-wrap">
     </div>
-
-    <!-- removed the scrpt for add file input -->
 </table>
-</form>

@@ -313,12 +313,16 @@
                         </div>
                     </div>
                 </td>
-                
+
             <?php endif; ?>
             <?php if ($user_role === 'SHELDAHL REPRESENTATIVE'): ?>
-                <td colspan="2">
-                    <div class="d-flex justify-content-end align-items-center">
-                        <div class="d-flex justify-content-end align-items-center">
+                <td>
+                    <strong>QA Manager or his/her appointee:</strong><br>
+                    (Signature & Date)
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center" style="margin-right: auto;">
                             <div class="me-3">
                                 <strong>Sheldahl / NT Representative:</strong><br>
                                 (Signature & Date)
@@ -368,34 +372,4 @@
     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
     <div id="file-list" class="d-block flex-wrap">
     </div>
-
-    <script>
-        function addFileInput() {
-            let container = document.getElementById('fileUploadContainer');
-
-            let div = document.createElement('div');
-            div.className = "file-input-group d-flex align-items-center";
-
-            let input = document.createElement('input');
-            input.type = 'file';
-            input.name = 'attachments[]';
-            input.className = 'form-control mb-2';
-
-            let removeBtn = document.createElement('button');
-            removeBtn.type = 'button';
-            removeBtn.className = 'btn btn-danger ms-2';
-            removeBtn.innerHTML = 'Delete';
-            removeBtn.onclick = function() {
-                removeFileInput(this);
-            };
-
-            div.appendChild(input);
-            div.appendChild(removeBtn);
-            container.appendChild(div);
-        }
-
-        function removeFileInput(button) {
-            button.parentElement.remove();
-        }
-    </script>
 </table>

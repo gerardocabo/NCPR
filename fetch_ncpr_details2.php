@@ -374,11 +374,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
         </div>
 
         <!-- Uploaded Files -->
-        <h6 class="mt-3">Uploaded Files</h6>
         <ul>
-            <?php foreach ($files as $file): ?>
-                <li><a href="<?= htmlspecialchars($file['file_path']) ?>" target="_blank"><?= htmlspecialchars($file['file_name']) ?></a></li>
-            <?php endforeach; ?>
+            <?php if (!empty($files)): ?>
+                <h6 class="mt-3">Uploaded Files</h6>
+                <?php foreach ($files as $file): ?>
+                    <?php
+                    $fileType = strtolower(pathinfo($file['file_name'], PATHINFO_EXTENSION));
+                    if (in_array($fileType, ['jpg', 'png', 'jpeg', 'gif'])):
+                    ?>
+                        <li>
+                            <img src="<?= htmlspecialchars($file['file_path']) ?>"
+                                class="img-thumbnail"
+                                style="max-width: 150px; margin: 5px; margin-bottom: 10px;"
+                                alt="<?= htmlspecialchars($file['file_name']) ?>">
+                        </li>
+                    <?php else: ?>
+                        <li>
+                            <a href="<?= htmlspecialchars($file['file_path']) ?>"
+                                download="<?= htmlspecialchars($file['file_name']) ?>"
+                                class="btn btn-primary btn-sm"
+                                style="margin-bottom: 10px;">
+                                <i class="fa fa-download"></i> Download <?= htmlspecialchars($file['file_name']) ?>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li>No files uploaded</li>
+            <?php endif; ?>
         </ul>
         </div>
         </div>

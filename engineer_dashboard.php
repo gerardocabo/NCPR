@@ -18,159 +18,47 @@ function isAuthorized($allowed_roles)
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+    <style>
+        .action-container {
+            position: relative;
+            /* Ensure floating indicator stays positioned correctly */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+            /* Adjust spacing */
+        }
 
+        .urgent-indicator {
+            position: absolute;
+            top: -5px;
+            right: 0;
+            /* Move above the buttons */
+            background: red;
+            color: white;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            animation: blink 1s infinite alternate;
+            /* Optional blinking effect */
+        }
+
+        /* Optional Blinking Effect */
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+    </style>
 </head>
-<style>
-    ::after,
-    ::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
 
-    a {
-        text-decoration: none;
-    }
-
-    li {
-        list-style: none;
-    }
-
-    h1 {
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .wrapper {
-        display: flex;
-    }
-
-    .main {
-        min-height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        transition: all 0.35s ease-in-out;
-        background-color: #fafbfe;
-    }
-
-    #sidebar {
-        width: 70px;
-        min-width: 70px;
-        z-index: 1000;
-        transition: all .25s ease-in-out;
-        background-color: #0e2238;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        /* Full viewport height */
-        position: sticky;
-        /* ✅ Keeps sidebar sticky */
-        top: 0;
-        /* ✅ Ensures it stays at the top when scrolling */
-    }
-
-    #sidebar.expand {
-        width: 260px;
-        min-width: 260px;
-    }
-
-    .toggle-btn {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 1rem 1.5rem;
-    }
-
-    .toggle-btn i {
-        font-size: 1.5rem;
-        color: #FFF;
-    }
-
-    .sidebar-logo {
-        margin: auto 0;
-    }
-
-    .sidebar-logo a {
-        color: #FFF;
-        font-size: 1.15rem;
-        font-weight: 600;
-    }
-
-    #sidebar:not(.expand) .sidebar-logo,
-    #sidebar:not(.expand) a.sidebar-link span {
-        display: none;
-    }
-
-    .sidebar-nav {
-        padding: 2rem 0;
-        flex-grow: 1;
-        /* ✅ Allows it to take available space and push footer down */
-    }
-
-    a.sidebar-link {
-        padding: .625rem 1.5rem;
-        color: #FFF;
-        display: block;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        border-left: 3px solid transparent;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-link i {
-        font-size: 1.2rem;
-        color: white;
-        margin-right: 10px;
-    }
-
-    a.sidebar-link:hover {
-        background-color: rgba(255, 255, 255, .075);
-        border-left: 3px solid #3b7ddd;
-    }
-
-    .sidebar-item {
-        position: relative;
-    }
-
-    #sidebar:not(.expand) .sidebar-link span {
-        display: none;
-        position: absolute;
-        left: 80px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #0e2238;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar:not(.expand) .sidebar-item:hover .sidebar-link span,
-    #sidebar:not(.expand) .sidebar-footer:hover .sidebar-link span {
-        display: block;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-item.active a {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-left: 3px solid #3b7ddd;
-        color: #3b7ddd;
-    }
-</style>
 
 <body class="bg-white">
     <div class="wrapper bg-white">
@@ -180,7 +68,7 @@ function isAuthorized($allowed_roles)
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo $user_role ?></a>
+                    <a href="#"><?php echo htmlspecialchars($user_role) ?></a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -360,7 +248,7 @@ function isAuthorized($allowed_roles)
     </div>
 
     <!-- Dispo-ing Modal Structure -->
-    <div class="modal fade" id="dispoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="dispoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -389,6 +277,19 @@ function isAuthorized($allowed_roles)
     display: none;
     border-radius: 5px;
     font-weight: bold;">
+    </div>
+    <div id="warning-box" style="
+    position: fixed;
+    top: 60px; /* Positioned below the notification box */
+    right: 10px;
+    background: orange;
+    color: white;
+    padding: 15px;
+    display: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
     </div>
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
@@ -435,6 +336,10 @@ function isAuthorized($allowed_roles)
                     "type": "GET",
                     "dataSrc": function(json) {
                         if (json.ncprs.length > 0) {
+                            let currentTime = new Date().getTime(); // Get current timestamp in milliseconds
+                            let overdueNCPRs = [];
+                            let unseenNCPRs = [];
+
                             if (firstLoad) {
                                 // Set last seen ID from the server on first load
                                 lastSeenId = json.lastSeenId;
@@ -444,44 +349,49 @@ function isAuthorized($allowed_roles)
                                 lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0;
                             }
 
-                            // Filter new records based on last seen ID
-                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
-
                             // Retrieve previously notified NCPRs
                             notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
 
-                            // Collect unseen, unique NCPRs
-                            let unseenNCPRs = [];
+                            json.ncprs.forEach(record => {
+                                let createdAt = new Date(record.created_at).getTime(); // Convert `created_at` to timestamp
+                                let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
+                                let ncprNum = record.ncpr_num;
 
-                            newRecords.forEach(ncprNum => {
-                                if (!notifiedNCPRs.includes(ncprNum)) {
-                                    unseenNCPRs.push(ncprNum); // Add to unseen list
+                                // Identify overdue NCPRs
+                                if (diffHours > 24) {
+                                    overdueNCPRs.push(record.ncpr_num);
+                                    record.isOverdue = true; // ✅ Mark as overdue
+                                } else {
+                                    record.isOverdue = false; // ✅ Ensure non-overdue rows are marked correctly
+                                }
+
+                                // Identify unseen NCPRs
+                                if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(ncprNum)) {
+                                    unseenNCPRs.push(ncprNum);
                                 }
                             });
 
-                            // If there are unseen NCPRs, notify user
+                            // Show warning if there are overdue NCPRs
+                            if (overdueNCPRs.length > 0) {
+                                showWarningNotification(overdueNCPRs);
+                            }
+
+                            // Show notification for unseen NCPRs
                             if (unseenNCPRs.length > 0) {
-                                showNotification(unseenNCPRs, username); // ✅ Updated function
-                                notifiedNCPRs.push(...unseenNCPRs); // ✅ Mark all as notified
+                                showNotification(unseenNCPRs, username);
+                                notifiedNCPRs.push(...unseenNCPRs); // Mark all as notified
+                                sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
                             }
 
-                            // Persist updated notifiedNCPRs list
-                            sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
-
-                            // ✅ Now update last seen ID ONLY IF new unseen records exist
-                            if (newRecords.length > 0) {
-                                let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
+                            // Update last seen ID in sessionStorage and database
+                            if (unseenNCPRs.length > 0) {
+                                let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
                                 sessionStorage.setItem("lastSeenId_" + username, latestId);
-                                updateLastSeenId(latestId); // Update in the database
+                                updateLastSeenId(latestId);
                             }
 
-                            // ✅ Debugging logs (remove after testing)
-                            console.log("Last Seen ID:", lastSeenId);
-                            console.log("New Records:", newRecords.map(r => r.id));
-                            console.log("Unseen NCPRs Notified:", unseenNCPRs);
+                            firstLoad = false; // Ensure first load logic doesn't run again
                         }
-
-                        firstLoad = false; // Ensure first load logic doesn't run again
                         return json.ncprs;
                     },
 
@@ -506,16 +416,22 @@ function isAuthorized($allowed_roles)
                     {
                         "data": "id",
                         "render": function(data, type, row) {
+                            let urgentIndicator = row.isOverdue ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
+                            let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
                             return `
+                             <div class="action-container">
+            ${urgentIndicator} <!-- Floating indicator -->
+            ${exceedIndicator} <!-- Floating indicator -->
                         <button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
                             <i class="fas fa-eye"></i> View
                         </button>
                         <button class="btn btn-success btn-sm dispo-btn" 
                                 data-id="${row.ncpr_num}" 
                                 data-bs-toggle="modal" 
-                                data-bs-target="#dispoModal"><i class="fas fa-eye"></i>
+                                data-bs-target="#dispoModal"><i class="fas fa-add"></i>
                             Dispo
-                        </button>`;
+                        </button>
+                         </div>`;
                         }
                     }
                 ],
@@ -525,6 +441,14 @@ function isAuthorized($allowed_roles)
                 "language": {
                     "emptyTable": "No Available NCPR Filing"
                 }
+            });
+
+            $('#dispoModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var ncprNum = button.data('id'); // Extract data-id
+
+                // Set the extracted value inside the modal
+                $('#modal-id').text(ncprNum); // Display in modal
             });
 
             // Function to update the last seen NCPR ID in the database
@@ -553,19 +477,33 @@ function isAuthorized($allowed_roles)
                 notificationBox.html(message).fadeIn().delay(5000).fadeOut();
             }
 
+            function showWarningNotification(overdueNCPRs) {
+                let notificationBox = $("#warning-box"); // Assuming you have a separate warning box
+
+                // Check if the notification was already shown in this session
+                if (sessionStorage.getItem("warningShown")) {
+                    return; // Exit function if already shown
+                }
+
+                let message = `⚠️ Warning: ${overdueNCPRs.length} NCPRs have exceeded 24 hours!`;
+
+                // If <= 5, list them; otherwise, show a summary
+                if (overdueNCPRs.length <= 5) {
+                    message += ` Overdue NCPRs: ${overdueNCPRs.join(", ")}`;
+                }
+
+                notificationBox.html(message).fadeIn().delay(5000).fadeOut();
+
+                // Mark as shown in sessionStorage
+                sessionStorage.setItem("warningShown", "true");
+            }
+
+
             // Auto-refresh table every 5 seconds without resetting the table state
             setInterval(function() {
                 table.ajax.reload(null, false);
             }, 5000);
 
-            let selectedId = "";
-
-            // Handle dynamically created "Add" buttons using event delegation
-            $('#ncprTable tbody').on('click', '.add-btn', function() {
-                selectedId = $(this).data('id'); // Get the ID from the clicked button
-                console.log("Button clicked, selectedId:", selectedId); // Debugging
-                $("#modal-id").text(selectedId); // Display ID inside modal
-            });
         });
 
         function fetchNcprDetails(ncprNum, viewOnly) {
@@ -605,6 +543,16 @@ function isAuthorized($allowed_roles)
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            const modalElement = document.getElementById("dispoModal");
+            const modal = new bootstrap.Modal(modalElement);
+            const closeModalButtons = document.querySelectorAll("#closeModal, #closeModalFooter");
+
+            closeModalButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    modal.hide(); // Close the modal only when close button is clicked
+                });
             });
         });
     </script>

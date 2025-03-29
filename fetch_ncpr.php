@@ -8,7 +8,7 @@ header('Content-Type: application/json');
 function getPendingApprovals($user_role)
 {
     // Default query: Fetch all NCPRs that haven't been disposed yet
-    $query = "SELECT id, ncpr_num, initiator, status, `date` FROM ncpr_table WHERE dispo_id IS NULL";
+    $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at FROM ncpr_table WHERE dispo_id IS NULL";
 
     // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
     if ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
@@ -27,7 +27,8 @@ function getPendingApprovals($user_role)
                   FROM ncpr_table
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
                   WHERE dispo_approval.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 
-                  AND dispo_approval.status = 'Approved'";
+                  AND dispo_approval.status = 'Approved'
+                  AND ncpr_table.status = 'open'";
     } 
 
     return $query;

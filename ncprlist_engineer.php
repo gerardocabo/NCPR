@@ -169,6 +169,18 @@ $result = $conn->query($query);
         color: #3b7ddd;
     }
 </style>
+<style>
+    .locked {
+        pointer-events: none;
+        /* Prevent clicking */
+    }
+
+    .fortyle {
+        margin-right: auto;
+        padding: 0 10;
+        text-decoration: underline;
+    }
+</style>
 
 <body class="bg-white">
     <div class="wrapper bg-white">
@@ -250,10 +262,10 @@ $result = $conn->query($query);
                                 <td><?php echo $row['status']; ?></td>
                                 <td>
                                     <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                    <i class="fas fa-eye"></i> NCPR
+                                        <i class="fas fa-eye"></i> NCPR
                                     </button>
                                     <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                    <i class="fas fa-eye"></i> DISPO
+                                        <i class="fas fa-eye"></i> DISPO
                                     </button>
                                 </td>
                             </tr>
@@ -941,13 +953,16 @@ $result = $conn->query($query);
                     success: function(response) {
                         // Log the full response for debugging
                         console.log("Encoded JSON response:", response);
-                        if (response.trim() === "No matching records found") {
+                        if (response.error === "No matching records found") {
                             Swal.fire({
                                 icon: "info", // Soft message icon
                                 title: "No Records Found",
                                 text: "There are no matching records. Please check your input and try again.",
                                 confirmButtonColor: "#3085d6"
-                            });
+                            }).then(() => {
+                                $('#dispoModal').modal('hide'); // Close modal after user clicks "OK"
+                            });;
+                            return;
                         } else {
                             console.log("Dispo ID found. Disabling inputs.", response);
 

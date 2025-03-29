@@ -14,6 +14,18 @@ $user_role = $_SESSION['role'];
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
+    <style>
+        .locked {
+            pointer-events: none;
+            /* Prevent clicking */
+        }
+
+        .fortyle {
+            margin-right: auto;
+            padding: 0 10;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body class="bg-white">
@@ -222,6 +234,19 @@ $user_role = $_SESSION['role'];
         </div>
     </div>
 
+    <div id="username" data-user="<?php echo $_SESSION['user']; ?>" style="display: none;"></div>
+    <div id="notification-box" style="
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: green;
+    color: white;
+    padding: 10px;
+    display: none;
+    border-radius: 5px;
+    font-weight: bold;">
+    </div>
+
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/bootstrap/js/all.min.js"></script>
@@ -234,16 +259,95 @@ $user_role = $_SESSION['role'];
     <!-- DataTable Initialization -->
     <script>
         $(document).ready(function() {
+            var username = $("#username").data("user"); // Get logged-in username
+            var lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0; // Retrieve last seen ID
+            var notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]"); // Retrieve notified NCPRs
+            var firstLoad = true;
+
             var table = $('#ncprTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'excelHtml5',
+                        text: 'Export Excel',
+                        className: 'btn btn-success'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        text: 'Export CSV',
+                        className: 'btn btn-primary'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Export PDF',
+                        className: 'btn btn-danger'
+                    },
+                    {
+                        extend: 'print',
+                        text: 'Print',
+                        className: 'btn btn-warning'
+                    }
+                ],
                 "ajax": {
                     "url": "fetch_ncpr.php",
                     "type": "GET",
-                    "dataSrc": ""
+                    "dataSrc": function(json) {
+                        if (json.ncprs.length > 0) {
+                            if (firstLoad) {
+                                // Set last seen ID from the server on first load
+                                lastSeenId = json.lastSeenId;
+                                sessionStorage.setItem("lastSeenId_" + username, lastSeenId);
+                            } else {
+                                // Retrieve lastSeenId from sessionStorage
+                                lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0;
+                            }
+
+                            // Filter new records based on last seen ID
+                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
+
+                            // Retrieve previously notified NCPRs
+                            notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
+
+                            // Collect unseen, unique NCPRs
+                            let unseenNCPRs = [];
+
+                            newRecords.forEach(ncprNum => {
+                                if (!notifiedNCPRs.includes(ncprNum)) {
+                                    unseenNCPRs.push(ncprNum); // Add to unseen list
+                                }
+                            });
+
+                            // If there are unseen NCPRs, notify user
+                            if (unseenNCPRs.length > 0) {
+                                showNotification(unseenNCPRs, username); // ✅ Updated function
+                                notifiedNCPRs.push(...unseenNCPRs); // ✅ Mark all as notified
+                            }
+
+                            // Persist updated notifiedNCPRs list
+                            sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
+
+                            // ✅ Now update last seen ID ONLY IF new unseen records exist
+                            if (newRecords.length > 0) {
+                                let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
+                                sessionStorage.setItem("lastSeenId_" + username, latestId);
+                                updateLastSeenId(latestId); // Update in the database
+                            }
+
+                            // ✅ Debugging logs (remove after testing)
+                            console.log("Last Seen ID:", lastSeenId);
+                            console.log("New Records:", newRecords.map(r => r.id));
+                            console.log("Unseen NCPRs Notified:", unseenNCPRs);
+                        }
+
+                        firstLoad = false; // Ensure first load logic doesn't run again
+                        return json.ncprs;
+                    },
+
+                    "cache": false
                 },
                 "columns": [{
                         "data": "id",
                         "visible": false
-                    }, // Hides ID column
+                    }, // Hide ID column
                     {
                         "data": "ncpr_num"
                     },
@@ -273,12 +377,44 @@ $user_role = $_SESSION['role'];
                     }
                 ],
                 "order": [
-                    [0, "desc"]
+                    [0, "asc"]
                 ],
                 "language": {
                     "emptyTable": "No Available NCPR Filing"
                 }
             });
+
+            // Function to update the last seen NCPR ID in the database
+            function updateLastSeenId(newLastSeenId) {
+                $.post("update_last_seen.php", {
+                    lastSeenId: newLastSeenId
+                }, function(response) {
+                    console.log("Last Seen ID Updated: ", response);
+                });
+            }
+
+            function showNotification(ncprNums, user) {
+                let notificationBox = $("#notification-box");
+
+                let message;
+                if (ncprNums.length <= 5) {
+                    // Show all NCPRs if the number is small
+                    message = `Hello ${user}, new NCPR Numbers: ${ncprNums.join(", ")} have been added.`;
+                } else {
+                    // Show a summary with the first few NCPRs
+                    let previewNCPRs = ncprNums.slice(0, 3).join(", "); // Get the first 3 NCPRs
+                    message = `Hello ${user}, ${ncprNums.length} new NCPRs have been added. (e.g., ${previewNCPRs}, ...)`;
+                }
+
+                // Display the notification
+                notificationBox.html(message).fadeIn().delay(5000).fadeOut();
+            }
+
+            // Auto-refresh table every 5 seconds without resetting the table state
+            /*setInterval(function() {
+                table.ajax.reload(null, false);
+            }, 5000);*/
+
             let selectedId = "";
 
             // Handle dynamically created "Add" buttons using event delegation
