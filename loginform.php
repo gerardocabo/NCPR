@@ -53,32 +53,12 @@ require "config.php";
                 <button type="submit" class="btn btn-success w-100 p-2" name="login"><span class="fs-5 fw-bold text-dark">LOGIN</span></button>
             </form>
             <hr>
-            <form method="POST" action="login.php">
-
-                <div class="mb-3">
-                    <label for="guestAccess" class="form-label">Select Guest Access:</label>
-                    <select id="guestAccess" name="guest_role" class="form-select">
-                        <option value="" selected disabled>Choose...</option>
-                        <option value="guest1">GUEST1</option>
-                        <option value="guest2">GUEST2</option>
-                        <option value="guest3">GUEST3</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 p-2" name="guest" id="guestLogin"><span class="fs-5 fw-bold text-dark">GUEST</span></button>
+            <form id="loginForm" method="POST" action="login.php">
+                <input type="hidden" name="guest_role" value="GUEST"> <!-- Hidden field for guest role -->
+                <button type="submit" class="btn btn-primary w-100 p-2" name="guest" id="guestLogin">
+                    <span class="fs-5 fw-bold text-dark">GUEST</span>
+                </button>
             </form>
-            <!-- JavaScript (Ensure guest role is selected before submitting) -->
-            <script>
-                document.getElementById('guestAccess').addEventListener('change', function() {
-                    document.getElementById('guestHidden').value = this.value;
-                });
-                document.getElementById('guestLogin').addEventListener('click', function(event) {
-                    const guestRole = document.getElementById('guestAccess').value;
-                    if (!guestRole) {
-                        alert("Please select a guest role before logging in.");
-                        event.preventDefault(); // Prevent form submission
-                    }
-                });
-            </script>
 
             <p class="text-end mt-2">
                 <a href="requestOTP.php"

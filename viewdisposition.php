@@ -50,8 +50,8 @@
                 <!-- Right Side -->
                 <div>
                     <input class="locked" type="checkbox" name="cause[]" value="Material"> Material<br>
-                    <input class="locked" type="checkbox" name="cause[]" value="NID Item"> N.I.D Item<br>
-                    <input class="locked" type="checkbox" name="cause[]" value="NID Purchased Item"> N.I.D Purchased Item<br>
+                    <input class="locked" type="checkbox" name="cause[]" value="NID Item"> NFLD Item<br>
+                    <input class="locked" type="checkbox" name="cause[]" value="NID Purchased Item"> NFLD Purchased Item<br>
                     <input class="locked" type="checkbox" name="cause[]" value="For Expiry Expired"> For Expiry Expired<br>
                     <input class="locked" type="checkbox" name="cause[]" value="Local Supplier"> Local Supplier<br>
                     <input class="locked" type="checkbox" name="cause[]" value="Customer Furnish Material">

@@ -1,206 +1,285 @@
-
 $(document).ready(function () {
+  $(".approval-action").click(function (e) {
+    e.preventDefault();
 
-    $(".approval-action").click(function (e) {
-        e.preventDefault();
+    var action = $(this).data("action");
+    var role = $(this).data("role");
+    var selectedId; // Declare variable before the condition
 
-        var action = $(this).data("action");
-        var role = $(this).data("role");
+    // If action is "cancel" and role is "QA Engineer", use #view-ncpr-num
+    if (action === "cancel" && role === "QA Engineer") {
+      selectedId = $("#view-ncpr-num").text();
+    } else {
+      selectedId = $("#modal-id").text(); // Default selector
+    }
 
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You are about to approve this action.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, approve it!",
-            cancelButtonText: "Cancel"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (role === "QA_Engineer") {
-                    sendApprovalRequest(action, role); // ENGINEER approval function
-                } else if (role === "QA Manager" || "Representative") {
-                    sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
-                } else {
-                    Swal.fire("Error", "You do not have permission to approve this request.", "error");
-                }
-            }
-        });
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to " + action + " this NCPR?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, approve it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (role === "QA Engineer" && action !== "cancel") {
+          // Then, upload file attachments and include the ncpr_num
+          uploadFileAttachments(selectedId);
+          sendApprovalRequest(action, role); // ENGINEER approval function
+        } else if (role === "QA Manager" || "Representative") {
+          sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
+        } else if (action === "cancel" || "reject") {
+          sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
+        } else {
+          Swal.fire(
+            "Error",
+            "You do not have permission to approve this request.",
+            "error"
+          );
+        }
+      }
+    });
+  });
+
+  function uploadFileAttachments(ncpr_num) {
+    // Create a new FormData object for file attachments
+    var fileFormData = new FormData();
+
+    // Collect all file attachments and append them to FormData
+    var files = $("input[name='attachments[]']")[0].files;
+
+    for (var i = 0; i < files.length; i++) {
+      fileFormData.append("attachments[]", files[i]);
+    }
+
+    // Append the ncpr_num to the FormData so it is sent along with the files
+    fileFormData.append("ncpr_num", ncpr_num);
+
+    // Send the file attachments using AJAX
+    $.ajax({
+      url: "insert_fileUpload.php", // Server-side script to handle file uploads
+      type: "POST",
+      data: fileFormData,
+      processData: false, // Prevent jQuery from processing the data
+      contentType: false, // Let the browser set the content type for file uploads
+      success: function (response) {
+        try {
+          var parsedResponse = JSON.parse(response);
+          if (parsedResponse.status === "success") {
+            Swal.fire("Success", "Files uploaded successfully.", "success");
+          } else {
+            Swal.fire(
+              "Error",
+              "File upload failed. Please try again.",
+              "error"
+            );
+          }
+        } catch (e) {
+          Swal.fire(
+            "Error",
+            "File upload failed. Invalid server response.",
+            "error"
+          );
+        }
+      },
+      error: function (xhr, status, error) {
+        Swal.fire("Error", "File upload failed. Check console.", "error");
+      },
+    });
+  }
+
+  function sendApprovalRequest(action, role) {
+    let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
+
+    var Containment = $("#containment").val();
+    var causes = [];
+    $("input[name='cause[]']:checked").each(function () {
+      causes.push($(this).val());
     });
 
-    function sendApprovalRequest(action, role) {
-        let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
+    //inputs
+    var idNo = $("input[name='id_no']").val().trim();
+    var name = $("input[name='name']").val().trim();
+    var carNo = $("input[name='car_no']").val().trim(); // Get value of car_no input
+    var scarNo = $("input[name='scar_no']").val().trim(); // Get value of car_no input
+    var DA = $("input[name='document_alert']").val().trim(); // Get value of car_no input
+    var contactperson = $("input[name='contact_person']").val().trim(); // Get value of car_no input
+    var otherSpecify = $("input[name='other_specify']").val().trim(); // Get value of car_no input
+    var yieldOff = $("input[name='yield_off']").val().trim(); // Get value of car_no input
+    var regradeDA = $("input[name='da_no']").val().trim(); // Get value of car_no input
+    var reworkDA = $("input[name='rework_da_no']").val().trim(); // Get value of car_no input
+    var wisnum = $("input[name='wis_no']").val().trim(); // Get value of car_no input
+    var repairDA = $("input[name='repair_DA']").val().trim(); // Get value of car_no input
+    var scrap_amount = $("input[name='scrap_amount']").val().trim(); // Get value of car_no input
+    var shipDate = $("input[name='shipment_date']").val().trim(); // Get value of car_no input
 
-        var Containment = $("#containment").val();
-        var causes = [];
-        $("input[name='cause[]']:checked").each(function () {
-            causes.push($(this).val());
-        });
+    //radio_inputs
+    var correctiveAction = $("input[name='corrective_action']:checked").val();
+    var pff = $("input[name='potential_failure']:checked").val();
+    var bdReport = $("input[name='bd_report']:checked").val();
+    var mrb = $("input[name='mrb']:checked").val();
+    var custApp = $("input[name='customer_approval']:checked").val();
+
+    //checkboxes
+    // ✅ Collect independent checkboxes into an array
+    var independent_checkbox = [];
+
+    var car = $("input[name='car']:checked").val();
+    if (car) independent_checkbox.push(car);
+
+    var scar = $("input[name='scar']:checked").val();
+    if (scar) independent_checkbox.push(scar);
+
+    var affectedBusiness = $("input[name='affected_business']:checked").val();
+    if (affectedBusiness) independent_checkbox.push(affectedBusiness);
+
+    var otherInstructions = $("input[name='other_instructions']:checked").val();
+    if (otherInstructions) independent_checkbox.push(otherInstructions);
+
+    var dispoFrom = [];
+    $("input[name='dispo_from[]']:checked").each(function () {
+      dispoFrom.push($(this).val());
+    });
+    var IARA = [];
+    $("input[name='impact_analysis[]']:checked").each(function () {
+      IARA.push($(this).val());
+    });
+
+    var prod_dispo = [];
+    $("input[name='product_dispo[]']:checked").each(function () {
+      prod_dispo.push($(this).val());
+    });
+
+    console.log("Sending AJAX request...");
+    $.ajax({
+      url: "approval.php",
+      type: "POST",
+      data: {
+        action: action,
+        role: role,
+        ncpr_num: selectedId,
 
         //inputs
-        var idNo = $("input[name='id_no']").val().trim();
-        var name = $("input[name='name']").val().trim();
-        var carNo = $("input[name='car_no']").val().trim(); // Get value of car_no input
-        var scarNo = $("input[name='scar_no']").val().trim(); // Get value of car_no input
-        var DA = $("input[name='document_alert']").val().trim(); // Get value of car_no input
-        var contactperson = $("input[name='contact_person']").val().trim(); // Get value of car_no input
-        var otherSpecify = $("input[name='other_specify']").val().trim(); // Get value of car_no input
-        var yieldOff = $("input[name='yield_off']").val().trim(); // Get value of car_no input
-        var regradeDA = $("input[name='da_no']").val().trim(); // Get value of car_no input
-        var reworkDA = $("input[name='rework_da_no']").val().trim(); // Get value of car_no input
-        var wisnum = $("input[name='wis_no']").val().trim(); // Get value of car_no input
-        var repairDA = $("input[name='repair_DA']").val().trim(); // Get value of car_no input
-        var scrap_amount = $("input[name='scrap_amount']").val().trim(); // Get value of car_no input
-        var shipDate = $("input[name='shipment_date']").val().trim(); // Get value of car_no input
+        containment: Containment,
 
-        //radio_inputs
-        var correctiveAction = $("input[name='corrective_action']").val(); // Get value of corrective_action input
-        var pff = $("input[name='potential_failure']").val(); // Get value of potential_failure input
-        var bdReport = $("input[name='bd_report']").val(); // Get value of bd_report input
-        var mrb = $("input[name='mrb']").val(); // Get value of mrb input
-        var custApp = $("input[name='customer_approval']").val(); // Get value of customer_approval input
+        cause: causes,
+        id_no: idNo,
+        name: name,
+        car_no: carNo,
+        scar_no: scarNo,
+        document_alert: DA,
+        contact_person: contactperson,
+        other_specify: otherSpecify,
+        yield_off: yieldOff,
+        da_no: regradeDA,
+        rework_da_no: reworkDA,
+        wis_no: wisnum,
+        repair_DA: repairDA,
+        scrap_amount: scrap_amount,
+        shipment_date: shipDate,
 
-        //checkboxes
-        // ✅ Collect independent checkboxes into an array
-        var independent_checkbox = [];
+        //arrays of checkboxes
+        independents: independent_checkbox,
+        dispo_from: dispoFrom,
+        IARA: IARA,
+        product_dispo: prod_dispo,
 
-        var car = $("input[name='car']:checked").val();
-        if (car) independent_checkbox.push(car);
-
-        var scar = $("input[name='scar']:checked").val();
-        if (scar) independent_checkbox.push(scar);
-
-        var affectedBusiness = $("input[name='affected_business']:checked").val();
-        if (affectedBusiness) independent_checkbox.push(affectedBusiness);
-
-        var otherInstructions = $("input[name='other_instructions']:checked").val();
-        if (otherInstructions) independent_checkbox.push(otherInstructions);
-
-        var dispoFrom = [];
-        $("input[name='dispo_from[]']:checked").each(function () {
-            dispoFrom.push($(this).val());
-        });
-        var IARA = [];
-        $("input[name='impact_analysis[]']:checked").each(function () {
-            IARA.push($(this).val());
-        });
-
-        var prod_dispo = [];
-        $("input[name='product_dispo[]']:checked").each(function () {
-            prod_dispo.push($(this).val());
-        });
-
+        //i did forgot the radios
+        corrective_action: correctiveAction,
+        potential_failure: pff,
+        bd_report: bdReport,
+        mrb: mrb,
+        customer_approval: custApp,
+      },
+      dataType: "json", // Expect JSON response
+      beforeSend: function () {
         console.log("Sending AJAX request...");
-        $.ajax({
-            url: "approval.php",
-            type: "POST",
-            data: {
-                action: action,
-                role: role,
-                ncpr_num: selectedId,
+      },
+      success: function (response) {
+        console.log("Raw response:", response);
 
-                //inputs
-                containment: Containment,
-                non_conformance: nonConformance,
-                cause: causes,
-                id_no: idNo,
-                name: name,
-                car_no: carNo,
-                scar_no: scarNo,
-                document_alert: DA,
-                contact_person: contactperson,
-                other_specify: otherSpecify,
-                yield_off: yieldOff,
-                da_no: regradeDA,
-                rework_da_no: reworkDA,
-                wis_no: wisnum,
-                repair_DA: repairDA,
-                scrap_amount: scrap_amount,
-                shipment_date: shipDate,
+        if (response.status === "success") {
+          console.log("Parsed JSON:", response);
 
-                //arrays of checkboxes
-                independents: independent_checkbox,
-                dispo_from: dispoFrom,
-                IARA: IARA,
-                product_dispo: prod_dispo,
+          Swal.fire({
+            title: "Success",
+            text: response.message,
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(() => {
+            // Hide the Swal modal
+            $(".swal2-container").fadeOut(200, function () {
+              $(this).remove(); // Remove Swal2 container after fadeOut
+            });
+            // Clear the form
+            $("#dispoForm")[0].reset();
+            // Hide the Bootstrap modal
+            $("#dispoModal").modal("hide"); // Ensure you replace #viewModal with your actual modal ID
+          });
+        } else {
+          console.error("Error from server:", response.message);
+          Swal.fire("Error", response.message, "error");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("AJAX Error:", error, xhr.responseText);
+        Swal.fire("Error", "AJAX request failed. Check console.", "error");
+      },
+    });
+  }
 
-                //i did forgot the radios
-                corrective_action: correctiveAction,
-                potential_failure: pff,
-                bd_report: bdReport,
-                mrb: mrb,
-                customer_approval: custApp
-            },
-            dataType: "json", // Expect JSON response
-            beforeSend: function () {
-                console.log("Sending AJAX request...");
-            },
-            success: function (response) {
-                console.log("Raw response:", response);
+  function sendSPMGRApproval(action, role) {
+    let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
+    console.log("Sending AJAX request for MANAGER/SUPERVISOR...");
 
-                if (response.status === "success") {
-                    console.log("Parsed JSON:", response);
+    let viewmodalID = $("#view-ncpr-num").text(); // Ensure selected ID is correctly retrieved
+    console.log("Sending AJAX request for cancel...");
 
-                    Swal.fire({
-                        title: "Success",
-                        text: response.message,
-                        icon: "success",
-                        confirmButtonText: "OK"
-                    }).then(() => {
-                        location.reload(); // Reload the page after success
-                    });
-
-                } else {
-                    console.error("Error from server:", response.message);
-                    Swal.fire("Error", response.message, "error");
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error:", error, xhr.responseText);
-                Swal.fire("Error", "AJAX request failed. Check console.", "error");
-            }
-        });
+    if (role === "QA Engineer") {
+      selectedId = viewmodalID;
     }
 
-    function sendSPMGRApproval(action, role) {
-        let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
-        console.log("Sending AJAX request for MANAGER/SUPERVISOR...");
+    $.ajax({
+      url: "approval.php",
+      type: "POST",
+      data: {
+        action: action,
+        role: role,
+        ncpr_num: selectedId,
+      },
+      success: function (response) {
+        console.log("Response received:", response);
+        // Handle success response
+        if (response.status === "success") {
+          console.log("Parsed JSON:", response);
 
-        $.ajax({
-            url: "approval.php",
-            type: "POST",
-            data: {
-                action: action,
-                role: role,
-                ncpr_num: selectedId,
-            },
-            success: function (response) {
-                console.log("Response received:", response);
-                // Handle success response
-                if (response.status === "success") {
-                    console.log("Parsed JSON:", response);
+          Swal.fire({
+            title: "Success",
+            text: response.message,
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(() => {
+            // Hide the Swal modal
+            $(".swal2-container").fadeOut(200, function () {
+              $(this).remove(); // Remove Swal2 container after fadeOut
+            });
 
-                    Swal.fire({
-                        title: "Success",
-                        text: response.message,
-                        icon: "success",
-                        confirmButtonText: "OK"
-                    }).then(() => {
-                        location.reload(); // Reload the page after success
-                    });
-
-                } else {
-                    console.error("Error from server:", response.message);
-                    Swal.fire("Error", response.message, "error");
-                }
-            },
-            /*error: function (xhr, status, error) {
+            // Hide the Bootstrap modal
+            $("#viewModal").modal("hide"); // Ensure you replace #viewModal with your actual modal ID
+          });
+        } else {
+          console.error("Error from server:", response.message);
+          Swal.fire("Error", response.message, "error");
+        }
+      },
+      /*error: function (xhr, status, error) {
                 console.error("Error:", error);
-            }*/error: function (xhr, status, error) {
-                console.error("AJAX Error:", error, xhr.responseText);
-                Swal.fire("Error", "AJAX request failed. Check console.", "error");
-            }
-        });
-    }
+            }*/ error: function (xhr, status, error) {
+        console.error("AJAX Error:", error, xhr.responseText);
+        Swal.fire("Error", "AJAX request failed. Check console.", "error");
+      },
+    });
+  }
 });

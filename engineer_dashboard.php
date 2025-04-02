@@ -210,6 +210,7 @@ function isAuthorized($allowed_roles)
                                     <th>NCPR Number</th>
                                     <th>Initiator</th>
                                     <th>Status</th>
+                                    <th hidden>Status</th>
                                     <th>Date</th>
                                     <th>Action</th>
                                 </tr>
@@ -223,8 +224,9 @@ function isAuthorized($allowed_roles)
             </div>
         </div>
     </div>
+
     <!-- View Modal -->
-    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" >
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
@@ -243,12 +245,19 @@ function isAuthorized($allowed_roles)
                 <div class="modal-body">
                     <!-- Content will be loaded here via AJAX -->
                 </div>
+                <!-- Modal Footer (For Buttons) -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger approval-action" data-action="cancel" data-role="QA Engineer">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Dispo-ing Modal Structure -->
-    <div class="modal fade" id="dispoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="dispoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -266,30 +275,50 @@ function isAuthorized($allowed_roles)
         </div>
     </div>
 
+    <!-- EDIT Dispo-ing Modal Structure -->
+    <div class="modal fade" id="editDispoModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Dispositioning</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- edit Dispo Place here  -->
+                    <?php include "edit_disposition.php"; ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="username" data-user="<?php echo $_SESSION['user']; ?>" style="display: none;"></div>
     <div id="notification-box" style="
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: green;
-    color: white;
-    padding: 10px;
-    display: none;
-    border-radius: 5px;
-    font-weight: bold;">
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: green;
+        color: white;
+        padding: 10px;
+        display: none;
+        border-radius: 5px;
+        font-weight: bold;">
     </div>
     <div id="warning-box" style="
-    position: fixed;
-    top: 60px; /* Positioned below the notification box */
-    right: 10px;
-    background: orange;
-    color: white;
-    padding: 15px;
-    display: none;
-    border-radius: 5px;
-    font-weight: bold;
-    text-align: center;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+        position: fixed;
+        top: 60px; /* Positioned below the notification box */
+        right: 10px;
+        background: orange;
+        color: white;
+        padding: 15px;
+        display: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
     </div>
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
@@ -411,6 +440,10 @@ function isAuthorized($allowed_roles)
                         "data": "status"
                     },
                     {
+                        "data": "statuses",
+                        "visible": false
+                    },
+                    {
                         "data": "date"
                     },
                     {
@@ -418,20 +451,32 @@ function isAuthorized($allowed_roles)
                         "render": function(data, type, row) {
                             let urgentIndicator = row.isOverdue ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
                             let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
-                            return `
-                             <div class="action-container">
-            ${urgentIndicator} <!-- Floating indicator -->
-            ${exceedIndicator} <!-- Floating indicator -->
-                        <button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
+                            let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
                             <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="btn btn-success btn-sm dispo-btn" 
-                                data-id="${row.ncpr_num}" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#dispoModal"><i class="fas fa-add"></i>
-                            Dispo
-                        </button>
-                         </div>`;
+                          </button>`;
+
+                            let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
+                               data-id="${row.ncpr_num}" 
+                               data-bs-toggle="modal" 
+                               data-bs-target="#dispoModal">
+                               <i class="fas fa-add"></i> Dispo
+                           </button>`;
+
+                            let editButton = `<button class="btn btn-warning btn-sm edit-btn" 
+                              data-id="${row.ncpr_num}">
+                              <i class="fas fa-edit"></i> Edit
+                          </button>`;
+
+                            // Only show edit button if the NCPR is approved
+                            let actionButtons = row.statuses === "Approved" ? editButton : dispoButton;
+
+                            return `
+                                <div class="action-container">
+                                    ${urgentIndicator} <!-- Floating indicator -->
+                                    ${exceedIndicator} <!-- Floating indicator -->
+                                    ${viewButton}
+                                    ${actionButtons}
+                                </div>`;
                         }
                     }
                 ],
@@ -500,9 +545,9 @@ function isAuthorized($allowed_roles)
 
 
             // Auto-refresh table every 5 seconds without resetting the table state
-            setInterval(function() {
+            /*setInterval(function() {
                 table.ajax.reload(null, false);
-            }, 5000);
+            }, 5000);*/
 
         });
 
@@ -529,6 +574,92 @@ function isAuthorized($allowed_roles)
             var ncprNum = $(this).data('id');
             fetchNcprDetails(ncprNum, true);
         });
+
+        $(document).ready(function() {
+            $('#ncprTable tbody').on('click', '.edit-btn', function() {
+                var ncprNum = $(this).data('id');
+                var targetForm = $('#editDispoForm'); // Specify the form ID
+
+                $("#modal-id").text(ncprNum); // Display ID inside modal
+
+                $.ajax({
+                    url: 'fetch_dispo_details.php', // New PHP script to fetch dispo_id
+                    method: 'POST',
+                    data: {
+                        ncpr_num: ncprNum
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log("Encoded JSON response:", response);
+
+                        targetForm.find('#modal-id').text(response.ncpr_num);
+                        targetForm.find('#containment').text(response.containment); // Sets the text for textarea
+                        targetForm.find('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
+                        targetForm.find('input[name="potential_failure"][value="' + response.pff + '"]').prop('checked', true);
+
+                        // Populate multiple checkboxes for cause of non-conformance
+                        targetForm.find('input[name="cause[]"]').each(function() {
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === $(this).val());
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        targetForm.find('#id_no').val(response.id_no);
+                        targetForm.find('#name').val(response.name);
+                        targetForm.find('input[name="car"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        targetForm.find('input[name="scar"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+                        targetForm.find('#car_no').val(response.car_no);
+                        targetForm.find('#scar_no').val(response.scar_no);
+
+                        // Populate dispo checkboxes
+                        targetForm.find('input[name="dispo_from[]"]').each(function() {
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === $(this).val());
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate IARA checkboxes
+                        targetForm.find('input[name="impact_analysis[]"]').each(function() {
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === $(this).val());
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        targetForm.find('input[name="affected_business"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
+                        targetForm.find('input[name="other_instructions"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
+
+                        // Set BD report and MRB radio buttons
+                        targetForm.find('input[name="bd_report"][value="' + response.bd_report + '"]').prop('checked', true);
+                        targetForm.find('input[name="mrb"][value="' + response.mrb + '"]').prop('checked', true);
+                        targetForm.find('input[name="customer_approval"][value="' + response.customer_approval + '"]').prop('checked', true);
+
+                        // Populate product disposition checkboxes
+                        targetForm.find('input[name="product_dispo[]"]').each(function() {
+                            let isChecked = response.checkboxes.some(cb => cb.checkbox_name === $(this).val());
+                            $(this).prop('checked', isChecked);
+                        });
+
+                        // Populate text fields
+                        targetForm.find('#yield_off').val(response.yield_off || "");
+                        targetForm.find('#da_no').val(response.da_no || "");
+                        targetForm.find('#rework_da_no').val(response.rework_da_no || "");
+                        targetForm.find('#wis_no').val(response.wis_no || "");
+                        targetForm.find('#scrap_amount').val(response.scrap_amount || "");
+                        targetForm.find('#shipment_date').val(response.shipment_date || "");
+                        targetForm.find('#document_alert').val(response.document_alert || "");
+
+                        $('#editDispoModal').modal('show');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error fetching disposition data:", {
+                            status: jqXHR.status,
+                            statusText: jqXHR.statusText,
+                            responseText: jqXHR.responseText,
+                            textStatus: textStatus,
+                            errorThrown: errorThrown
+                        });
+                        alert(`Failed to fetch disposition data.`);
+                    }
+                });
+            });
+        });
     </script>
 
     <script>
@@ -545,15 +676,7 @@ function isAuthorized($allowed_roles)
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
 
-            const modalElement = document.getElementById("dispoModal");
-            const modal = new bootstrap.Modal(modalElement);
-            const closeModalButtons = document.querySelectorAll("#closeModal, #closeModalFooter");
 
-            closeModalButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    modal.hide(); // Close the modal only when close button is clicked
-                });
-            });
         });
     </script>
 </body>

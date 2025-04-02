@@ -1,19 +1,4 @@
-<?php
-// Assuming you have a function to get the current user's role, like getUserRole()
-// Replace this with the actual method of fetching the user's role
-$user_role = $_SESSION['role']; // This should return the current user's role
-
-// Check if the role is not "ENGINEER"
-if ($user_role !== 'QA ENGINEER') {
-    echo '<style>
-            .locked {
-                pointer-events: none;
-                /* Prevent clicking */
-            }
-          </style>';
-}
-?>
-<form id="dispoForm" action="dispo_process.php" method="POST">
+<form id="editDispoForm" method="POST">
     <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
     <div class="form-floating mb-3">
         <textarea class="form-control lock" name="containment" id="containment" placeholder="Enter details here..." style="height: 100px;"></textarea>
@@ -306,44 +291,16 @@ if ($user_role !== 'QA ENGINEER') {
             <tr>
                 <td>
                     <strong>QA Engineer / NT Representative:</strong><br>
+                    <span id="engineer_name"></span>
                     (Signature & Date)
-                    <?php if ($user_role === 'QA ENGINEER'): ?>
-                        <button type="button" class="btn btn-success approval-action" data-action="approve" data-role="QA Engineer">
-                            Approve
-                        </button>
-
-                    <?php endif; ?>
                 </td>
                 <td>
                     <strong>QA Manager or his/her appointee:</strong><br>
                     (Signature & Date)
-                    <?php if ($user_role === 'MANAGER' || $user_role === 'SUPERVISOR'): ?>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Manager">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Manager">Cancel</a></li>
-                            </ul>
-                        </div>
-                    <?php endif; ?>
                 </td>
                 <td>
                     <strong>Sheildahl / NT Representative:</strong><br>
                     (Signature & Date)
-                    <?php if ($user_role === 'REPRESENTATIVE'): ?>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Action
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="NT Representative">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="reject" data-role="NT Representative">Reject</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="NT Representative">Cancel</a></li>
-                            </ul>
-                        </div>
-                    <?php endif; ?>
                 </td>
             </tr>
 
@@ -380,11 +337,11 @@ if ($user_role !== 'QA ENGINEER') {
                     <strong>Attach Supporting Documents:</strong><br>
                     <div id="fileUploadContainer">
                         <div class="file-input-group d-flex align-items-center">
-                            <input type="file" name="attachments[]" class="form-control mb-2" onchange="validateFile(this)">
+                            <input type="file" name="attachments[]" class="form-control mb-2">
                         </div>
                     </div>
                     <button type="button" class="btn btn-primary btn-sm mt-2" onclick="addFileInput()">Add More Files</button>
-                    <small class="text-muted d-block mt-1">You can upload multiple files (JPEG, PDF, Excel, Word, PowerPoint, etc.).</small>
+                    <small class="text-muted d-block mt-1">You can upload multiple files (Excel, PDF, Images, etc.).</small>
                 </td>
             </tr>
         </table>
@@ -400,7 +357,6 @@ if ($user_role !== 'QA ENGINEER') {
                 input.type = 'file';
                 input.name = 'attachments[]';
                 input.className = 'form-control mb-2';
-                input.setAttribute('onchange', 'validateFile(this)');
 
                 let removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
@@ -418,24 +374,5 @@ if ($user_role !== 'QA ENGINEER') {
             function removeFileInput(button) {
                 button.parentElement.remove();
             }
-
-            function validateFile(input) {
-                const allowedTypes = [
-                    'application/pdf', // PDF
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel (xlsx)
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word (docx)
-                    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint (pptx)
-                    'image/jpeg', // JPEG images (jpg, jpeg)
-                    'image/jpg' // JPG images
-                ];
-
-                const file = input.files[0];
-
-                if (file && !allowedTypes.includes(file.type)) {
-                    alert('Invalid file type! Please upload a JPEG image or a valid Office file (PDF, Word, Excel, PowerPoint).');
-                    input.value = ''; // Clear the selected file
-                }
-            }
         </script>
-
 </form>

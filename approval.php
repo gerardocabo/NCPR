@@ -83,8 +83,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Begin transaction
         $conn->begin_transaction();
 
+
         // Execute only if user role is ENGINEER
         if ($user_role === "QA ENGINEER" && $action !== "cancel") {
+
             $inputs_sakses = include 'insert_dispo_input.php';
             if (!$inputs_sakses) {
                 throw new Exception("Execute dispo-input failed: " . $stmt->error);
@@ -134,10 +136,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 executeQuery($conn, $query, [$status, $ncpr_num], "ss");
             }
         } else {
-            // Update status in ncpr_table
-            $status = "Close";
-            $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
-            executeQuery($conn, $query, [$status, $ncpr_num], "ss");
+            // Always set status to "Close" in ncpr_table
+            $query = "UPDATE ncpr_table SET status = 'Close' WHERE ncpr_num = ?";
+            executeQuery($conn, $query, [$ncpr_num], "s");
+
+            // Convert action to past tense for dispo_approval
+            $status = isset($action_map[$action]) ? ucfirst($action_map[$action]) : ucfirst($action);
+
+            // Insert into dispo_approval
+            $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+              VALUES (?, ?, ?, ?, NOW())";
+            executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
         }
 
         // Commit transaction

@@ -12,6 +12,7 @@ $current_page = basename(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_UNSAFE_RA
 // Define Role Constants
 define('ROLE_SUPERADMIN', 'SUPERADMIN');
 define('ROLE_ADMIN', 'ADMIN');
+define('ROLE_QEMS', 'QEMS OFFICER');
 define('ROLE_QA_STAFF', 'QA STAFF');
 define('ROLE_QA_ENGINEER', 'QA ENGINEER');
 define('ROLE_QA_SUPERVISOR', 'QA SUPERVISOR');
@@ -38,8 +39,8 @@ $role_dashboard = [
 // Define role-based access for each page
 $page_roles = [
     "SuperAdmin_dashboard.php"     => [ROLE_SUPERADMIN],
-    "admin_dashboard.php"          => [ROLE_ADMIN, ROLE_QA_STAFF, ROLE_SUPERADMIN],
-    "engineer_dashboard.php"       => [ROLE_QA_ENGINEER, ROLE_QA_SUPERVISOR, ROLE_SUPERADMIN],
+    "admin_dashboard.php"          => [ROLE_ADMIN, ROLE_QA_STAFF, ROLE_QEMS, "PCO", ROLE_SUPERADMIN],
+    "engineer_dashboard.php"       => [ROLE_QA_ENGINEER, /*ROLE_QA_SUPERVISOR,*/ ROLE_SUPERADMIN],
     "supv_mgr_dashboard.php"       => [ROLE_QA_SUPERVISOR, ROLE_QA_MANAGER, ROLE_SUPERADMIN],
     "representative_dashboard.php" => [ROLE_REPRESENTATIVE, ROLE_SUPERADMIN],
     "guest_ncprfiling.php"         => [ROLE_GUEST],

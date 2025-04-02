@@ -1,9 +1,12 @@
 <?php
 // Include your database connection file
-include 'conn.php'; // Make sure you have a proper database connection here
 require "config.php";
+include 'conn.php'; // Make sure you have a proper database connection here
+
 // Fetch data from ncpr_table
-$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table";
+$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id
+FROM ncpr_table
+ORDER BY dispo_id IS NULL DESC, id ASC";
 $result = $conn->query($query);
 $name = $_SESSION["user"];
 ?>
@@ -86,9 +89,11 @@ $name = $_SESSION["user"];
                                     <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
                                         <i class="fas fa-eye"></i> NCPR
                                     </button>
-                                    <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                        <i class="fas fa-eye"></i> EDIT
-                                    </button>
+                                    <?php if (is_null($row['dispo_id']) && ($row['status'] === "open")): ?>
+                                        <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
+                                            <i class="fas fa-eye"></i> EDIT
+                                        </button>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -1168,7 +1173,8 @@ $name = $_SESSION["user"];
                 "columnDefs": [{
                     "targets": [0],
                     "visible": false
-                }]
+                }],
+                "order": [] // Remove default ordering
             }); // Initialize DataTable for sorting, searching, and pagination
         });
     </script>

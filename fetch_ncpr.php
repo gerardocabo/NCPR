@@ -8,10 +8,28 @@ header('Content-Type: application/json');
 function getPendingApprovals($user_role)
 {
     // Default query: Fetch all NCPRs that haven't been disposed yet
-    $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at FROM ncpr_table WHERE dispo_id IS NULL";
+    $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at
+                FROM ncpr_table 
+                WHERE status = 'open' AND dispo_id IS NULL";
 
     // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
-    if ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
+    if ($user_role === 'QA ENGINEER') {
+        $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
+       dispo.status as statuses, dispo.approver_role
+FROM ncpr_table AS ncpr
+LEFT JOIN dispo_approval AS dispo 
+    ON ncpr.ncpr_num = dispo.ncpr_num 
+    AND dispo.approver_role = 'QA ENGINEER'
+WHERE ncpr.status = 'open' 
+    AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
+    AND (
+        dispo.status = 'Approved' 
+        OR ncpr.ncpr_num NOT IN (
+            SELECT ncpr_num FROM dispo_approval 
+            WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
+        )
+    )";
+    } elseif ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
                   FROM ncpr_table
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
@@ -20,7 +38,7 @@ function getPendingApprovals($user_role)
                   AND ncpr_table.dispo_id IS NOT NULL
                   AND ncpr_table.ncpr_num NOT IN (
                     SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))";
-    } 
+    }
     // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
     elseif ($user_role === 'SHELDAHL REPRESENTATIVE') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
@@ -29,7 +47,7 @@ function getPendingApprovals($user_role)
                   WHERE dispo_approval.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 
                   AND dispo_approval.status = 'Approved'
                   AND ncpr_table.status = 'open'";
-    } 
+    }
 
     return $query;
 }
@@ -40,9 +58,9 @@ try {
 
     // Define the valid roles that can access the system
     $valid_roles = ['QA STAFF', 'QA ENGINEER', 'QA SUPERVISOR', 'QA MANAGER', 'SHELDAHL REPRESENTATIVE'];
-    
+
     // Get the user role from session, default to 'QA ENGINEER' if not set
-    $user_role = $_SESSION['role'] ?? 'QA ENGINEER'; 
+    $user_role = $_SESSION['role'] ?? 'QA ENGINEER';
 
     // Validate the user role
     if (!in_array($user_role, $valid_roles)) {
@@ -71,5 +89,3 @@ try {
     // Handle other exceptions (invalid role, etc.)
     echo json_encode(["error" => $e->getMessage()]);
 }
-?>
-

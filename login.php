@@ -6,21 +6,24 @@ require "connection.php"; // Database connection
 header("Content-Type: application/json"); // Set response type to JSON
 
 // Guest Login Function
-function handleGuestLogin($guestRole) {
-    $allowedGuestRoles = ["guest1", "guest2", "guest3"];
-
-    if (!in_array($guestRole, $allowedGuestRoles)) {
+function handleGuestLogin($guestRole)
+{
+    // Allow only the "GUEST" role
+    if ($guestRole !== "GUEST") {
         return json_encode(["status" => "error", "message" => "Invalid Guest Role Selected."]);
     }
 
-    $_SESSION["user"] = ucfirst($guestRole);
-    $_SESSION["role"] = "GUEST";
+    // Set the session variables for the guest login
+    $_SESSION["user"] = "GUEST"; // Assuming you always set the user to GUEST
+    $_SESSION["role"] = "GUEST"; // Set role to GUEST
 
     return json_encode(["status" => "success", "message" => "Guest login successful.", "redirect" => "guest_dashboard.php"]);
 }
 
+
 // Admin Login Function
-function handleAdminLogin($username, $password, $pdo) {
+function handleAdminLogin($username, $password, $pdo)
+{
     if (empty($username) || empty($password)) {
         return json_encode(["status" => "error", "message" => "Username or Password cannot be Empty."]);
     }
@@ -30,7 +33,7 @@ function handleAdminLogin($username, $password, $pdo) {
         $stmt = $pdo->prepare("SELECT users.password, users_roles.role_name FROM users 
                                JOIN users_roles ON users.role_id = users_roles.id 
                                WHERE users.username = :username");
-        
+
         $stmt->execute(["username" => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -58,7 +61,6 @@ function handleAdminLogin($username, $password, $pdo) {
         ];
 
         return json_encode(["status" => "success", "message" => ucfirst(strtolower($user["role_name"])) . " Login Successful.", "redirect" => $redirectPages[$user["role_name"]] ?? "error.php"]);
-    
     } catch (PDOException $e) {
         error_log("Database Error: " . $e->getMessage());
         return json_encode(["status" => "error", "message" => "An error occurred while processing your request."]);
@@ -80,4 +82,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // Default Error Response
 echo json_encode(["status" => "error", "message" => "Invalid Request."]);
 ob_end_flush();
-?>
