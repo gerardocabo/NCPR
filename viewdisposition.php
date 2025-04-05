@@ -307,7 +307,8 @@
                                 Select Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager" title="approve the NCPR">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
                                 <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
                             </ul>
                         </div>

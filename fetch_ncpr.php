@@ -15,22 +15,22 @@ function getPendingApprovals($user_role)
     // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
     if ($user_role === 'QA ENGINEER') {
         $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
-       dispo.status as statuses, dispo.approver_role
-FROM ncpr_table AS ncpr
-LEFT JOIN dispo_approval AS dispo 
-    ON ncpr.ncpr_num = dispo.ncpr_num 
-    AND dispo.approver_role = 'QA ENGINEER'
-WHERE ncpr.status = 'open' 
-    AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
-    AND (
-        dispo.status = 'Approved' 
-        OR ncpr.ncpr_num NOT IN (
-            SELECT ncpr_num FROM dispo_approval 
-            WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
-        )
-    )";
+                    dispo.status as statuses, dispo.approver_role
+                    FROM ncpr_table AS ncpr
+                    LEFT JOIN dispo_approval AS dispo 
+                    ON ncpr.ncpr_num = dispo.ncpr_num 
+                    AND dispo.approver_role = 'QA ENGINEER'
+                    WHERE ncpr.status = 'open' 
+                    AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
+                    AND (
+                        dispo.status = 'Approved' 
+                        OR ncpr.ncpr_num NOT IN (
+                            SELECT ncpr_num FROM dispo_approval 
+                        WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
+                        )
+                )";
     } elseif ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
-        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
+        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
                   FROM ncpr_table
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
                   WHERE dispo_approval.approver_role = 'QA ENGINEER' 
@@ -41,7 +41,7 @@ WHERE ncpr.status = 'open'
     }
     // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
     elseif ($user_role === 'SHELDAHL REPRESENTATIVE') {
-        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`
+        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
                   FROM ncpr_table
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
                   WHERE dispo_approval.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 

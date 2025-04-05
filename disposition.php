@@ -16,8 +16,8 @@ if ($user_role !== 'QA ENGINEER') {
 <form id="dispoForm" action="dispo_process.php" method="POST">
     <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
     <div class="form-floating mb-3">
-        <textarea class="form-control lock" name="containment" id="containment" placeholder="Enter details here..." style="height: 100px;"></textarea>
-        <label for="containment">This space is intended for QA verification, containment and investigation activities</label>
+        <textarea class="form-control lock" name="containment" id="containment" placeholder="Enter details here..." style="height: 100px;" required></textarea>
+        <label for="containment">This space is intended for QA verification, containment and investigation activities <span style="color: red;">*</span></label>
     </div>
 
     <!-- Cause of Non-Conformance Table -->

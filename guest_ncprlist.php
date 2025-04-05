@@ -6,7 +6,15 @@ include 'conn.php'; // Make sure you have a proper database connection here
 // Fetch data from ncpr_table
 $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id
 FROM ncpr_table
-ORDER BY dispo_id IS NULL DESC, id ASC";
+ORDER BY 
+  dispo_id IS NOT NULL,             -- dispo_id IS NULL (false = 0) comes first
+  CASE 
+    WHEN status = 'open' THEN 0
+    WHEN status = 'close' THEN 1
+    ELSE 2
+  END,
+  id ASC;
+";
 $result = $conn->query($query);
 $name = $_SESSION["user"];
 ?>
@@ -22,6 +30,23 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
+
+    <style>
+        .signature-line {
+            display: flex;
+            justify-content: center;
+            /* Center the inner content */
+            margin-top: 5px;
+        }
+
+        .signature-line span {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            /* Underline just the name */
+            padding-bottom: 2px;
+            /* Space between text and line */
+        }
+    </style>
 </head>
 
 
@@ -93,41 +118,16 @@ $name = $_SESSION["user"];
                                         <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
                                             <i class="fas fa-eye"></i> EDIT
                                         </button>
+                                    <?php elseif (($row['dispo_id']) && ($row['status'] === "Close")): ?>
+                                        <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                            <i class="fas fa-eye"></i> DISPO
+                                        </button>
                                     <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Add Modal -->
-            <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addModalLabel">Add New Record</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="addForm" action="process_add.php" method="POST">
-                                <div class="mb-3">
-                                    <label for="ncpr_num" class="form-label">NCPR Number</label>
-                                    <input type="text" class="form-control" id="add_ncpr_num" name="ncpr_num" readonly required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="part_name" class="form-label">Part Name</label>
-                                    <input type="text" class="form-control" id="part_name" name="part_name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="part_number" class="form-label">Part Number</label>
-                                    <input type="text" class="form-control" id="part_number" name="part_number" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Save Record</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- View Modal -->
@@ -800,12 +800,30 @@ $name = $_SESSION["user"];
     </div>
     </div>
 
+    <!-- Dispo viewonly Modal -->
+    <div class="modal fade" id="dispoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Disposition Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be loaded here  -->
+                    <?php include "viewonlydisposition.php"; ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
+    <script src="assets/js/aViewOnlyDispo.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -970,12 +988,10 @@ $name = $_SESSION["user"];
                                 } else {
                                     // Download link
                                     fileLink = `<a href="${file.file_path}" download="${file.file_name}" class="btn btn-primary btn-sm" 
-                style="margin-bottom: 10px;">
-                    <i class="fa fa-download"></i> Download ${file.file_name}
-                </a>`;
+                                                style="margin-bottom: 10px;">
+                                                    <i class="fa fa-download"></i> Download ${file.file_name}
+                                                </a>`;
                                 }
-
-
                                 filesContainer.append(`<div>${fileLink}</div>`);
                             });
                         } else {
@@ -1045,8 +1061,6 @@ $name = $_SESSION["user"];
                     $("#edit-mcs").val(response.mcs);
                     $("#edit-mcs-details").val(response.mcs_details);
                     $("#edit-customer-notif").val(response.customer_notif);
-
-
 
                     // Load Material Details into Edit Modal Table
                     var materialTable = $('#edit-material-table tbody');

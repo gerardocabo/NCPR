@@ -1,12 +1,6 @@
 <?php
 require "config.php";
 $user_role = $_SESSION['role'];
-// Function to check if the role is allowed
-function isAuthorized($allowed_roles)
-{
-    global $user_role;
-    return in_array($user_role, $allowed_roles);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +9,6 @@ function isAuthorized($allowed_roles)
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
@@ -125,7 +118,9 @@ function isAuthorized($allowed_roles)
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/folder.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-folder fa-stack-1x"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -146,7 +141,10 @@ function isAuthorized($allowed_roles)
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/open.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-question fa-stack-2x" style="font-size: 1.5em; color: red; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +153,7 @@ function isAuthorized($allowed_roles)
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="productkey.php" class="text-decoration-none">
+                    <a href="ncprlist.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -167,7 +165,10 @@ function isAuthorized($allowed_roles)
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/close.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-flag-checkered fa-stack-2x" style="font-size: 1.1em; color: green; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -176,7 +177,7 @@ function isAuthorized($allowed_roles)
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="status.php" class="text-decoration-none">
+                    <a href="ncprlist.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -188,7 +189,10 @@ function isAuthorized($allowed_roles)
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/eng.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-exclamation fa-stack-2x" style="font-size: 1.5em; color: red; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -226,7 +230,7 @@ function isAuthorized($allowed_roles)
     </div>
 
     <!-- View Modal -->
-    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" >
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
@@ -323,8 +327,6 @@ function isAuthorized($allowed_roles)
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
     <script src="assets/js/approval.js"></script>
@@ -332,223 +334,243 @@ function isAuthorized($allowed_roles)
     <!-- DataTable Initialization -->
     <script>
         $(document).ready(function() {
-            var username = $("#username").data("user"); // Get logged-in username
-            var lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0; // Retrieve last seen ID
-            var notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]"); // Retrieve notified NCPRs
-            var firstLoad = true;
+            (function() {
+                var username = $("#username").data("user"); // Get logged-in username
+                var lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0; // Retrieve last seen ID
+                var notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]"); // Retrieve notified NCPRs
+                var firstLoad = true;
 
-            var table = $('#ncprTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'excelHtml5',
-                        text: 'Export Excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        extend: 'csvHtml5',
-                        text: 'Export CSV',
-                        className: 'btn btn-primary'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        text: 'Export PDF',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        className: 'btn btn-warning'
-                    }
-                ],
-                "ajax": {
-                    "url": "fetch_ncpr.php",
-                    "type": "GET",
-                    "dataSrc": function(json) {
-                        if (json.ncprs.length > 0) {
-                            let currentTime = new Date().getTime(); // Get current timestamp in milliseconds
-                            let overdueNCPRs = [];
-                            let unseenNCPRs = [];
-
-                            if (firstLoad) {
-                                // Set last seen ID from the server on first load
-                                lastSeenId = json.lastSeenId;
-                                sessionStorage.setItem("lastSeenId_" + username, lastSeenId);
-                            } else {
-                                // Retrieve lastSeenId from sessionStorage
-                                lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0;
-                            }
-
-                            // Retrieve previously notified NCPRs
-                            notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
-
-                            json.ncprs.forEach(record => {
-                                let createdAt = new Date(record.created_at).getTime(); // Convert `created_at` to timestamp
-                                let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
-                                let ncprNum = record.ncpr_num;
-
-                                // Identify overdue NCPRs
-                                if (diffHours > 24) {
-                                    overdueNCPRs.push(record.ncpr_num);
-                                    record.isOverdue = true; // ✅ Mark as overdue
-                                } else {
-                                    record.isOverdue = false; // ✅ Ensure non-overdue rows are marked correctly
-                                }
-
-                                // Identify unseen NCPRs
-                                if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(ncprNum)) {
-                                    unseenNCPRs.push(ncprNum);
-                                }
-                            });
-
-                            // Show warning if there are overdue NCPRs
-                            if (overdueNCPRs.length > 0) {
-                                showWarningNotification(overdueNCPRs);
-                            }
-
-                            // Show notification for unseen NCPRs
-                            if (unseenNCPRs.length > 0) {
-                                showNotification(unseenNCPRs, username);
-                                notifiedNCPRs.push(...unseenNCPRs); // Mark all as notified
-                                sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
-                            }
-
-                            // Update last seen ID in sessionStorage and database
-                            if (unseenNCPRs.length > 0) {
-                                let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
-                                sessionStorage.setItem("lastSeenId_" + username, latestId);
-                                updateLastSeenId(latestId);
-                            }
-
-                            firstLoad = false; // Ensure first load logic doesn't run again
+                var table = $('#ncprTable').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [{
+                            extend: 'excelHtml5',
+                            text: 'Export Excel',
+                            className: 'btn btn-success'
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            text: 'Export CSV',
+                            className: 'btn btn-primary'
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            className: 'btn btn-danger'
+                        },
+                        {
+                            extend: 'print',
+                            text: 'Print',
+                            className: 'btn btn-warning'
                         }
-                        return json.ncprs;
-                    },
+                    ],
+                    "ajax": {
+                        "url": "fetch_ncpr.php",
+                        "type": "GET",
+                        "dataSrc": function(json) {
+                            if (json.ncprs.length > 0) {
+                                let currentTime = new Date().getTime(); // Get current timestamp in milliseconds
+                                let overdueNCPRs = [];
+                                let urgentNCPRs = [];
+                                let unseenNCPRs = [];
 
-                    "cache": false
-                },
-                "columns": [{
-                        "data": "id",
-                        "visible": false
-                    }, // Hide ID column
-                    {
-                        "data": "ncpr_num"
+                                if (firstLoad) {
+                                    // Set last seen ID from the server on first load
+                                    lastSeenId = json.lastSeenId;
+                                    sessionStorage.setItem("lastSeenId_" + username, lastSeenId);
+                                } else {
+                                    // Retrieve lastSeenId from sessionStorage
+                                    lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0;
+                                }
+
+                                // Retrieve previously notified NCPRs
+                                notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
+
+                                json.ncprs.forEach(record => {
+                                    let createdAt = new Date(record.created_at).getTime(); // Convert `created_at` to timestamp
+                                    let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
+                                    let ncprNum = record.ncpr_num;
+
+                                    // Identify overdue NCPRs
+                                    if (diffHours > 24) {
+                                        overdueNCPRs.push(record.ncpr_num);
+                                        record.isOverdue = true; // ✅ Mark as overdue
+                                    } else {
+                                        record.isOverdue = false; // ✅ Ensure non-overdue rows are marked correctly
+                                    }
+
+                                    // ✅ Check if Urgent (record.urgent === "on")
+                                    if (record.urgent === "on") {
+                                        urgentNCPRs.push(record.ncpr_num);
+                                        record.isUrgent = true;
+                                    } else {
+                                        record.isUrgent = false;
+                                    }
+
+                                    // Identify unseen NCPRs
+                                    if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(ncprNum)) {
+                                        unseenNCPRs.push(ncprNum);
+                                    }
+                                });
+
+                                // Show warning if there are overdue NCPRs
+                                if (overdueNCPRs.length > 0) {
+                                    showWarningNotification(overdueNCPRs); // ✅ Show overdue notification
+                                }
+
+                                // Show warning if there are urgent NCPRs
+                                /*if (urgentNCPRs.length > 0) {
+                                    showUrgentNotification(urgentNCPRs); // ✅ New urgent notification for urgent cases
+                                }*/
+
+                                // Show notification for unseen NCPRs
+                                if (unseenNCPRs.length > 0) {
+                                    showNotification(unseenNCPRs, username);
+                                    notifiedNCPRs.push(...unseenNCPRs); // Mark all as notified
+                                    sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
+                                }
+
+                                // Update last seen ID in sessionStorage and database
+                                if (unseenNCPRs.length > 0) {
+                                    let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
+                                    sessionStorage.setItem("lastSeenId_" + username, latestId);
+                                    updateLastSeenId(latestId);
+                                }
+
+                                firstLoad = false; // Ensure first load logic doesn't run again
+                            }
+                            return json.ncprs;
+                        },
+
+                        "cache": false
                     },
-                    {
-                        "data": "initiator"
-                    },
-                    {
-                        "data": "status"
-                    },
-                    {
-                        "data": "statuses",
-                        "visible": false
-                    },
-                    {
-                        "data": "date"
-                    },
-                    {
-                        "data": "id",
-                        "render": function(data, type, row) {
-                            let urgentIndicator = row.isOverdue ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
-                            let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
-                            let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
+                    "columns": [{
+                            "data": "id",
+                            "visible": false
+                        }, // Hide ID column
+                        {
+                            "data": "ncpr_num"
+                        },
+                        {
+                            "data": "initiator"
+                        },
+                        {
+                            "data": "status"
+                        },
+                        {
+                            "data": "statuses",
+                            "visible": false
+                        },
+                        {
+                            "data": "date"
+                        },
+                        {
+                            "data": "id",
+                            "render": function(data, type, row) {
+                                let urgentIndicator = (row.isUrgent || row.isOverdue) ?
+                                    `<div class="urgent-indicator">URGENT</div>` :
+                                    ""; // ✅ Conditional indicator for either urgent or overdue
+                                let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
+                                let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
                             <i class="fas fa-eye"></i> View
                           </button>`;
 
-                            let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
+                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">
                                <i class="fas fa-add"></i> Dispo
                            </button>`;
 
-                            let editButton = `<button class="btn btn-warning btn-sm edit-btn" 
+                                let editButton = `<button class="btn btn-warning btn-sm edit-btn" 
                               data-id="${row.ncpr_num}">
                               <i class="fas fa-edit"></i> Edit
                           </button>`;
 
-                            // Only show edit button if the NCPR is approved
-                            let actionButtons = row.statuses === "Approved" ? editButton : dispoButton;
+                                // Only show edit button if the NCPR is approved
+                                let actionButtons = row.statuses === "Approved" ? editButton : dispoButton;
 
-                            return `
+                                return `
                                 <div class="action-container">
                                     ${urgentIndicator} <!-- Floating indicator -->
                                     ${exceedIndicator} <!-- Floating indicator -->
                                     ${viewButton}
                                     ${actionButtons}
                                 </div>`;
+                            }
                         }
+                    ],
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    "language": {
+                        "emptyTable": "No Available NCPR Filing"
                     }
-                ],
-                "order": [
-                    [0, "asc"]
-                ],
-                "language": {
-                    "emptyTable": "No Available NCPR Filing"
-                }
-            });
-
-            $('#dispoModal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var ncprNum = button.data('id'); // Extract data-id
-
-                // Set the extracted value inside the modal
-                $('#modal-id').text(ncprNum); // Display in modal
-            });
-
-            // Function to update the last seen NCPR ID in the database
-            function updateLastSeenId(newLastSeenId) {
-                $.post("update_last_seen.php", {
-                    lastSeenId: newLastSeenId
-                }, function(response) {
-                    console.log("Last Seen ID Updated: ", response);
                 });
-            }
+                // 🔒 Expose only this secure refresh function
+                window.refreshNcprTable = function() {
+                    table.ajax.reload(null, false);
+                };
 
-            function showNotification(ncprNums, user) {
-                let notificationBox = $("#notification-box");
+                // Auto-refresh table every 5 seconds without resetting the table state
+                setInterval(function() {
+                    table.ajax.reload(null, false);
+                }, 5000);
 
-                let message;
-                if (ncprNums.length <= 5) {
-                    // Show all NCPRs if the number is small
-                    message = `Hello ${user}, new NCPR Numbers: ${ncprNums.join(", ")} have been added.`;
-                } else {
-                    // Show a summary with the first few NCPRs
-                    let previewNCPRs = ncprNums.slice(0, 3).join(", "); // Get the first 3 NCPRs
-                    message = `Hello ${user}, ${ncprNums.length} new NCPRs have been added. (e.g., ${previewNCPRs}, ...)`;
+                $('#dispoModal').on('show.bs.modal', function(event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var ncprNum = button.data('id'); // Extract data-id
+
+                    // Set the extracted value inside the modal
+                    $('#modal-id').text(ncprNum); // Display in modal
+                });
+
+                // Function to update the last seen NCPR ID in the database
+                function updateLastSeenId(newLastSeenId) {
+                    $.post("update_last_seen.php", {
+                        lastSeenId: newLastSeenId
+                    }, function(response) {
+                        console.log("Last Seen ID Updated: ", response);
+                    });
                 }
 
-                // Display the notification
-                notificationBox.html(message).fadeIn().delay(5000).fadeOut();
-            }
+                function showNotification(ncprNums, user) {
+                    let notificationBox = $("#notification-box");
 
-            function showWarningNotification(overdueNCPRs) {
-                let notificationBox = $("#warning-box"); // Assuming you have a separate warning box
+                    let message;
+                    if (ncprNums.length <= 5) {
+                        // Show all NCPRs if the number is small
+                        message = `Hello ${user}, new NCPR Numbers: ${ncprNums.join(", ")} have been added.`;
+                    } else {
+                        // Show a summary with the first few NCPRs
+                        let previewNCPRs = ncprNums.slice(0, 3).join(", "); // Get the first 3 NCPRs
+                        message = `Hello ${user}, ${ncprNums.length} new NCPRs have been added. (e.g., ${previewNCPRs}, ...)`;
+                    }
 
-                // Check if the notification was already shown in this session
-                if (sessionStorage.getItem("warningShown")) {
-                    return; // Exit function if already shown
+                    // Display the notification
+                    notificationBox.html(message).fadeIn().delay(5000).fadeOut();
                 }
 
-                let message = `⚠️ Warning: ${overdueNCPRs.length} NCPRs have exceeded 24 hours!`;
+                function showWarningNotification(overdueNCPRs) {
+                    let notificationBox = $("#warning-box"); // Assuming you have a separate warning box
 
-                // If <= 5, list them; otherwise, show a summary
-                if (overdueNCPRs.length <= 5) {
-                    message += ` Overdue NCPRs: ${overdueNCPRs.join(", ")}`;
+                    // Check if the notification was already shown in this session
+                    if (sessionStorage.getItem("warningShown")) {
+                        return; // Exit function if already shown
+                    }
+
+                    let message = `⚠️ Warning: ${overdueNCPRs.length} NCPRs have exceeded 24 hours!`;
+
+                    // If <= 5, list them; otherwise, show a summary
+                    if (overdueNCPRs.length <= 5) {
+                        message += ` Overdue NCPRs: ${overdueNCPRs.join(", ")}`;
+                    }
+
+                    notificationBox.html(message).fadeIn().delay(5000).fadeOut();
+
+                    // Mark as shown in sessionStorage
+                    sessionStorage.setItem("warningShown", "true");
                 }
-
-                notificationBox.html(message).fadeIn().delay(5000).fadeOut();
-
-                // Mark as shown in sessionStorage
-                sessionStorage.setItem("warningShown", "true");
-            }
-
-
-            // Auto-refresh table every 5 seconds without resetting the table state
-            /*setInterval(function() {
-                table.ajax.reload(null, false);
-            }, 5000);*/
-
+            })();
         });
 
         function fetchNcprDetails(ncprNum, viewOnly) {
@@ -607,8 +629,8 @@ function isAuthorized($allowed_roles)
                         targetForm.find('#name').val(response.name);
                         targetForm.find('input[name="car"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'CAR'));
                         targetForm.find('input[name="scar"]').prop('checked', response.checkboxes.some(cb => cb.checkbox_name === 'SCAR'));
-                        targetForm.find('#car_no').val(response.car_no);
-                        targetForm.find('#scar_no').val(response.scar_no);
+                        targetForm.find('input[name="car_no"]').val(response.car_no);
+                        targetForm.find('input[name="scar_no').val(response.scar_no);
 
                         // Populate dispo checkboxes
                         targetForm.find('input[name="dispo_from[]"]').each(function() {
@@ -637,13 +659,17 @@ function isAuthorized($allowed_roles)
                         });
 
                         // Populate text fields
-                        targetForm.find('#yield_off').val(response.yield_off || "");
-                        targetForm.find('#da_no').val(response.da_no || "");
-                        targetForm.find('#rework_da_no').val(response.rework_da_no || "");
-                        targetForm.find('#wis_no').val(response.wis_no || "");
-                        targetForm.find('#scrap_amount').val(response.scrap_amount || "");
-                        targetForm.find('#shipment_date').val(response.shipment_date || "");
-                        targetForm.find('#document_alert').val(response.document_alert || "");
+                        targetForm.find('#impact_analysis').val(response.notes || "");
+                        targetForm.find('input[name="contact_person"').val(response.contact_person || "");
+                        targetForm.find('input[name="other_specify"').val(response.other_specify || "");
+                        targetForm.find('input[name="yield_off"').val(response.yield_off || "");
+                        targetForm.find('input[name="da_no"').val(response.da_no || "");
+                        targetForm.find('input[name="rework_da_no"').val(response.rework_da_no || "");
+                        targetForm.find('input[name="repair_DA"').val(response.repair_DA || "");
+                        targetForm.find('input[name="wis_no"').val(response.wis_no || "");
+                        targetForm.find('input[name="scrap_amount"').val(response.scrap_amount || "");
+                        targetForm.find('input[name="shipment_date"').val(response.shipment_date || "");
+                        targetForm.find('input[name="document_alert"').val(response.document_alert || "");
 
                         $('#editDispoModal').modal('show');
                     },

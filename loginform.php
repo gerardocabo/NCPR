@@ -38,12 +38,12 @@ require "config.php";
                 <input type="hidden" name="login" value="1">
                 <div class="mb-3">
                     <label class="form-label">EMAIL</label>
-                    <input type="text" class="form-control p-2 fs-6" name="username" placeholder="Enter email">
+                    <input type="text" class="form-control p-2 fs-6" name="username" placeholder="Enter Email or ID number">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">PASSWORD</label>
                     <div class="position-relative">
-                        <input type="password" class="form-control p-2 fs-6 pe-5" id="password" name="password" placeholder="Enter password">
+                        <input type="password" class="form-control p-2 fs-6 pe-5" id="password" name="password" placeholder="Enter Password">
                         <button class="btn position-absolute end-0 top-50 translate-middle-y p-0 border-0 bg-transparent shadow-none me-2" type="button" id="togglePassword">
                             <i class="fas fa-eye" style="font-size: 1rem;"></i>
                         </button>
@@ -203,7 +203,7 @@ require "config.php";
                         if (response.status === "success") {
                             Swal.fire({
                                 icon: "success",
-                                title: "Login Successful",
+                                title: "WELCOME!",
                                 text: response.message,
                                 showConfirmButton: true,
                                 confirmButtonColor: "#577BC1"

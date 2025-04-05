@@ -17,7 +17,7 @@ function handleGuestLogin($guestRole)
     $_SESSION["user"] = "GUEST"; // Assuming you always set the user to GUEST
     $_SESSION["role"] = "GUEST"; // Set role to GUEST
 
-    return json_encode(["status" => "success", "message" => "Guest login successful.", "redirect" => "guest_dashboard.php"]);
+    return json_encode(["status" => "success", "message" => "Guest", "redirect" => "guest_dashboard.php"]);
 }
 
 
@@ -25,14 +25,14 @@ function handleGuestLogin($guestRole)
 function handleAdminLogin($username, $password, $pdo)
 {
     if (empty($username) || empty($password)) {
-        return json_encode(["status" => "error", "message" => "Username or Password cannot be Empty."]);
+        return json_encode(["status" => "error", "message" => "Username or Password cannot be empty."]);
     }
 
     try {
         // Prepare the SQL statement using PDO
-        $stmt = $pdo->prepare("SELECT users.password, users_roles.role_name FROM users 
+        $stmt = $pdo->prepare("SELECT users.password, users.username, users.email, users_roles.role_name FROM users 
                                JOIN users_roles ON users.role_id = users_roles.id 
-                               WHERE users.username = :username");
+                               WHERE users.username = :username OR users.email = :username");
 
         $stmt->execute(["username" => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -46,7 +46,7 @@ function handleAdminLogin($username, $password, $pdo)
             return json_encode(["status" => "error", "message" => "Incorrect Password."]);
         }
 
-        $_SESSION["user"] = $username;
+        $_SESSION["user"] = $user["username"]; // Ensure the session stores the actual username
         $_SESSION["role"] = $user["role_name"];
 
         $redirectPages = [
@@ -60,12 +60,13 @@ function handleAdminLogin($username, $password, $pdo)
             "GUEST"                     => "guest_ncprfiling.php",
         ];
 
-        return json_encode(["status" => "success", "message" => ucfirst(strtolower($user["role_name"])) . " Login Successful.", "redirect" => $redirectPages[$user["role_name"]] ?? "error.php"]);
+        return json_encode(["status" => "success", "message" => ucfirst(strtolower($_SESSION["user"])), "redirect" => $redirectPages[$user["role_name"]] ?? "error.php"]);
     } catch (PDOException $e) {
         error_log("Database Error: " . $e->getMessage());
         return json_encode(["status" => "error", "message" => "An error occurred while processing your request."]);
     }
 }
+
 
 // Handle Requests
 if ($_SERVER["REQUEST_METHOD"] === "POST") {

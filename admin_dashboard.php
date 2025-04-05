@@ -9,7 +9,6 @@ $name = $_SESSION["user"];
     <title>admin Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
@@ -45,7 +44,44 @@ $name = $_SESSION["user"];
         }
     }
 </style>
+<style>
+    .action-container {
+        position: relative;
+        /* Ensure floating indicator stays positioned correctly */
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        /* Adjust spacing */
+    }
 
+    .urgent-indicator {
+        position: absolute;
+        top: -5px;
+        right: 0;
+        /* Move above the buttons */
+        background: red;
+        color: white;
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        text-transform: uppercase;
+        animation: blink 1s infinite alternate;
+        /* Optional blinking effect */
+    }
+
+    /* Optional Blinking Effect */
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0.5;
+        }
+    }
+</style>
 
 <body class="bg-white">
     <div id="loader"></div>
@@ -91,7 +127,7 @@ $name = $_SESSION["user"];
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="setting.php" class="sidebar-link">
+                    <a href="" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>
@@ -119,7 +155,9 @@ $name = $_SESSION["user"];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/folder.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-folder fa-stack-1x"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -140,7 +178,10 @@ $name = $_SESSION["user"];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/open.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-question fa-stack-2x" style="font-size: 1.5em; color: red; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -161,7 +202,10 @@ $name = $_SESSION["user"];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/close.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-flag-checkered fa-stack-2x" style="font-size: 1.1em; color: green; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -182,7 +226,10 @@ $name = $_SESSION["user"];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/eng.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-exclamation fa-stack-2x" style="font-size: 1.5em; color: red; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -278,8 +325,6 @@ $name = $_SESSION["user"];
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
 
@@ -316,59 +361,93 @@ $name = $_SESSION["user"];
                         className: 'btn btn-warning'
                     }
                 ],
+                "processing": false, // Show loading message while processing
                 "ajax": {
                     "url": "fetch_ncpr.php",
                     "type": "GET",
                     "dataSrc": function(json) {
+                        if (firstLoad) {
+                            $('#ncprTable').DataTable().processing(true); // show "Processing..."
+                        }
+
                         if (json.ncprs.length > 0) {
+                            let currentTime = new Date().getTime(); // Get current timestamp in milliseconds
+                            let overdueNCPRs = [];
+                            let urgentNCPRs = [];
+                            let unseenNCPRs = [];
+
                             if (firstLoad) {
-                                // Set last seen ID from the server on first load
                                 lastSeenId = json.lastSeenId;
                                 sessionStorage.setItem("lastSeenId_" + username, lastSeenId);
                             } else {
-                                // Retrieve lastSeenId from sessionStorage
-                                lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0;
+                                let storedLastSeen = sessionStorage.getItem("lastSeenId_" + username);
+                                lastSeenId = storedLastSeen ? parseInt(storedLastSeen) : 0;
                             }
 
-                            // Filter new records based on last seen ID
-                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
-
-                            // Retrieve previously notified NCPRs
                             notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
 
-                            // Collect unseen, unique NCPRs
-                            let unseenNCPRs = [];
+                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
 
-                            newRecords.forEach(ncprNum => {
-                                if (!notifiedNCPRs.includes(ncprNum)) {
-                                    unseenNCPRs.push(ncprNum); // Add to unseen list
+                            newRecords.forEach(record => {
+                                let createdAt = new Date(record.created_at).getTime();
+                                let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
+
+                                // ✅ Check if Overdue (Older than 24 hours)
+                                if (diffHours > 24) {
+                                    overdueNCPRs.push(record.ncpr_num);
+                                    record.isOverdue = true;
+                                } else {
+                                    record.isOverdue = false;
+                                }
+
+                                // ✅ Check if Urgent (record.urgent === "on")
+                                if (record.urgent === "on") {
+                                    urgentNCPRs.push(record.ncpr_num);
+                                    record.isUrgent = true;
+                                } else {
+                                    record.isUrgent = false;
+                                }
+
+                                if (!notifiedNCPRs.includes(record.ncpr_num)) {
+                                    unseenNCPRs.push(record.ncpr_num);
+                                    notifiedNCPRs.push(record.ncpr_num);
                                 }
                             });
 
-                            // If there are unseen NCPRs, notify user
-                            if (unseenNCPRs.length > 0) {
-                                showNotification(unseenNCPRs, username); // ✅ Updated function
-                                notifiedNCPRs.push(...unseenNCPRs); // ✅ Mark all as notified
+                            // ✅ Show overdue warning if there are overdue NCPRs
+                            if (overdueNCPRs.length > 0) {
+                                showWarningNotification(overdueNCPRs, "Overdue");
                             }
 
-                            // Persist updated notifiedNCPRs list
+                            // ✅ Show urgent warning if there are urgent NCPRs
+                            if (urgentNCPRs.length > 0) {
+                                showWarningNotification(urgentNCPRs, "Urgent");
+                            }
+
+                            // ✅ Show notification for new unseen NCPRs
+                            if (unseenNCPRs.length > 0) {
+                                showNotification(unseenNCPRs, username);
+                            }
+
                             sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
 
-                            // ✅ Now update last seen ID ONLY IF new unseen records exist
                             if (newRecords.length > 0) {
                                 let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
                                 sessionStorage.setItem("lastSeenId_" + username, latestId);
-                                updateLastSeenId(latestId); // Update in the database
+                                updateLastSeenId(latestId);
                             }
 
-                            // ✅ Debugging logs (remove after testing)
                             console.log("Last Seen ID:", lastSeenId);
                             console.log("New Records:", newRecords.map(r => r.id));
                             console.log("Unseen NCPRs Notified:", unseenNCPRs);
+                            console.log("Overdue NCPRs:", overdueNCPRs);
+                            console.log("Urgent NCPRs:", urgentNCPRs);
                         }
 
-                        firstLoad = false; // Ensure first load logic doesn't run again
+                        firstLoad = false;
+                        $('#ncprTable').DataTable().processing(false); // hide "Processing..."
                         return json.ncprs;
+
                     },
 
                     "cache": false
@@ -392,16 +471,25 @@ $name = $_SESSION["user"];
                     {
                         "data": "id",
                         "render": function(data, type, row) {
+                            // Show "URGENT" indicator if row.urgent is true
+                            let urgentIndicator = (row.isUrgent|| row.isOverdue) ?
+                                `<div class="urgent-indicator">URGENT</div>` :
+                                ""; // ✅ Conditional indicator for either urgent or overdue
+
+                            // Show "Overdue/24hrs" indicator if row.isOverdue is true
+                            let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : "";
+
+                            // View button for the NCPR
+                            let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
+        <i class="fas fa-eye"></i> View
+    </button>`;
+
                             return `
-                        <button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <!-- <button class="btn btn-success btn-sm dispo-btn" 
-                                data-id="${row.ncpr_num}" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#dispoModal"><i class="fas fa-eye"></i>
-                            Dispo
-                        </button> -->`;
+        <div class="action-container">
+            ${urgentIndicator} <!-- Show if urgent -->
+            ${exceedIndicator} <!-- Show if overdue -->
+            ${viewButton}
+        </div>`;
                         }
                     }
                 ],
@@ -439,10 +527,31 @@ $name = $_SESSION["user"];
                 notificationBox.html(message).fadeIn().delay(5000).fadeOut();
             }
 
+            function showWarningNotification(overdueNCPRs) {
+                let notificationBox = $("#warning-box"); // Assuming you have a separate warning box
+
+                // Check if the notification was already shown in this session
+                if (sessionStorage.getItem("warningShown")) {
+                    return; // Exit function if already shown
+                }
+
+                let message = `⚠️ Warning: ${overdueNCPRs.length} NCPRs have exceeded 24 hours!`;
+
+                // If <= 5, list them; otherwise, show a summary
+                if (overdueNCPRs.length <= 5) {
+                    message += ` Overdue NCPRs: ${overdueNCPRs.join(", ")}`;
+                }
+
+                notificationBox.html(message).fadeIn().delay(5000).fadeOut();
+
+                // Mark as shown in sessionStorage
+                sessionStorage.setItem("warningShown", "true");
+            }
+
             // Auto-refresh table every 5 seconds without resetting the table state
-            /*setInterval(function() {
+            setInterval(function() {
                 table.ajax.reload(null, false);
-            }, 5000);*/
+            }, 5000);
 
             function fetchNcprDetails(ncprNum, viewOnly) {
                 $.ajax({

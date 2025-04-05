@@ -2,6 +2,56 @@ $(document).ready(function () {
   $(".approval-action").click(function (e) {
     e.preventDefault();
 
+    // Check if all required inputs (including textareas) are filled before continuing
+    var isValid = true;
+    var firstInvalidElement = null; // To store the first invalid field
+
+    // Check required inputs
+    $("input[required]").each(function () {
+      if ($(this).val() === "") {
+        isValid = false;
+        $(this).addClass("is-invalid"); // Optionally, add a class for styling
+        if (!firstInvalidElement) {
+          firstInvalidElement = $(this); // Set first invalid element
+        }
+      } else {
+        $(this).removeClass("is-invalid");
+      }
+    });
+
+    // Check required textareas
+    $("textarea[required]").each(function () {
+      if ($(this).val().trim() === "") {
+        isValid = false;
+        $(this).addClass("is-invalid"); // Optionally, add a class for styling
+        if (!firstInvalidElement) {
+          firstInvalidElement = $(this); // Set first invalid element
+        }
+      } else {
+        $(this).removeClass("is-invalid");
+      }
+    });
+
+    if (!isValid) {
+      // Scroll to the first invalid field and focus on it
+      $("html, body").animate(
+        {
+          scrollTop: firstInvalidElement.offset().top - 20, // Adjust for better visibility
+        },
+        500
+      );
+
+      firstInvalidElement.focus(); // Focus the first invalid field
+      // Show a message if any required field is empty
+      /*Swal.fire({
+        title: "Validation Error",
+        text: "Please fill all the required fields before proceeding.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });*/
+      return; // Stop the rest of the code from executing
+    }
+
     var action = $(this).data("action");
     var role = $(this).data("role");
     var selectedId; // Declare variable before the condition
@@ -44,11 +94,16 @@ $(document).ready(function () {
   });
 
   function uploadFileAttachments(ncpr_num) {
-    // Create a new FormData object for file attachments
-    var fileFormData = new FormData();
-
     // Collect all file attachments and append them to FormData
     var files = $("input[name='attachments[]']")[0].files;
+
+    // If no files selected, simply exit the function
+    if (files.length === 0) {
+      return; // Exit if no files
+    }
+
+    // Create a new FormData object for file attachments
+    var fileFormData = new FormData();
 
     for (var i = 0; i < files.length; i++) {
       fileFormData.append("attachments[]", files[i]);
@@ -67,21 +122,11 @@ $(document).ready(function () {
       success: function (response) {
         try {
           var parsedResponse = JSON.parse(response);
-          if (parsedResponse.status === "success") {
-            Swal.fire("Success", "Files uploaded successfully.", "success");
-          } else {
-            Swal.fire(
-              "Error",
-              "File upload failed. Please try again.",
-              "error"
-            );
+          if (parsedResponse.status !== "success") {
+            alert("File upload failed. Please try again.");
           }
         } catch (e) {
-          Swal.fire(
-            "Error",
-            "File upload failed. Invalid server response.",
-            "error"
-          );
+          alert("File upload failed. Invalid server response.");
         }
       },
       error: function (xhr, status, error) {
@@ -102,9 +147,10 @@ $(document).ready(function () {
     //inputs
     var idNo = $("input[name='id_no']").val().trim();
     var name = $("input[name='name']").val().trim();
-    var carNo = $("input[name='car_no']").val().trim(); // Get value of car_no input
+    var carNo = $("input[name='car_no']").val(); // Get value of car_no input
     var scarNo = $("input[name='scar_no']").val().trim(); // Get value of car_no input
     var DA = $("input[name='document_alert']").val().trim(); // Get value of car_no input
+    var notes = $("input[name='impact_analysis']").val(); // Get value of car_no input
     var contactperson = $("input[name='contact_person']").val().trim(); // Get value of car_no input
     var otherSpecify = $("input[name='other_specify']").val().trim(); // Get value of car_no input
     var yieldOff = $("input[name='yield_off']").val().trim(); // Get value of car_no input
@@ -163,13 +209,13 @@ $(document).ready(function () {
 
         //inputs
         containment: Containment,
-
         cause: causes,
         id_no: idNo,
         name: name,
         car_no: carNo,
         scar_no: scarNo,
         document_alert: DA,
+        notes: notes,
         contact_person: contactperson,
         other_specify: otherSpecify,
         yield_off: yieldOff,
@@ -217,6 +263,10 @@ $(document).ready(function () {
             $("#dispoForm")[0].reset();
             // Hide the Bootstrap modal
             $("#dispoModal").modal("hide"); // Ensure you replace #viewModal with your actual modal ID
+            // ✅ Refresh the DataTable securely
+            if (typeof refreshNcprTable === "function") {
+              refreshNcprTable();
+            }
           });
         } else {
           console.error("Error from server:", response.message);
@@ -235,7 +285,7 @@ $(document).ready(function () {
     console.log("Sending AJAX request for MANAGER/SUPERVISOR...");
 
     let viewmodalID = $("#view-ncpr-num").text(); // Ensure selected ID is correctly retrieved
-    console.log("Sending AJAX request for cancel...");
+    if(viewmodalID){console.log("Sending AJAX request for cancel...");}
 
     if (role === "QA Engineer") {
       selectedId = viewmodalID;
@@ -267,10 +317,19 @@ $(document).ready(function () {
             });
 
             // Hide the Bootstrap modal
-            $("#viewModal").modal("hide"); // Ensure you replace #viewModal with your actual modal ID
+            $("#dispoModal").modal("hide"); // Ensure you replace #viewModal with your actual modal ID
+            // ✅ Refresh the DataTable securely
+            if (typeof refreshNcprTable === "function") {
+              refreshNcprTable();
+            }
           });
         } else {
-          console.error("Error from server:", response.message);
+          console.error(
+            "Error from server:",
+            response.status,
+            response.message,
+            response.stack || "No stack trace available"
+          );
           Swal.fire("Error", response.message, "error");
         }
       },

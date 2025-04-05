@@ -21,155 +21,11 @@ $conn->close();
     <title>admin Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
-<style>
-    ::after,
-    ::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
 
-    a {
-        text-decoration: none;
-    }
-
-    li {
-        list-style: none;
-    }
-
-    h1 {
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .wrapper {
-        display: flex;
-    }
-
-    .main {
-        min-height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        transition: all 0.35s ease-in-out;
-        background-color: #fafbfe;
-    }
-
-    #sidebar {
-        width: 70px;
-        min-width: 70px;
-        z-index: 1000;
-        transition: all .25s ease-in-out;
-        background-color: #0e2238;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        /* Full viewport height */
-        position: sticky;
-        /* ✅ Keeps sidebar sticky */
-        top: 0;
-        /* ✅ Ensures it stays at the top when scrolling */
-    }
-
-    #sidebar.expand {
-        width: 260px;
-        min-width: 260px;
-    }
-
-    .toggle-btn {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 1rem 1.5rem;
-    }
-
-    .toggle-btn i {
-        font-size: 1.5rem;
-        color: #FFF;
-    }
-
-    .sidebar-logo {
-        margin: auto 0;
-    }
-
-    .sidebar-logo a {
-        color: #FFF;
-        font-size: 1.15rem;
-        font-weight: 600;
-    }
-
-    #sidebar:not(.expand) .sidebar-logo,
-    #sidebar:not(.expand) a.sidebar-link span {
-        display: none;
-    }
-
-    .sidebar-nav {
-        padding: 2rem 0;
-        flex-grow: 1;
-        /* ✅ Allows it to take available space and push footer down */
-    }
-
-    a.sidebar-link {
-        padding: .625rem 1.5rem;
-        color: #FFF;
-        display: block;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        border-left: 3px solid transparent;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-link i {
-        font-size: 1.2rem;
-        color: white;
-        margin-right: 10px;
-    }
-
-    a.sidebar-link:hover {
-        background-color: rgba(255, 255, 255, .075);
-        border-left: 3px solid #3b7ddd;
-    }
-
-    .sidebar-item {
-        position: relative;
-    }
-
-    #sidebar:not(.expand) .sidebar-link span {
-        display: none;
-        position: absolute;
-        left: 80px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #0e2238;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar:not(.expand) .sidebar-item:hover .sidebar-link span,
-    #sidebar:not(.expand) .sidebar-footer:hover .sidebar-link span {
-        display: block;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-</style>
 
 <body>
     <div class="wrapper">
@@ -232,7 +88,7 @@ $conn->close();
                 <h2>Product Key Table</h2>
                 <!-- Button to Open Modal -->
                 <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
-                <table class="table table-bordered table-striped">
+                <table id="productKey" class="table table-bordered table-striped">
                     <thead class="table-dark">
                         <tr>
                             <th>Part Number</th>
@@ -241,27 +97,7 @@ $conn->close();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($products as $product): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($product['part_number']); ?></td>
-                                <td><?= htmlspecialchars($product['part_name']); ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm edit-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editProductModal"
-                                        data-id="<?= htmlspecialchars($product['part_number']); ?>"
-                                        data-name="<?= htmlspecialchars($product['part_name']); ?>">
-                                        Edit
-                                    </button>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
 
-                        <?php if (empty($products)): ?>
-                            <tr>
-                                <td colspan="3" class="text-center">No products found</td>
-                            </tr>
-                        <?php endif; ?>
                     </tbody>
                 </table>
 
@@ -323,8 +159,6 @@ $conn->close();
     </div>
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
     <script>
@@ -337,6 +171,44 @@ $conn->close();
                     // Populate modal fields
                     document.getElementById("edit_part_number").value = partNumber;
                     document.getElementById("edit_part_name").value = partName;
+                });
+            });
+
+            $(document).ready(function() {
+                var table = $('#productKey').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "productKey_fetch.php",
+                        type: "GET",
+                        dataSrc: function(json) {
+                            return json.data;
+                        }
+                    },
+                    columns: [{
+                            data: "part_number"
+                        },
+                        {
+                            data: "part_name"
+                        },
+                        {
+                            data: null,
+                            orderable: false,
+                            render: function(data, type, row) {
+                                return `
+                        <button class="btn btn-warning btn-sm edit-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editProductModal"
+                            data-id="${row.part_number}"
+                            data-name="${row.part_name}">
+                            Edit
+                        </button>
+                    `;
+                            }
+                        }
+                    ],
+                    order: [], // ✅ This line disables default ordering
+                    pagingType: "full_numbers" // Optional: shows First/Prev/Next/Last buttons
                 });
             });
         });

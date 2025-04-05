@@ -18,6 +18,43 @@ $user_role = $_SESSION['role'];
             pointer-events: none;
             /* Prevent clicking */
         }
+
+        .action-container {
+            position: relative;
+            /* Ensure floating indicator stays positioned correctly */
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+            /* Adjust spacing */
+        }
+
+        .urgent-indicator {
+            position: absolute;
+            top: -5px;
+            right: 0;
+            /* Move above the buttons */
+            background: red;
+            color: white;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            animation: blink 1s infinite alternate;
+            /* Optional blinking effect */
+        }
+
+        /* Optional Blinking Effect */
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
     </style>
 </head>
 
@@ -34,7 +71,7 @@ $user_role = $_SESSION['role'];
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active">
-                    <a href="engineer_dashboard.php" class="sidebar-link">
+                    <a href="supv_mgr_dashboard.php" class="sidebar-link">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
@@ -86,7 +123,9 @@ $user_role = $_SESSION['role'];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/folder.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-folder fa-stack-1x"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -107,7 +146,10 @@ $user_role = $_SESSION['role'];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/open.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-question fa-stack-2x" style="font-size: 1.5em; color: red; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +170,10 @@ $user_role = $_SESSION['role'];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/close.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-flag-checkered fa-stack-2x" style="font-size: 1.1em; color: green; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +194,10 @@ $user_role = $_SESSION['role'];
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/eng.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
+                                            <span class="fa-stack fa-2x">
+                                                <i class="fa-solid fa-file fa-stack-1x"></i>
+                                                <i class="fa-solid fa-exclamation fa-stack-2x" style="font-size: 1.5em; color: red; position: relative; top: -10px; left: 10px; z-index: 2;"></i>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -239,11 +287,22 @@ $user_role = $_SESSION['role'];
     border-radius: 5px;
     font-weight: bold;">
     </div>
+    <div id="warning-box" style="
+        position: fixed;
+        top: 60px; /* Positioned below the notification box */
+        right: 10px;
+        background: orange;
+        color: white;
+        padding: 15px;
+        display: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+    </div>
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
     <script src="assets/js/approval.js"></script>
@@ -251,170 +310,203 @@ $user_role = $_SESSION['role'];
     <!-- DataTable Initialization -->
     <script>
         $(document).ready(function() {
-            var username = $("#username").data("user"); // Get logged-in username
-            var lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0; // Retrieve last seen ID
-            var notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]"); // Retrieve notified NCPRs
-            var firstLoad = true;
+            (function() {
+                var username = $("#username").data("user"); // Get logged-in username
+                var lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0; // Retrieve last seen ID
+                var notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]"); // Retrieve notified NCPRs
+                var firstLoad = true;
 
-            var table = $('#ncprTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'excelHtml5',
-                        text: 'Export Excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        extend: 'csvHtml5',
-                        text: 'Export CSV',
-                        className: 'btn btn-primary'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        text: 'Export PDF',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        className: 'btn btn-warning'
-                    }
-                ],
-                "ajax": {
-                    "url": "fetch_ncpr.php",
-                    "type": "GET",
-                    "dataSrc": function(json) {
-                        if (json.ncprs.length > 0) {
-                            if (firstLoad) {
-                                // Set last seen ID from the server on first load
-                                lastSeenId = json.lastSeenId;
-                                sessionStorage.setItem("lastSeenId_" + username, lastSeenId);
-                            } else {
-                                // Retrieve lastSeenId from sessionStorage
-                                lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0;
-                            }
+                var table = $('#ncprTable').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [{
+                            extend: 'excelHtml5',
+                            text: 'Export Excel',
+                            className: 'btn btn-success'
+                        },
+                        {
+                            extend: 'csvHtml5',
+                            text: 'Export CSV',
+                            className: 'btn btn-primary'
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            className: 'btn btn-danger'
+                        },
+                        {
+                            extend: 'print',
+                            text: 'Print',
+                            className: 'btn btn-warning'
+                        }
+                    ],
+                    "ajax": {
+                        "url": "fetch_ncpr.php",
+                        "type": "GET",
+                        "dataSrc": function(json) {
+                            if (json.ncprs.length > 0) {
+                                let currentTime = new Date().getTime(); // Get current timestamp in milliseconds
+                                let overdueNCPRs = [];
+                                let urgentNCPRs = [];
+                                let unseenNCPRs = [];
 
-                            // Filter new records based on last seen ID
-                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
-
-                            // Retrieve previously notified NCPRs
-                            notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
-
-                            // Collect unseen, unique NCPRs
-                            let unseenNCPRs = [];
-
-                            newRecords.forEach(ncprNum => {
-                                if (!notifiedNCPRs.includes(ncprNum)) {
-                                    unseenNCPRs.push(ncprNum); // Add to unseen list
+                                if (firstLoad) {
+                                    lastSeenId = json.lastSeenId;
+                                    sessionStorage.setItem("lastSeenId_" + username, lastSeenId);
+                                } else {
+                                    let storedLastSeen = sessionStorage.getItem("lastSeenId_" + username);
+                                    lastSeenId = storedLastSeen ? parseInt(storedLastSeen) : 0;
                                 }
-                            });
 
-                            // If there are unseen NCPRs, notify user
-                            if (unseenNCPRs.length > 0) {
-                                showNotification(unseenNCPRs, username); // ✅ Updated function
-                                notifiedNCPRs.push(...unseenNCPRs); // ✅ Mark all as notified
+                                notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
+
+                                let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
+
+                                newRecords.forEach(record => {
+                                    let createdAt = new Date(record.created_at).getTime();
+                                    let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
+
+                                    // ✅ Check if Overdue (Older than 24 hours)
+                                    if (diffHours > 24) {
+                                        overdueNCPRs.push(record.ncpr_num);
+                                        record.isOverdue = true;
+                                    } else {
+                                        record.isOverdue = false;
+                                    }
+
+                                    // ✅ Check if Urgent (record.urgent === "on")
+                                    if (record.urgent === "on") {
+                                        urgentNCPRs.push(record.ncpr_num);
+                                        record.isUrgent = true;
+                                    } else {
+                                        record.isUrgent = false;
+                                    }
+
+                                    if (!notifiedNCPRs.includes(record.ncpr_num)) {
+                                        unseenNCPRs.push(record.ncpr_num);
+                                        notifiedNCPRs.push(record.ncpr_num);
+                                    }
+                                });
+
+                                // ✅ Show overdue warning if there are overdue NCPRs
+                                /*if (overdueNCPRs.length > 0) {
+                                    showWarningNotification(overdueNCPRs, "Overdue");
+                                }*/
+
+                                // ✅ Show urgent warning if there are urgent NCPRs
+                                /*if (urgentNCPRs.length > 0) {
+                                    showWarningNotification(urgentNCPRs, "Urgent");
+                                }*/
+
+                                // ✅ Show notification for new unseen NCPRs
+                                if (unseenNCPRs.length > 0) {
+                                    showNotification(unseenNCPRs, username);
+                                }
+
+                                sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
+
+                                if (newRecords.length > 0) {
+                                    let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
+                                    sessionStorage.setItem("lastSeenId_" + username, latestId);
+                                    updateLastSeenId(latestId);
+                                }
                             }
 
-                            // Persist updated notifiedNCPRs list
-                            sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
+                            firstLoad = false;
+                            return json.ncprs;
+                        },
 
-                            // ✅ Now update last seen ID ONLY IF new unseen records exist
-                            if (newRecords.length > 0) {
-                                let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
-                                sessionStorage.setItem("lastSeenId_" + username, latestId);
-                                updateLastSeenId(latestId); // Update in the database
-                            }
-
-                            // ✅ Debugging logs (remove after testing)
-                            console.log("Last Seen ID:", lastSeenId);
-                            console.log("New Records:", newRecords.map(r => r.id));
-                            console.log("Unseen NCPRs Notified:", unseenNCPRs);
-                        }
-
-                        firstLoad = false; // Ensure first load logic doesn't run again
-                        return json.ncprs;
+                        "cache": false
                     },
-
-                    "cache": false
-                },
-                "columns": [{
-                        "data": "id",
-                        "visible": false
-                    }, // Hide ID column
-                    {
-                        "data": "ncpr_num"
-                    },
-                    {
-                        "data": "initiator"
-                    },
-                    {
-                        "data": "status"
-                    },
-                    {
-                        "data": "date"
-                    },
-                    {
-                        "data": "id",
-                        "render": function(data, type, row) {
-                            return `
-                        <button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
+                    "columns": [{
+                            "data": "id",
+                            "visible": false
+                        }, // Hide ID column
+                        {
+                            "data": "ncpr_num"
+                        },
+                        {
+                            "data": "initiator"
+                        },
+                        {
+                            "data": "status"
+                        },
+                        {
+                            "data": "date"
+                        },
+                        {
+                            "data": "id",
+                            "render": function(data, type, row) {
+                                let urgentIndicator = row.isUrgent ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
+                                let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
                             <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="btn btn-success btn-sm dispo-btn" 
-                                data-id="${row.ncpr_num}" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#dispoModal"><i class="fas fa-check"></i>
-                            Dispo
-                        </button>`;
+                          </button>`;
+                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
+                               data-id="${row.ncpr_num}" 
+                               data-bs-toggle="modal" 
+                               data-bs-target="#dispoModal">
+                               <i class="fas fa-add"></i> Dispo
+                           </button>`;
+                                return `
+                                <div class="action-container">
+                                    ${urgentIndicator} <!-- Floating indicator -->
+                                    ${viewButton}
+                                    ${dispoButton}
+                                </div>`;
+                            }
                         }
+                    ],
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    "language": {
+                        "emptyTable": "No Available NCPR Filing"
                     }
-                ],
-                "order": [
-                    [0, "asc"]
-                ],
-                "language": {
-                    "emptyTable": "No Available NCPR Filing"
-                }
-            });
-            
-            $('#dispoModal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var ncprNum = button.data('id'); // Extract data-id
-
-                // Set the extracted value inside the modal
-                $('#modal-id').text(ncprNum); // Display in modal
-            });
-
-            // Function to update the last seen NCPR ID in the database
-            function updateLastSeenId(newLastSeenId) {
-                $.post("update_last_seen.php", {
-                    lastSeenId: newLastSeenId
-                }, function(response) {
-                    console.log("Last Seen ID Updated: ", response);
                 });
-            }
+                // 🔒 Expose only this secure refresh function
+                window.refreshNcprTable = function() {
+                    table.ajax.reload(null, false);
+                };
+                // Auto-refresh table every 5 seconds without resetting the table state
+                setInterval(function() {
+                    table.ajax.reload(null, false);
+                }, 5000);
 
-            function showNotification(ncprNums, user) {
-                let notificationBox = $("#notification-box");
+                $('#dispoModal').on('show.bs.modal', function(event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var ncprNum = button.data('id'); // Extract data-id
 
-                let message;
-                if (ncprNums.length <= 5) {
-                    // Show all NCPRs if the number is small
-                    message = `Hello ${user}, new NCPR Numbers: ${ncprNums.join(", ")} have been added.`;
-                } else {
-                    // Show a summary with the first few NCPRs
-                    let previewNCPRs = ncprNums.slice(0, 3).join(", "); // Get the first 3 NCPRs
-                    message = `Hello ${user}, ${ncprNums.length} new NCPRs have been added. (e.g., ${previewNCPRs}, ...)`;
+                    // Set the extracted value inside the modal
+                    $('#modal-id').text(ncprNum); // Display in modal
+                });
+
+                // Function to update the last seen NCPR ID in the database
+                function updateLastSeenId(newLastSeenId) {
+                    $.post("update_last_seen.php", {
+                        lastSeenId: newLastSeenId
+                    }, function(response) {
+                        console.log("Last Seen ID Updated: ", response);
+                    });
                 }
 
-                // Display the notification
-                notificationBox.html(message).fadeIn().delay(5000).fadeOut();
-            }
+                function showNotification(ncprNums, user) {
+                    let notificationBox = $("#notification-box");
 
-            // Auto-refresh table every 5 seconds without resetting the table state
-            /*setInterval(function() {
-                table.ajax.reload(null, false);
-            }, 5000);*/
+                    let message;
+                    if (ncprNums.length <= 5) {
+                        // Show all NCPRs if the number is small
+                        message = `Hello ${user}, new NCPR Numbers: ${ncprNums.join(", ")} have been added.`;
+                    } else {
+                        // Show a summary with the first few NCPRs
+                        let previewNCPRs = ncprNums.slice(0, 3).join(", "); // Get the first 3 NCPRs
+                        message = `Hello ${user}, ${ncprNums.length} new NCPRs have been added. (e.g., ${previewNCPRs}, ...)`;
+                    }
 
+                    // Display the notification
+                    notificationBox.html(message).fadeIn().delay(5000).fadeOut();
+                }
+
+
+            })();
         });
 
         function fetchNcprDetails(ncprNum, viewOnly) {
@@ -515,6 +607,9 @@ $user_role = $_SESSION['role'];
                         });
 
                         // Populate text fields
+                        $('#impact_analysis').text(response.notes || "");
+                        $('#contact_person').text(response.contact_person || "");
+                        $('#other_specify').text(response.other_specify || "");
                         $('#yield_off').text(response.yield_off || "");
                         $('#da_no').text(response.da_no || "");
                         $('#rework_da_no').text(response.rework_da_no || "");
@@ -564,6 +659,20 @@ $user_role = $_SESSION['role'];
             closeModalButtons.forEach(button => {
                 button.addEventListener("click", function() {
                     modal.hide(); // Close the modal only when close button is clicked
+                });
+            });
+
+            // Add event listeners for submenu toggling
+            var submenuItems = document.querySelectorAll('.dropdown-submenu');
+            submenuItems.forEach(function(submenu) {
+                submenu.addEventListener('click', function(e) {
+                    var dropdownMenu = submenu.querySelector('.dropdown-menu');
+                    if (dropdownMenu.classList.contains('show')) {
+                        dropdownMenu.classList.remove('show');
+                    } else {
+                        dropdownMenu.classList.add('show');
+                    }
+                    e.stopPropagation();
                 });
             });
         });

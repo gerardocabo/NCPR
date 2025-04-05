@@ -62,7 +62,7 @@
             </td>
             <td>
                 <input class="locked" type="radio" name="potential_failure" value="Yes" class="mb-5"> Yes<br>
-                <input class="locked" type="radio" name="potential_failure" value="No"> No<br>
+                <input class="locked" type="radio" name="potential_failure" value="NO"> No<br>
             </td>
             <td>
                 <div class="d-flex align-items-center mb-2">

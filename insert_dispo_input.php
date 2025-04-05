@@ -3,12 +3,12 @@ require 'conn.php';
 
 $dispo_id = !empty($_POST['dispo_id']) ? $_POST['dispo_id'] : NULL;
 $containment = !empty($_POST['containment']) ? $_POST['containment'] : NULL;
-$non_conformance = !empty($_POST['non_conformance']) ? $_POST['non_conformance'] : NULL;
 $id_no = !empty($_POST['id_no']) ? $_POST['id_no'] : NULL;
 $name = !empty($_POST['name']) ? $_POST['name'] : NULL;
 $car_no = !empty($_POST['car_no']) ? $_POST['car_no'] : NULL;
 $scar_no = !empty($_POST['scar_no']) ? $_POST['scar_no'] : NULL;
 $document_alert = !empty($_POST['document_alert']) ? $_POST['document_alert'] : NULL;
+$notes = !empty($_POST['notes']) ? $_POST['notes'] : NULL;
 $contact_person = !empty($_POST['contact_person']) ? $_POST['contact_person'] : NULL;
 $other_specify = !empty($_POST['other_specify']) ? $_POST['other_specify'] : NULL;
 $yield_off = !empty($_POST['yield_off']) ? $_POST['yield_off'] : NULL;
@@ -24,11 +24,11 @@ $updated_at = $created_at;
 
 // ✅ Insert data into `disposition_tbl`
 $sql = "INSERT INTO disposition_tbl 
-        (ncpr_num, containment, non_conformance, id_no, name, car_no, scar_no, document_alert, contact_person, other_specify, yield_off, da_no, rework_da_no, wis_no, scrap_amount, shipment_date, created_at, updated_at) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        (ncpr_num, containment, id_no, name, car_no, scar_no, document_alert, notes, contact_person, other_specify, yield_off, da_no, rework_da_no, wis_no, repair_DA, scrap_amount, shipment_date, created_at, updated_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ssssssssssssssssss", $ncpr_num, $containment, $non_conformance, $id_no, $name, $car_no, $scar_no, $document_alert, $contact_person, $other_specify, $yield_off, $da_no, $rework_da_no, $wis_no, $scrap_amount, $shipment_date, $created_at, $updated_at);
+$stmt->bind_param("sssssssssssssssssss", $ncpr_num, $containment, $id_no, $name, $car_no, $scar_no, $document_alert, $notes, $contact_person, $other_specify, $yield_off, $da_no, $rework_da_no, $wis_no, $repair_DA, $scrap_amount, $shipment_date, $created_at, $updated_at);
 
 if (!$stmt->execute()) {
     error_log("Insert Error: " . $stmt->error);

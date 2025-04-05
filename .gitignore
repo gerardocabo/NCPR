@@ -1,1 +1,11 @@
+# Ignore auser.txt file
 auser.txt
+
+# Ignore the fontawesome directory inside assets
+assets/fontawesome/
+
+# ignore this HAAHHAHA
+assets/vendor/bootstrap/webfonts/
+
+assets/img/
+assets/attachments/

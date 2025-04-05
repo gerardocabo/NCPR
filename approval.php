@@ -37,6 +37,7 @@ $allowed_roles = [
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST['action'] ?? '';
+    $action_check = $_POST['action'] ?? '';
     $role = $_POST['role'] ?? '';
     $ncpr_num = $_POST['ncpr_num'] ?? '';
 
@@ -108,6 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($action !== "cancel" && $action !== "reject") {
             // Convert certain actions to past tense
             $action_map = [
+                "full_approve" => "approved",
                 "approve" => "approved",
                 "reject" => "rejected",
                 "submit" => "submitted",
@@ -120,14 +122,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $status = ucfirst(strtolower($action));
 
-            // Insert into dispo_approval
-            $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
-                      VALUES (?, ?, ?, ?, NOW())";
-            $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+            if ($action_check === "full_approve") {
+                // First, handle the initial approver (already defined $user_role and $person_id)
+                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                            VALUES (?, ?, ?, ?, NOW())";
+                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
 
-            // Update dispo_id in ncpr_table
-            $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
-            executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+
+                // Then loop through the rest of the approvers (assuming you have an array of objects)
+                $extra_approvers = [ (object)['user_role' => 'SHELDAHL REPRESENTATIVE', 'person_id' => 9]];
+                foreach ($extra_approvers as $approver) {
+                    $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                                VALUES (?, ?, ?, ?, NOW())";
+                    $dispo_id = executeQuery($conn, $query, [$ncpr_num, $approver->user_role, $approver->person_id, $status], "ssis");
+
+                    $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+                    executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+                }
+
+                $user_role = 'SHELDAHL REPRESENTATIVE';
+            } else {
+                // Insert into dispo_approval
+                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                      VALUES (?, ?, ?, ?, NOW())";
+                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+
+                // Update dispo_id in ncpr_table
+                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+            }
 
             // If the user role is REPRESENTATIVE, update the status to Close
             if ($user_role === "SHELDAHL REPRESENTATIVE") {

@@ -293,18 +293,24 @@
         <tr>
             <td>
                 <strong>QA Engineer / NT Representative:</strong><br>
-                <span id="approvd_by_engineer"></span>
                 (Signature & Date)
+                <div class="signature-line">
+                    <strong><span id="approvd_by_engineer"></span></strong>
+                </div>
             </td>
             <td>
                 <strong>QA Manager or his/her appointee:</strong><br>
-                <span id="approvd_by_supv_mgr"></span>
                 (Signature & Date)
+                <div class="signature-line">
+                    <strong><span id="approvd_by_supv_mgr"></span></strong>
+                </div>
             </td>
             <td>
                 <strong>Sheildahl / NT Representative:</strong><br>
-                <span id="approvd_by_SheldahlRep"></span>
                 (Signature & Date)
+                <div class="signature-line">
+                    <strong><span id="approvd_by_SheldahlRep"></span></strong>
+                </div>
             </td>
         </tr>
         </tr>
