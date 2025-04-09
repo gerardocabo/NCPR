@@ -482,7 +482,7 @@ $name = $_SESSION["user"];
                             // View button for the NCPR
                             let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
         <i class="fas fa-eye"></i> View
-    </button>`;
+        </button>`;
 
                             return `
         <div class="action-container">
