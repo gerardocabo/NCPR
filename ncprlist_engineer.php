@@ -2,6 +2,11 @@
 // Include your database connection file
 include 'conn.php'; // Make sure you have a proper database connection here
 require "config.php";
+if (isset($_SESSION['page'])) {
+    $page = $_SESSION['page'];
+} else {
+    $page = 'default.php'; // fallback
+}
 // Fetch data from ncpr_table
 $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table";
 $result = $conn->query($query);
@@ -210,7 +215,7 @@ $result = $conn->query($query);
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="engineer_dashboard.php" class="sidebar-link">
+                    <a href="<?php echo htmlspecialchars($page) ?>" class="sidebar-link">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>

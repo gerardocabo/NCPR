@@ -390,12 +390,14 @@ $user_role = $_SESSION['role'];
                                     let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
                                     let ncprNum = record.ncpr_num;
 
-                                    // Identify overdue NCPRs
-                                    if (diffHours > 24) {
-                                        overdueNCPRs.push(record.ncpr_num);
-                                        record.isOverdue = true; // ✅ Mark as overdue
+                                    if (diffHours >= 72) {
+                                        record.overdueLevel = "72";
+                                    } else if (diffHours >= 48) {
+                                        record.overdueLevel = "48";
+                                    } else if (diffHours >= 24) {
+                                        record.overdueLevel = "24";
                                     } else {
-                                        record.isOverdue = false; // ✅ Ensure non-overdue rows are marked correctly
+                                        record.overdueLevel = null;
                                     }
 
                                     // ✅ Check if Urgent (record.urgent === "on")
@@ -466,10 +468,18 @@ $user_role = $_SESSION['role'];
                         {
                             "data": "id",
                             "render": function(data, type, row) {
-                                let urgentIndicator = (row.isUrgent || row.isOverdue) ?
+                                let urgentIndicator = (row.isUrgent || row.overdueLevel) ?
                                     `<div class="urgent-indicator">URGENT</div>` :
                                     ""; // ✅ Conditional indicator for either urgent or overdue
-                                let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
+                                let exceedIndicator = "";
+
+                                if (row.overdueLevel === "24") {
+                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: orange;">Overdue/24hrs</div>`;
+                                } else if (row.overdueLevel === "48") {
+                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: darkorange;">Overdue/48hrs</div>`;
+                                } else if (row.overdueLevel === "72") {
+                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: red;">Overdue/72hrs</div>`;
+                                }
                                 let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
                             <i class="fas fa-eye"></i> View
                           </button>`;

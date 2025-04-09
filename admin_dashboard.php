@@ -386,18 +386,19 @@ $name = $_SESSION["user"];
 
                             notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
 
-                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
-
-                            newRecords.forEach(record => {
+                            json.ncprs.forEach(record => {
                                 let createdAt = new Date(record.created_at).getTime();
                                 let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
 
                                 // ✅ Check if Overdue (Older than 24 hours)
-                                if (diffHours > 24) {
-                                    overdueNCPRs.push(record.ncpr_num);
-                                    record.isOverdue = true;
+                                if (diffHours >= 72) {
+                                    record.overdueLevel = "72";
+                                } else if (diffHours >= 48) {
+                                    record.overdueLevel = "48";
+                                } else if (diffHours >= 24) {
+                                    record.overdueLevel = "24";
                                 } else {
-                                    record.isOverdue = false;
+                                    record.overdueLevel = null;
                                 }
 
                                 // ✅ Check if Urgent (record.urgent === "on")
@@ -431,14 +432,7 @@ $name = $_SESSION["user"];
 
                             sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
 
-                            if (newRecords.length > 0) {
-                                let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
-                                sessionStorage.setItem("lastSeenId_" + username, latestId);
-                                updateLastSeenId(latestId);
-                            }
-
                             console.log("Last Seen ID:", lastSeenId);
-                            console.log("New Records:", newRecords.map(r => r.id));
                             console.log("Unseen NCPRs Notified:", unseenNCPRs);
                             console.log("Overdue NCPRs:", overdueNCPRs);
                             console.log("Urgent NCPRs:", urgentNCPRs);
@@ -472,12 +466,20 @@ $name = $_SESSION["user"];
                         "data": "id",
                         "render": function(data, type, row) {
                             // Show "URGENT" indicator if row.urgent is true
-                            let urgentIndicator = (row.isUrgent|| row.isOverdue) ?
+                            let urgentIndicator = (row.isUrgent || row.overdueLevel) ?
                                 `<div class="urgent-indicator">URGENT</div>` :
                                 ""; // ✅ Conditional indicator for either urgent or overdue
 
                             // Show "Overdue/24hrs" indicator if row.isOverdue is true
-                            let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : "";
+                            let exceedIndicator = "";
+
+                            if (row.overdueLevel === "24") {
+                                exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: orange;">Overdue/24hrs</div>`;
+                            } else if (row.overdueLevel === "48") {
+                                exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: darkorange;">Overdue/48hrs</div>`;
+                            } else if (row.overdueLevel === "72") {
+                                exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: red;">Overdue/72hrs</div>`;
+                            }
 
                             // View button for the NCPR
                             let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
