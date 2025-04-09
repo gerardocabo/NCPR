@@ -8,13 +8,9 @@ include "config.php"
     <title>admin Dashboard</title>
 
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
 
@@ -779,6 +775,12 @@ include "config.php"
             </form>
         </div>
     </div>
+    
+    <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/DataTables/datatables.min.js"></script>
+    <script src="assets/js/sweetalert2.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const requiredFields = document.querySelectorAll("input[required], textarea[required]");
@@ -857,7 +859,7 @@ include "config.php"
             </div>
         </td>
         <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
-    `;
+        `;
 
             table.appendChild(newRow);
 

@@ -10,7 +10,8 @@ function getPendingApprovals($user_role)
     // Default query: Fetch all NCPRs that haven't been disposed yet
     $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at
                 FROM ncpr_table 
-                WHERE status = 'open' AND dispo_id IS NULL";
+                WHERE status = 'open' AND dispo_id IS NULL
+                ORDER BY ncpr_num DESC";
 
     // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
     if ($user_role === 'QA ENGINEER') {
@@ -28,7 +29,8 @@ function getPendingApprovals($user_role)
                             SELECT ncpr_num FROM dispo_approval 
                         WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
                         )
-                )";
+                )
+                ORDER BY ncpr_num DESC";
     } elseif ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
                   FROM ncpr_table
@@ -37,7 +39,8 @@ function getPendingApprovals($user_role)
                   AND dispo_approval.status = 'Approved'
                   AND ncpr_table.dispo_id IS NOT NULL
                   AND ncpr_table.ncpr_num NOT IN (
-                    SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))";
+                    SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))
+                    ORDER BY ncpr_num DESC";
     }
     // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
     elseif ($user_role === 'SHELDAHL REPRESENTATIVE') {
@@ -46,7 +49,8 @@ function getPendingApprovals($user_role)
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
                   WHERE dispo_approval.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 
                   AND dispo_approval.status = 'Approved'
-                  AND ncpr_table.status = 'open'";
+                  AND ncpr_table.status = 'open'
+                  ORDER BY ncpr_num DESC";
     }
 
     return $query;

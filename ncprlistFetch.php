@@ -33,7 +33,7 @@ while ($row = $result->fetch_assoc()): ?>
             } elseif ($status === 'Close') {
                 $badgeClass = 'badge bg-danger';
             } else {
-                $badgeClass = 'badge bg-success'; // default/unknown status
+                $badgeClass = 'badge bg-danger'; // default/unknown status
             }
 
             echo "<span class='$badgeClass'>$status</span>";

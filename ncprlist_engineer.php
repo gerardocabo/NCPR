@@ -7,10 +7,6 @@ if (isset($_SESSION['page'])) {
 } else {
     $page = 'default.php'; // fallback
 }
-// Fetch data from ncpr_table
-$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table";
-$result = $conn->query($query);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,162 +15,11 @@ $result = $conn->query($query);
     <title>NCPR List</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+
 </head>
-<style>
-    ::after,
-    ::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    a {
-        text-decoration: none;
-    }
-
-    li {
-        list-style: none;
-    }
-
-    h1 {
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
-
-    body {
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .wrapper {
-        display: flex;
-    }
-
-    .main {
-        min-height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        transition: all 0.35s ease-in-out;
-        background-color: #fafbfe;
-    }
-
-    #sidebar {
-        width: 70px;
-        min-width: 70px;
-        z-index: 1000;
-        transition: all .25s ease-in-out;
-        background-color: #0e2238;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        /* Full viewport height */
-        position: sticky;
-        /* ✅ Keeps sidebar sticky */
-        top: 0;
-        /* ✅ Ensures it stays at the top when scrolling */
-    }
-
-    #sidebar.expand {
-        width: 260px;
-        min-width: 260px;
-    }
-
-    .toggle-btn {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 1rem 1.5rem;
-    }
-
-    .toggle-btn i {
-        font-size: 1.5rem;
-        color: #FFF;
-    }
-
-    .sidebar-logo {
-        margin: auto 0;
-    }
-
-    .sidebar-logo a {
-        color: #FFF;
-        font-size: 1.15rem;
-        font-weight: 600;
-    }
-
-    #sidebar:not(.expand) .sidebar-logo,
-    #sidebar:not(.expand) a.sidebar-link span {
-        display: none;
-    }
-
-    .sidebar-nav {
-        padding: 2rem 0;
-        flex-grow: 1;
-        /* ✅ Allows it to take available space and push footer down */
-    }
-
-    a.sidebar-link {
-        padding: .625rem 1.5rem;
-        color: #FFF;
-        display: block;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        border-left: 3px solid transparent;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-link i {
-        font-size: 1.2rem;
-        color: white;
-        margin-right: 10px;
-    }
-
-    a.sidebar-link:hover {
-        background-color: rgba(255, 255, 255, .075);
-        border-left: 3px solid #3b7ddd;
-    }
-
-    .sidebar-item {
-        position: relative;
-    }
-
-    #sidebar:not(.expand) .sidebar-link span {
-        display: none;
-        position: absolute;
-        left: 80px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #0e2238;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar:not(.expand) .sidebar-item:hover .sidebar-link span,
-    #sidebar:not(.expand) .sidebar-footer:hover .sidebar-link span {
-        display: block;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-item.active a {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-left: 3px solid #3b7ddd;
-        color: #3b7ddd;
-    }
-</style>
 <style>
     .locked {
         pointer-events: none;
@@ -244,7 +89,7 @@ $result = $conn->query($query);
         <div class="main">
             <div class="page-wrapper">
                 <h2 class="mb-3">NCPR Table</h2>
-                <table id="ncprTable" class="table table-bordered table-striped text-center">
+                <table id="ncprTable" class="table table-bordered table-hover table-striped text-center">
                     <thead class="table-secondary">
                         <tr>
                             <th hidden>ID</th>
@@ -259,7 +104,12 @@ $result = $conn->query($query);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <?php
+                        // Fetch data from ncpr_table
+                        $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table ORDER BY ncpr_num desc";
+                        $result = $conn->query($query);
+
+                        while ($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td hidden><?php echo $row['id']; ?></td>
                                 <td><?php echo $row['ncpr_num']; ?></td>
@@ -281,12 +131,12 @@ $result = $conn->query($query);
                                     $status = $row['status'];
                                     $badgeClass = '';
 
-                                    if ($status === 'Open') {
+                                    if ($status === 'open') {
                                         $badgeClass = 'badge bg-success';
                                     } elseif ($status === 'Close') {
                                         $badgeClass = 'badge bg-danger';
                                     } else {
-                                        $badgeClass = 'badge bg-success'; // default/unknown status
+                                        $badgeClass = 'badge bg-danger'; // default/unknown status
                                     }
 
                                     echo "<span class='$badgeClass'>$status</span>";
@@ -294,11 +144,11 @@ $result = $conn->query($query);
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex flex-wrap gap-1 justify-content-center">
-                                        <button class="btn btn-primary btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                            <i class="fas fa-eye"></i> NCPR
+                                        <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                            NCPR
                                         </button>
-                                        <button class="btn btn-primary btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                            <i class="fas fa-eye"></i> DISPO
+                                        <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                            DISPOSITION
                                         </button>
                                     </div>
                                 </td>
@@ -316,14 +166,14 @@ $result = $conn->query($query);
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                     <!-- First Image (Left Corner) -->
-                    <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                    <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                     <!-- Second Image (Right Corner) -->
                     <div style="position: relative;">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="position: absolute; top: -10px; right: -10px;" class="m-5">
                         </button>
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
                 </div>
 
@@ -698,7 +548,8 @@ $result = $conn->query($query);
                 "columnDefs": [{
                     "targets": [0, 5],
                     "visible": false
-                }]
+                }],
+                "order": [],
             }); // Initialize DataTable for sorting, searching, and pagination
         });
 

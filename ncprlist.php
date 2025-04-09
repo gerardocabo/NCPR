@@ -9,7 +9,6 @@ require "config.php";
 <head>
     <title>admin Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
@@ -82,19 +81,40 @@ require "config.php";
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="main">
             <div class="page-wrapper p-2">
                 <div class="card p-3">
                     <div class="card-title">
                         <h4>NCPR Files</h4>
                     </div>
-                    <table id="ncprTable" class="table table-bordered table-striped text-center">
+                    <table id="ncprTable" class="table table-bordered table-hover table-striped text-center">
                         <thead class="table-secondary">
                             <tr>
                                 <th hidden>ID</th>
@@ -138,12 +158,12 @@ require "config.php";
                                         $status = $row['status'];
                                         $badgeClass = '';
 
-                                        if ($status === 'Open') {
+                                        if ($status === 'open') {
                                             $badgeClass = 'badge bg-success';
                                         } elseif ($status === 'Close') {
                                             $badgeClass = 'badge bg-danger';
                                         } else {
-                                            $badgeClass = 'badge bg-success'; // default/unknown status
+                                            $badgeClass = 'badge bg-danger'; // default/unknown status
                                         }
 
                                         echo "<span class='$badgeClass'>$status</span>";
@@ -1779,9 +1799,6 @@ require "config.php";
                     input.checked = false;
                 });
             });
-
-
-
         });
     </script>
 </body>

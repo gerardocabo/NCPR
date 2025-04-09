@@ -311,7 +311,9 @@ if ($user_role !== 'QA ENGINEER') {
                         <button type="button" class="btn btn-success approval-action" data-action="approve" data-role="QA Engineer">
                             Approve
                         </button>
-
+                        <button type="button" class="btn btn-danger approval-action" data-action="cancel" data-role="QA Engineer">
+                            Cancel
+                        </button>
                     <?php endif; ?>
                 </td>
                 <td>

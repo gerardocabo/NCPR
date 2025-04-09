@@ -11,7 +11,6 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
 
 </head>
@@ -392,16 +391,10 @@ $name = $_SESSION["user"];
 
                             notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]");
 
-<<<<<<< HEAD
-=======
-                            let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
-
->>>>>>> cabo/ncpr_offline
                             json.ncprs.forEach(record => {
                                 let createdAt = new Date(record.created_at).getTime();
                                 let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert ms to hours
 
-<<<<<<< HEAD
                                 // ✅ Check if Overdue (Older than 24 hours)
                                 if (diffHours >= 72) {
                                     record.overdueLevel = "72";
@@ -412,10 +405,6 @@ $name = $_SESSION["user"];
                                 } else {
                                     record.overdueLevel = null;
                                 }
-=======
-                                // Set overdue flag
-                                record.isOverdue = diffHours > 24;
->>>>>>> cabo/ncpr_offline
 
                                 // Set urgent flag
                                 record.isUrgent = record.urgent === "on";
@@ -434,7 +423,7 @@ $name = $_SESSION["user"];
 
                             // ✅ Show overdue warning if there are overdue NCPRs
                             if (overdueNCPRs.length > 0) {
-                                showWarningNotification(overdueNCPRs, "Overdue");
+                                showWarningNotification(overdueNCPRs, username);
                             }
 
                             // ✅ Show urgent warning if there are urgent NCPRs
@@ -495,7 +484,6 @@ $name = $_SESSION["user"];
                     {
                         "data": "id",
                         "render": function(data, type, row) {
-<<<<<<< HEAD
                             // Show "URGENT" indicator if row.urgent is true
                             let urgentIndicator = (row.isUrgent || row.overdueLevel) ?
                                 `<div class="urgent-indicator">URGENT</div>` :
@@ -511,32 +499,23 @@ $name = $_SESSION["user"];
                             } else if (row.overdueLevel === "72") {
                                 exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: red;">Overdue/72hrs</div>`;
                             }
-=======
-                            console.log("Row Data:", row); // Debug: check if isUrgent and isOverdue are present
 
-                            let urgentIndicator = row.isUrgent ?
-                                `<div class="urgent-indicator">URGENT</div>` : "";
-
-                            let exceedIndicator = row.isOverdue ?
-                                `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : "";
->>>>>>> cabo/ncpr_offline
-
-                            let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
-        <i class="fas fa-eye"></i> View
-    </button>`;
+                            let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold" data-id="${row.ncpr_num}">
+                                                View
+                                                </button>`;
 
                             return `
-        <div class="action-container">
-            ${urgentIndicator}
-            ${exceedIndicator}
-            ${viewButton}
-        </div>`;
+                                <div class="action-container">
+                                    ${urgentIndicator}
+                                    ${exceedIndicator}
+                                    ${viewButton}
+                                </div>`;
                         }
 
                     }
                 ],
                 "order": [
-                    [0, "asc"]
+                    [1, "desc"]
                 ],
                 "language": {
                     "emptyTable": "No Available NCPR Filing"

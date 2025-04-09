@@ -10,7 +10,6 @@ $user_role = $_SESSION['role'];
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
@@ -61,6 +60,20 @@ $user_role = $_SESSION['role'];
             100% {
                 opacity: 0.5;
             }
+        }
+        .signature-line {
+            display: flex;
+            justify-content: center;
+            /* Center the inner content */
+            margin-top: 5px;
+        }
+
+        .signature-line span {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            /* Underline just the name */
+            padding-bottom: 2px;
+            /* Space between text and line */
         }
     </style>
 </head>
@@ -444,15 +457,15 @@ $user_role = $_SESSION['role'];
                             "data": "id",
                             "render": function(data, type, row) {
                                 let urgentIndicator = row.isUrgent ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
-                                let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
-                            <i class="fas fa-eye"></i> View
-                          </button>`;
-                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
+                                let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold" data-id="${row.ncpr_num}">
+                                View
+                            </button>`;
+                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn fw-bold  " 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">
-                               <i class="fas fa-add"></i> Dispo
-                           </button>`;
+                                Dispostion
+                            </button>`;
                                 return `
                                 <div class="action-container">
                                     ${urgentIndicator} <!-- Floating indicator -->
@@ -463,7 +476,7 @@ $user_role = $_SESSION['role'];
                         }
                     ],
                     "order": [
-                        [0, "asc"]
+                        [1, "desc"]
                     ],
                     "language": {
                         "emptyTable": "No Available NCPR Filing"
@@ -621,6 +634,41 @@ $user_role = $_SESSION['role'];
                         $('#shipment_date').text(response.shipment_date || "");
                         $('#document_alert').text(response.document_alert || "");
 
+                        //filled the approval names
+                        // Loop through the approvers and update the elements accordingly
+                        if (response.approvers && response.approvers.length > 0) {
+                            response.approvers.forEach(function(approver) {
+                                if (approver.approver_role) {
+                                    switch (approver.approver_role) {
+                                        case "QA ENGINEER":
+                                            $("#approvd_by_engineer").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "QA MANAGER":
+                                            $("#approvd_by_supv_mgr").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "QA SUPERVISOR":
+                                            $("#approvd_by_supv_mgr").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "SHELDAHL REPRESENTATIVE":
+                                            $("#approvd_by_SheldahlRep").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                            // Add more cases for other roles as needed
+                                        default:
+                                            // Handle default case if needed (optional)
+                                            console.log("Unknown role:", approver.approver_role);
+                                            break;
+                                    }
+                                }
+                            });
+                        }
                         // Disable all form elements to prevent modification
                         //$('.lock, .locked').prop('disabled', true);
                         $('#dispoModal').modal('show');

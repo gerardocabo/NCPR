@@ -293,7 +293,9 @@
             <td>
                 <strong>QA Engineer / NT Representative:</strong><br>
                 (Signature & Date)
-
+                <div class="signature-line">
+                    <strong><span id="approvd_by_engineer"></span></strong>
+                </div>
             </td>
             <?php if ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR'): ?>
                 <td colspan="2">
@@ -320,6 +322,9 @@
                 <td>
                     <strong>QA Manager or his/her appointee:</strong><br>
                     (Signature & Date)
+                    <div class="signature-line">
+                        <strong><span id="approvd_by_supv_mgr"></span></strong>
+                    </div>
                 </td>
                 <td>
                     <div class="d-flex align-items-center">

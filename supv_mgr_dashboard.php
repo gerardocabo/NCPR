@@ -9,10 +9,8 @@ $user_role = $_SESSION['role'];
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <style>
         .locked {
@@ -56,6 +54,21 @@ $user_role = $_SESSION['role'];
                 opacity: 0.5;
             }
         }
+
+        .signature-line {
+            display: flex;
+            justify-content: center;
+            /* Center the inner content */
+            margin-top: 5px;
+        }
+
+        .signature-line span {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            /* Underline just the name */
+            padding-bottom: 2px;
+            /* Space between text and line */
+        }
     </style>
 </head>
 
@@ -91,12 +104,33 @@ $user_role = $_SESSION['role'];
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="main p-3">
             <div class="row">
                 <div class="col-md-6 col-lg-3">
@@ -448,7 +482,7 @@ $user_role = $_SESSION['role'];
                         }
                     ],
                     "order": [
-                        [0, "asc"]
+                        [1, "desc"]
                     ],
                     "language": {
                         "emptyTable": "No Available NCPR Filing"
@@ -610,6 +644,41 @@ $user_role = $_SESSION['role'];
                         $('#shipment_date').text(response.shipment_date || "");
                         $('#document_alert').text(response.document_alert || "");
 
+                        //filled the approvals
+                        // Loop through the approvers and update the elements accordingly
+                        if (response.approvers && response.approvers.length > 0) {
+                            response.approvers.forEach(function(approver) {
+                                if (approver.approver_role) {
+                                    switch (approver.approver_role) {
+                                        case "QA ENGINEER":
+                                            $("#approvd_by_engineer").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "QA MANAGER":
+                                            $("#approvd_by_supv_mgr").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "QA SUPERVISOR":
+                                            $("#approvd_by_supv_mgr").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "SHELDAHL REPRESENTATIVE":
+                                            $("#approvd_by_SheldahlRep").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                            // Add more cases for other roles as needed
+                                        default:
+                                            // Handle default case if needed (optional)
+                                            console.log("Unknown role:", approver.approver_role);
+                                            break;
+                                    }
+                                }
+                            });
+                        }
                         // Disable all form elements to prevent modification
                         //$('.lock, .locked').prop('disabled', true);
                         $('#dispoModal').modal('show');

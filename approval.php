@@ -122,36 +122,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $status = ucfirst(strtolower($action));
 
-            if ($action_check === "full_approve") {
-                // First, handle the initial approver (already defined $user_role and $person_id)
-                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
-                            VALUES (?, ?, ?, ?, NOW())";
-                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
-
-                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
-                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
-
-                // Then loop through the rest of the approvers (assuming you have an array of objects)
-                $extra_approvers = [ (object)['user_role' => 'SHELDAHL REPRESENTATIVE', 'person_id' => 9]];
-                foreach ($extra_approvers as $approver) {
-                    $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
-                                VALUES (?, ?, ?, ?, NOW())";
-                    $dispo_id = executeQuery($conn, $query, [$ncpr_num, $approver->user_role, $approver->person_id, $status], "ssis");
-
-                    $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
-                    executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
-                }
-
-                $user_role = 'SHELDAHL REPRESENTATIVE';
-            } else {
-                // Insert into dispo_approval
-                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+            // Insert into dispo_approval
+            $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
                       VALUES (?, ?, ?, ?, NOW())";
-                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+            $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
 
-                // Update dispo_id in ncpr_table
+            // Update dispo_id in ncpr_table
+            $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+            executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+
+            if ($action_check === "full_approve") {
+
+                // Single approver object
+                $approver = (object)[
+                    'user_role' => 'SHELDAHL REPRESENTATIVE',
+                    'person_id' => 9
+                ];
+
+                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                          VALUES (?, ?, ?, ?, NOW())";
+                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $approver->user_role, $approver->person_id, $status], "ssis");
+
                 $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+
+                $user_role = $approver->user_role;
             }
 
             // If the user role is REPRESENTATIVE, update the status to Close
@@ -161,12 +156,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 executeQuery($conn, $query, [$status, $ncpr_num], "ss");
             }
         } else {
-            // Always set status to "Close" in ncpr_table
-            $query = "UPDATE ncpr_table SET status = 'Close' WHERE ncpr_num = ?";
-            executeQuery($conn, $query, [$ncpr_num], "s");
 
             // Convert action to past tense for dispo_approval
             $status = isset($action_map[$action]) ? ucfirst($action_map[$action]) : ucfirst($action);
+
+            // Always set status to "Close" in ncpr_table
+            $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
+            executeQuery($conn, $query, [$status, $ncpr_num], "ss");
 
             // Insert into dispo_approval
             $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 

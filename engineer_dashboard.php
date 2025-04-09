@@ -9,10 +9,8 @@ $user_role = $_SESSION['role'];
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <style>
         .action-container {
@@ -87,12 +85,33 @@ $user_role = $_SESSION['role'];
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="main p-3">
             <div class="row">
                 <div class="col-md-6 col-lg-3">
@@ -225,14 +244,14 @@ $user_role = $_SESSION['role'];
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                     <!-- First Image (Left Corner) -->
-                    <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                    <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                     <!-- Second Image (Right Corner) -->
                     <div style="position: relative;">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="position: absolute; top: -10px; right: -10px;" class="m-5">
                         </button>
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
                 </div>
 
@@ -241,9 +260,6 @@ $user_role = $_SESSION['role'];
                 </div>
                 <!-- Modal Footer (For Buttons) -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger approval-action" data-action="cancel" data-role="QA Engineer">
-                        Cancel
-                    </button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -462,16 +478,16 @@ $user_role = $_SESSION['role'];
                                     `<div class="urgent-indicator">URGENT</div>` :
                                     ""; // ✅ Conditional indicator for either urgent or overdue
                                 let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
-                                let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
-                            <i class="fas fa-eye"></i> View
-                          </button>`;
+                                let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold" data-id="${row.ncpr_num}">
+                                                    View
+                                                </button>`;
 
                                 let dispoButton = `<button class="btn btn-primary btn-sm dispo-btn fw-bold" 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">
-                               Disposition
-                           </button>`;
+                                    Disposition
+                                </button>`;
 
                                 let editButton = `<button class="btn btn-warning btn-sm edit-btn" 
                               data-id="${row.ncpr_num}">
@@ -492,7 +508,7 @@ $user_role = $_SESSION['role'];
                         }
                     ],
                     "order": [
-                        [0, "asc"]
+                        [1, "desc"]
                     ],
                     "language": {
                         "emptyTable": "No Available NCPR Filing"
