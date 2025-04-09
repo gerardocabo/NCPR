@@ -9,8 +9,10 @@ $user_role = $_SESSION['role'];
     <title>Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <style>
         .action-container {
@@ -75,18 +77,6 @@ $user_role = $_SESSION['role'];
                     <a href="ncprlist_engineer.php" class="sidebar-link">
                         <i class="fa-regular fa-address-card"></i>
                         <span>NCPR List</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                        <span>Product Key</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Engineer List</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -207,16 +197,16 @@ $user_role = $_SESSION['role'];
                         <h5 class="mb-3">NCPR Recently Filed Table</h5>
                     </div>
                     <div class="table-container table-responsive mt-3">
-                        <table id="ncprTable" class="table table-bordered table-hover" style="width:100%">
+                        <table id="ncprTable" class="table table-bordered table-hover text-center" style="width:100%">
                             <thead class="table-secondary">
                                 <tr>
                                     <th hidden>ID</th>
-                                    <th>NCPR Number</th>
-                                    <th>Initiator</th>
-                                    <th>Status</th>
+                                    <th class="text-center">NCPR Number</th>
+                                    <th class="text-center">Initiator</th>
+                                    <th class="text-center">Status</th>
                                     <th hidden>Status</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -348,19 +338,9 @@ $user_role = $_SESSION['role'];
                             className: 'btn btn-success'
                         },
                         {
-                            extend: 'csvHtml5',
-                            text: 'Export CSV',
-                            className: 'btn btn-primary'
-                        },
-                        {
                             extend: 'pdfHtml5',
                             text: 'Export PDF',
-                            className: 'btn btn-danger'
-                        },
-                        {
-                            extend: 'print',
-                            text: 'Print',
-                            className: 'btn btn-warning'
+                            className: 'btn btn-info ms-2'
                         }
                     ],
                     "ajax": {
@@ -456,7 +436,17 @@ $user_role = $_SESSION['role'];
                             "data": "initiator"
                         },
                         {
-                            "data": "status"
+                            "data": "status",
+                            "className": "text-center",
+                            "render": function(data, type, row) {
+                                if (data === "open") {
+                                    return '<span class="badge bg-success">open</span>';
+                                } else if (data === "Close") {
+                                    return '<span class="badge bg-danger">Close</span>';
+                                } else {
+                                    return '<span class="badge bg-secondary">' + data + '</span>';
+                                }
+                            }
                         },
                         {
                             "data": "statuses",
@@ -471,24 +461,16 @@ $user_role = $_SESSION['role'];
                                 let urgentIndicator = (row.isUrgent || row.overdueLevel) ?
                                     `<div class="urgent-indicator">URGENT</div>` :
                                     ""; // ✅ Conditional indicator for either urgent or overdue
-                                let exceedIndicator = "";
-
-                                if (row.overdueLevel === "24") {
-                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: orange;">Overdue/24hrs</div>`;
-                                } else if (row.overdueLevel === "48") {
-                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: darkorange;">Overdue/48hrs</div>`;
-                                } else if (row.overdueLevel === "72") {
-                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: red;">Overdue/72hrs</div>`;
-                                }
+                                let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
                                 let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
                             <i class="fas fa-eye"></i> View
                           </button>`;
 
-                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
+                                let dispoButton = `<button class="btn btn-primary btn-sm dispo-btn fw-bold" 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">
-                               <i class="fas fa-add"></i> Dispo
+                               Disposition
                            </button>`;
 
                                 let editButton = `<button class="btn btn-warning btn-sm edit-btn" 

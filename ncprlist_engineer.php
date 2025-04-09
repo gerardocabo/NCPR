@@ -1,5 +1,5 @@
 <?php
-// Include your database connection file
+
 include 'conn.php'; // Make sure you have a proper database connection here
 require "config.php";
 if (isset($_SESSION['page'])) {
@@ -21,6 +21,7 @@ $result = $conn->query($query);
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 </head>
 <style>
@@ -228,18 +229,6 @@ $result = $conn->query($query);
                 </li>
                 <li class="sidebar-item">
                     <a href="" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                        <span>Product Key</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Status</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>
@@ -255,18 +244,18 @@ $result = $conn->query($query);
         <div class="main">
             <div class="page-wrapper">
                 <h2 class="mb-3">NCPR Table</h2>
-                <table id="ncprTable" class="table table-bordered table-striped">
-                    <thead class="table-dark">
+                <table id="ncprTable" class="table table-bordered table-striped text-center">
+                    <thead class="table-secondary">
                         <tr>
                             <th hidden>ID</th>
-                            <th>NCPR Number</th>
-                            <th>Initiator</th>
-                            <th>Date</th>
-                            <th>Part Number</th>
-                            <th>Part Name</th>
-                            <th>Urgent</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th class="text-center">NCPR Number</th>
+                            <th class="text-center">Initiator</th>
+                            <th class="text-center">Date</th>
+                            <th class="text-center">Part Number</th>
+                            <th hidden>Part Name</th>
+                            <th class="text-center">Urgent</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -277,16 +266,41 @@ $result = $conn->query($query);
                                 <td><?php echo $row['initiator']; ?></td>
                                 <td><?php echo $row['date']; ?></td>
                                 <td><?php echo $row['part_number']; ?></td>
-                                <td><?php echo $row['part_name']; ?></td>
-                                <td><?php echo $row['urgent'] ? 'Yes' : 'No'; ?></td>
-                                <td><?php echo $row['status']; ?></td>
+                                <td hidden><?php echo $row['part_name']; ?></td>
                                 <td>
-                                    <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                        <i class="fas fa-eye"></i> NCPR
-                                    </button>
-                                    <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                        <i class="fas fa-eye"></i> DISPO
-                                    </button>
+                                    <?php
+                                    if ($row['urgent'] === 'on') {
+                                        echo '<i class="fas fa-exclamation-circle text-danger" title="Urgent"></i>';
+                                    } else {
+                                        echo '<i class="fas fa-minus-circle text-muted" title="Not Urgent"></i>';
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $status = $row['status'];
+                                    $badgeClass = '';
+
+                                    if ($status === 'Open') {
+                                        $badgeClass = 'badge bg-success';
+                                    } elseif ($status === 'Close') {
+                                        $badgeClass = 'badge bg-danger';
+                                    } else {
+                                        $badgeClass = 'badge bg-success'; // default/unknown status
+                                    }
+
+                                    echo "<span class='$badgeClass'>$status</span>";
+                                    ?>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                        <button class="btn btn-primary btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                            <i class="fas fa-eye"></i> NCPR
+                                        </button>
+                                        <button class="btn btn-primary btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                            <i class="fas fa-eye"></i> DISPO
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -682,7 +696,7 @@ $result = $conn->query($query);
         $(document).ready(function() {
             $('#ncprTable').DataTable({
                 "columnDefs": [{
-                    "targets": [0],
+                    "targets": [0, 5],
                     "visible": false
                 }]
             }); // Initialize DataTable for sorting, searching, and pagination

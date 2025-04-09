@@ -7,5 +7,6 @@ assets/fontawesome/
 # ignore this HAAHHAHA
 assets/vendor/bootstrap/webfonts/
 
-assets/img/
+# assets/img/
 assets/attachments/
+fontawesome-free-6.7.2-web

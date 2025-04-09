@@ -401,7 +401,7 @@ $user_role = $_SESSION['role'];
 
                                 // ✅ Show urgent warning if there are urgent NCPRs
                                 if (urgentNCPRs.length > 0) {
-                                    showWarningNotification(urgentNCPRs, "Urgent");
+                                    showNotification(urgentNCPRs, "Urgent");
                                 }
 
                                 // ✅ Show notification for new unseen NCPRs
