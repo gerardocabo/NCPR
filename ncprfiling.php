@@ -8,10 +8,13 @@ include "config.php"
     <title>admin Dashboard</title>
 
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
 
@@ -52,12 +55,6 @@ include "config.php"
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Status</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
                     <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
@@ -76,8 +73,8 @@ include "config.php"
             <form id="ncprForm" method="POST" enctype="multipart/form-data">
                 <div class="card border-0">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
 
                     <div class="card border p-2 mb-3 text-center">
@@ -107,14 +104,8 @@ include "config.php"
                                     <div class="d-flex flex-wrap gap-3 mb-1">
                                         <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
                                             <input type="text" id="part_number" name="part_number" class="form-control"
-                                                style="padding-right: 40px;" placeholder="Part Number">
+                                                style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off" required>
                                             <label for="part_number">Part Number/Model Number:</label>
-
-                                            <!-- Dropdown Button -->
-                                            <button type="button" class="btn btn-light position-absolute"
-                                                style="right: 10px; top: 50%; transform: translateY(-50%); border: none; font-size: 18px;"
-                                                onclick="toggleDropdown()">▼</button>
-
                                             <!-- Dropdown List -->
                                             <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
                                                 style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
@@ -135,9 +126,50 @@ include "config.php"
                                                 ?>
                                             </ul>
                                         </div>
+                                        <script>
+                                            function liveSearch() {
+                                                let input = document.getElementById("part_number").value;
+                                                let dropdown = document.getElementById("dropdownList");
+
+                                                // Clear old results
+                                                dropdown.innerHTML = "";
+
+                                                if (input.length === 0) {
+                                                    dropdown.style.display = "none";
+                                                    return;
+                                                }
+
+                                                let xhr = new XMLHttpRequest();
+                                                xhr.onreadystatechange = function() {
+                                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                                        dropdown.innerHTML = xhr.responseText;
+
+                                                        // Only show dropdown if there are new results
+                                                        dropdown.style.display = dropdown.innerHTML.trim() !== "" ? "block" : "none";
+                                                    }
+                                                };
+                                                xhr.open("GET", "search.php?query=" + encodeURIComponent(input), true);
+                                                xhr.send();
+                                            }
+
+                                            function selectValue(element) {
+                                                document.getElementById("part_number").value = element.textContent;
+                                                document.getElementById("dropdownList").style.display = "none";
+                                            }
+
+                                            // Hide dropdown when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                let inputField = document.getElementById("part_number");
+
+                                                if (!inputField.contains(event.target) && !dropdown.contains(event.target)) {
+                                                    dropdown.style.display = "none";
+                                                }
+                                            });
+                                        </script>
 
                                         <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="part_name" name="part_name" placeholder="Enter Part Description" oninput="fetchSuggestions(this.value)" autocomplete="off">
+                                            <input type="text" class="form-control" id="part_name" name="part_name" placeholder="Enter Part Description" oninput="fetchSuggestions(this.value)" autocomplete="off" required>
                                             <label>Part Description:</label>
                                             <ul id="suggestionsList" class="list-group position-absolute bg-white border rounded"
                                                 style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
@@ -147,6 +179,9 @@ include "config.php"
                                             function fetchSuggestions(query) {
                                                 let suggestionsList = document.getElementById("suggestionsList");
 
+                                                // Clear previous results
+                                                suggestionsList.innerHTML = "";
+
                                                 if (query.length === 0) {
                                                     suggestionsList.style.display = "none";
                                                     return;
@@ -155,7 +190,6 @@ include "config.php"
                                                 fetch("fetch_part_names.php?query=" + encodeURIComponent(query))
                                                     .then(response => response.json())
                                                     .then(data => {
-                                                        suggestionsList.innerHTML = "";
                                                         if (data.length > 0) {
                                                             data.forEach(item => {
                                                                 let li = document.createElement("li");
@@ -170,6 +204,8 @@ include "config.php"
                                                             });
                                                             suggestionsList.style.display = "block";
                                                         } else {
+                                                            // Clear the list and hide it when no results are found
+                                                            suggestionsList.innerHTML = "";
                                                             suggestionsList.style.display = "none";
                                                         }
                                                     })
@@ -248,7 +284,6 @@ include "config.php"
                                     </div>
                                 </div>
                             </div>
-
                             <script>
                                 function toggleDropdown() {
                                     let dropdown = document.getElementById("dropdownList");
@@ -294,15 +329,73 @@ include "config.php"
                                         dropdown.classList.remove("d-block");
                                     }
                                 });
-                            </script>
-                            <script>
-                                // Set the current date as the default value
+
                                 document.addEventListener("DOMContentLoaded", function() {
                                     let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
                                     document.getElementById("dateInput").value = today;
+
+                                    const supplierCheckbox = document.getElementById("supplierCheckbox");
+                                    const supplierSection = document.getElementById("supplierSection");
+                                    const supplierFields = supplierSection.querySelectorAll("input");
+                                    const submitButton = document.getElementById("submitButton"); // Ensure your submit button has an ID
+
+                                    function toggleSupplierFields() {
+                                        if (supplierCheckbox.checked) {
+                                            supplierSection.style.display = "block";
+                                            supplierFields.forEach(field => {
+                                                field.setAttribute("required", "required");
+                                                field.classList.add("is-invalid"); // Ensure Bootstrap validation is applied
+                                            });
+                                        } else {
+                                            supplierSection.style.display = "none";
+                                            supplierFields.forEach(field => {
+                                                field.removeAttribute("required");
+                                                field.classList.remove("is-invalid"); // Remove validation styles when hiding
+                                            });
+                                        }
+                                    }
+
+                                    // Attach event listener
+                                    supplierCheckbox.addEventListener("change", function() {
+                                        toggleSupplierFields();
+                                        checkFields(); // Ensure validation updates when toggling the checkbox
+                                    });
+
+                                    function checkFields() {
+                                        let allFilled = true;
+                                        const requiredFields = document.querySelectorAll("input[required], textarea[required]");
+
+                                        requiredFields.forEach(field => {
+                                            if (!field.value.trim()) {
+                                                field.classList.add("is-invalid"); // Bootstrap invalid class (red border)
+                                                allFilled = false;
+                                            } else {
+                                                field.classList.remove("is-invalid");
+                                            }
+                                        });
+
+                                        if (!allFilled) {
+                                            submitButton.classList.add("btn-danger");
+                                            submitButton.innerHTML = "Submit <span style='color: yellow;'>&#9888;</span>";
+                                        } else {
+                                            submitButton.classList.remove("btn-danger");
+                                            submitButton.innerHTML = "Submit";
+                                        }
+                                    }
+
+                                    // Re-run validation when user types in fields
+                                    document.querySelectorAll("input, textarea").forEach(field => {
+                                        field.addEventListener("input", checkFields);
+                                    });
+
+                                    submitButton.addEventListener("click", function(event) {
+                                        checkFields();
+                                        if (submitButton.classList.contains("btn-danger")) {
+                                            event.preventDefault(); // Prevent submission if there are empty fields
+                                        }
+                                    });
                                 });
                             </script>
-
                             <!-- JavaScript to Toggle Fields -->
                             <script>
                                 function toggleSupplierFields() {
@@ -676,7 +769,7 @@ include "config.php"
 
                                     <button type="button" class="btn btn-sm btn-primary" onclick="addExcelInput()">Add Another Excel File</button>
                                 </div>
-                                <button type="submit" class="btn btn-success  w-50 mx-auto d-block">
+                                <button type="submit" class="btn btn-success  w-50 mx-auto d-block" id="submitButton">
                                     <i class="fas fa-paper-plane"></i> Submit
                                 </button>
                             </div>
@@ -686,15 +779,61 @@ include "config.php"
             </form>
         </div>
     </div>
-
-    <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/DataTables/datatables.min.js"></script>
-    <script src="assets/js/sweetalert2.min.js"></script>
-
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const requiredFields = document.querySelectorAll("input[required], textarea[required]");
+            const submitButton = document.getElementById("submitButton"); // Ensure your submit button has an ID
+
+            function checkFields() {
+                let allFilled = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add("is-invalid"); // Bootstrap invalid class (red border)
+                        allFilled = false;
+                    } else {
+                        field.classList.remove("is-invalid");
+                    }
+                });
+
+                if (!allFilled) {
+                    submitButton.classList.add("btn-danger");
+                    submitButton.innerHTML = "Submit <span style='color: yellow;'>&#9888;</span>";
+                } else {
+                    submitButton.classList.remove("btn-danger");
+                    submitButton.innerHTML = "Submit";
+                }
+            }
+
+            requiredFields.forEach(field => {
+                field.addEventListener("input", checkFields);
+            });
+
+            submitButton.addEventListener("click", function(event) {
+                checkFields();
+                if (submitButton.classList.contains("btn-danger")) {
+                    event.preventDefault(); // Prevent submission if there are empty fields
+                }
+            });
+        });
+
         document.getElementById("addRowBtn").addEventListener("click", function() {
             var table = document.getElementById("materialTable").getElementsByTagName("tbody")[0];
+
+            // Count current rows
+            var rowCount = table.getElementsByTagName("tr").length;
+
+            // Check if the limit is reached
+            if (rowCount >= 12) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Limit Reached',
+                    text: 'You can only add up to 12 rows.',
+                    confirmButtonColor: '#d33'
+                });
+                return; // Stop execution if limit is reached
+            }
+
             var newRow = document.createElement("tr");
 
             // Get values from the first row if available
@@ -724,7 +863,13 @@ include "config.php"
 
             // Call function to enable defect rate calculation for this row
             calculateDefectRate(newRow);
+
+            // Attach event listener to remove button
+            newRow.querySelector(".remove-row").addEventListener("click", function() {
+                newRow.remove();
+            });
         });
+
 
         // Remove row functionality
         document.addEventListener("click", function(event) {

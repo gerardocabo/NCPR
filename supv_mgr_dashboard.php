@@ -12,6 +12,7 @@ $user_role = $_SESSION['role'];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <style>
         .locked {
@@ -80,18 +81,6 @@ $user_role = $_SESSION['role'];
                     <a href="ncprlist_engineer.php" class="sidebar-link">
                         <i class="fa-regular fa-address-card"></i>
                         <span>NCPR List</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                        <span>Product Key</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Engineer List</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -212,15 +201,15 @@ $user_role = $_SESSION['role'];
                         <h5 class="mb-3">NCPR Table</h5>
                     </div>
                     <div class="table-container table-responsive mt-3">
-                        <table id="ncprTable" class="table table-bordered table-hover" style="width:100%">
+                        <table id="ncprTable" class="table table-bordered table-hover" style="width:100% text-center">
                             <thead class="table-secondary">
                                 <tr>
                                     <th hidden>ID</th>
-                                    <th>NCPR Number</th>
-                                    <th>Initiator</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
+                                    <th class="text-center">NCPR Number</th>
+                                    <th class="text-center">Initiator</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -324,19 +313,9 @@ $user_role = $_SESSION['role'];
                             className: 'btn btn-success'
                         },
                         {
-                            extend: 'csvHtml5',
-                            text: 'Export CSV',
-                            className: 'btn btn-primary'
-                        },
-                        {
                             extend: 'pdfHtml5',
                             text: 'Export PDF',
-                            className: 'btn btn-danger'
-                        },
-                        {
-                            extend: 'print',
-                            text: 'Print',
-                            className: 'btn btn-warning'
+                            className: 'btn btn-info ms-2'
                         }
                     ],
                     "ajax": {
@@ -422,32 +401,45 @@ $user_role = $_SESSION['role'];
                             "visible": false
                         }, // Hide ID column
                         {
-                            "data": "ncpr_num"
+                            "data": "ncpr_num",
+                            "className": "text-center" // Center the initiator column
                         },
                         {
-                            "data": "initiator"
+                            "data": "initiator",
+                            "className": "text-center" // Center the initiator column
                         },
                         {
-                            "data": "status"
+                            "data": "status",
+                            "className": "text-center",
+                            "render": function(data, type, row) {
+                                if (data === "open") {
+                                    return '<span class="badge bg-success">open</span>';
+                                } else if (data === "Close") {
+                                    return '<span class="badge bg-danger">Close</span>';
+                                } else {
+                                    return '<span class="badge bg-secondary">' + data + '</span>';
+                                }
+                            }
                         },
                         {
-                            "data": "date"
+                            "data": "date",
+                            "className": "text-center" // Center the initiator column
                         },
                         {
                             "data": "id",
                             "render": function(data, type, row) {
                                 let urgentIndicator = row.isUrgent ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
-                                let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
-                            <i class="fas fa-eye"></i> View
+                                let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold text-light text-center" data-id="${row.ncpr_num}">
+                            View
                           </button>`;
-                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn" 
+                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn fw-btn text-light text-center" 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">
-                               <i class="fas fa-add"></i> Dispo
+                               Disposition
                            </button>`;
                                 return `
-                                <div class="action-container">
+                                 <div class="action-container d-flex justify-content-center">
                                     ${urgentIndicator} <!-- Floating indicator -->
                                     ${viewButton}
                                     ${dispoButton}

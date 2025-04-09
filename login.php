@@ -59,8 +59,9 @@ function handleAdminLogin($username, $password, $pdo)
             "SHELDAHL REPRESENTATIVE"   => "representative_dashboard.php",
             "GUEST"                     => "guest_ncprfiling.php",
         ];
+        $_SESSION["page"] = $redirectPages[$user["role_name"]];
 
-        return json_encode(["status" => "success", "message" => ucfirst(strtolower($_SESSION["user"])), "redirect" => $redirectPages[$user["role_name"]] ?? "error.php"]);
+        return json_encode(["status" => "success", "message" => ucfirst(strtolower($_SESSION["user"])), "redirect" => $_SESSION['page'] ?? "error.php"]);
     } catch (PDOException $e) {
         error_log("Database Error: " . $e->getMessage());
         return json_encode(["status" => "error", "message" => "An error occurred while processing your request."]);

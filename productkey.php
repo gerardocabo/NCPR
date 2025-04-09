@@ -20,6 +20,7 @@ $conn->close();
 <head>
     <title>admin Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
@@ -64,12 +65,6 @@ $conn->close();
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Status</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
                     <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
@@ -84,24 +79,30 @@ $conn->close();
             </div>
         </aside>
         <div class="main p-3">
-            <div class="container mt-4">
-                <h2>Product Key Table</h2>
-                <!-- Button to Open Modal -->
-                <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
-                <table id="productKey" class="table table-bordered table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Part Number</th>
-                            <th>Part Name</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <div class="page-wrapper p-2">
+                <div class="card p-3">
+                    <div class="card-title">
+                        <h4>Product Key List</h4>
+                    </div>
+                    <div class="d-flex justify-content-end mb-3">
+                        <button class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                            Add Product
+                        </button>
+                    </div>
 
-                    </tbody>
-                </table>
+                    <table id="productKey" class="table table-bordered table-striped text-center">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th class="text-center">Part Number</th>
+                                <th class="text-center">Part Name</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- Add Product Modal -->
             <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
@@ -196,7 +197,7 @@ $conn->close();
                             orderable: false,
                             render: function(data, type, row) {
                                 return `
-                        <button class="btn btn-warning btn-sm edit-btn"
+                        <button class="btn btn-warning btn-sm edit-btn text-light fw-bold"
                             data-bs-toggle="modal"
                             data-bs-target="#editProductModal"
                             data-id="${row.part_number}"

@@ -9,8 +9,8 @@ require "config.php";
 <head>
     <title>admin Dashboard</title>
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
@@ -75,12 +75,6 @@ require "config.php";
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Status</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
                     <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
@@ -95,55 +89,87 @@ require "config.php";
             </div>
         </aside>
         <div class="main">
-            <div class="page-wrapper">
-                <h2 class="mb-3">NCPR Table</h2>
-                <table id="ncprTable" class="table table-bordered table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th hidden>ID</th>
-                            <th hidden>ID</th>
-                            <th>NCPR Number</th>
-                            <th>Initiator</th>
-                            <th>Date</th>
-                            <th>Part Number</th>
-                            <th>Part Name</th>
-                            <th>Urgent</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ncpr-table-body">
-                        <?php
-                        // Fetch data from ncpr_table
-                        $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id FROM ncpr_table";
-                        $result = $conn->query($query);
-
-                        while ($row = $result->fetch_assoc()): ?>
+            <div class="page-wrapper p-2">
+                <div class="card p-3">
+                    <div class="card-title">
+                        <h4>NCPR Files</h4>
+                    </div>
+                    <table id="ncprTable" class="table table-bordered table-striped text-center">
+                        <thead class="table-secondary">
                             <tr>
-                                <td hidden><?php echo $row['id']; ?></td>
-                                <td hidden><?php echo $row['dispo_id']; ?></td>
-                                <td><?php echo $row['ncpr_num']; ?></td>
-                                <td><?php echo $row['initiator']; ?></td>
-                                <td><?php echo $row['date']; ?></td>
-                                <td><?php echo $row['part_number']; ?></td>
-                                <td><?php echo $row['part_name']; ?></td>
-                                <td><?php echo $row['urgent'] ? 'Yes' : 'No'; ?></td>
-                                <td><?php echo $row['status']; ?></td>
-                                <td>
-                                    <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                        <i class="fas fa-eye"></i> NCPR
-                                    </button>
-                                    <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                        <i class="fas fa-eye"></i> EDIT
-                                    </button>
-                                    <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                        <i class="fas fa-eye"></i> DISPO
-                                    </button>
-                                </td>
+                                <th hidden>ID</th>
+                                <th hidden>ID</th>
+                                <th class="text-center">NCPR Number</th>
+                                <th class="text-center">Initiator</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Part Number</th>
+                                <th hidden>Part Name</th>
+                                <th class="text-center">Urgent</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
                             </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody id="ncpr-table-body">
+                            <?php
+                            // Fetch data from ncpr_table
+                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id FROM ncpr_table";
+                            $result = $conn->query($query);
+
+                            while ($row = $result->fetch_assoc()): ?>
+                                <tr>
+                                    <td hidden><?php echo $row['id']; ?></td>
+                                    <td hidden><?php echo $row['dispo_id']; ?></td>
+                                    <td><?php echo $row['ncpr_num']; ?></td>
+                                    <td><?php echo $row['initiator']; ?></td>
+                                    <td><?php echo $row['date']; ?></td>
+                                    <td><?php echo $row['part_number']; ?></td>
+                                    <td hidden><?php echo $row['part_name']; ?></td>
+                                    <td>
+                                        <?php
+                                        if ($row['urgent'] === 'on') {
+                                            echo '<i class="fas fa-exclamation-circle text-danger" title="Urgent"></i>';
+                                        } else {
+                                            echo '<i class="fas fa-minus-circle text-muted" title="Not Urgent"></i>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $status = $row['status'];
+                                        $badgeClass = '';
+
+                                        if ($status === 'Open') {
+                                            $badgeClass = 'badge bg-success';
+                                        } elseif ($status === 'Close') {
+                                            $badgeClass = 'badge bg-danger';
+                                        } else {
+                                            $badgeClass = 'badge bg-success'; // default/unknown status
+                                        }
+
+                                        echo "<span class='$badgeClass'>$status</span>";
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                            <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                                NCPR Form
+                                            </button>
+                                            <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                                Disposition Form
+                                            </button>
+                                            <button class="btn btn-warning btn-sm edit-btn text-light fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                Edit
+                                            </button>
+                                            <button class="btn btn-secondary btn-sm print-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>">
+                                                Print
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -154,14 +180,14 @@ require "config.php";
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                     <!-- First Image (Left Corner) -->
-                    <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                    <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                     <!-- Second Image (Right Corner) -->
                     <div style="position: relative;">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="position: absolute; top: -10px; right: -10px;" class="m-5">
                         </button>
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
                 </div>
 
@@ -487,18 +513,18 @@ require "config.php";
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm">
+                    <form id="editForm" method="POST" enctype="multipart/form-data">
                         <div class="position-relative">
                             <div class="row g-0">
                                 <div class="col-md-9">
                                     <div class="d-flex flex-wrap gap-3 mb-1 g-0 m-0 p-0">
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
                                             <input type="hidden" id="edit-id" name="id">
-                                            <input type="text" class="form-control" id="edit-initiator" name="initiator">
+                                            <input type="text" class="form-control" id="edit-initiator" name="initiator" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();">
                                             <label class="form-label">Initiator</label>
                                         </div>
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="edit-ncpr-num" name="ncpr_num">
+                                            <input type="text" class="form-control" id="edit-ncpr-num" name="ncpr_num" readonly>
                                             <label class="form-label">NCPR Number</label>
                                         </div>
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
@@ -507,14 +533,172 @@ require "config.php";
                                         </div>
                                     </div>
                                     <div class="d-flex flex-wrap gap-3 mb-1 g-0 m-0 p-0">
-                                        <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="edit-part-number" name="part_number">
-                                            <label class="form-label">Part Number</label>
+                                        <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
+                                            <input type="text" id="edit-part-number" name="part_number" class="form-control"
+                                                style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off">
+                                            <label for="part_number">Part Number/Model Number:</label>
+                                            <!-- Dropdown List -->
+                                            <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
+                                                style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                                                <?php
+                                                include 'connection.php'; // Include your existing connection file
+
+                                                // Fetch part numbers from the product_list table
+                                                $sql = "SELECT part_number FROM product_list";
+                                                $result = $conn->query($sql);
+
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<li class='list-group-item' style='cursor: pointer;' onclick='selectValue(this)'>" .
+                                                            htmlspecialchars($row["part_number"]) .
+                                                            "</li>";
+                                                    }
+                                                }
+                                                ?>
+                                            </ul>
                                         </div>
-                                        <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="edit-part-name" name="part_name">
-                                            <label class="form-label">Part Name</label>
+                                        <script>
+                                            function liveSearch() {
+                                                let input = document.getElementById("edit-part-number").value;
+                                                let dropdown = document.getElementById("dropdownList");
+
+                                                // Clear old results
+                                                dropdown.innerHTML = "";
+
+                                                if (input.length === 0) {
+                                                    dropdown.style.display = "none";
+                                                    return;
+                                                }
+
+                                                let xhr = new XMLHttpRequest();
+                                                xhr.onreadystatechange = function() {
+                                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                                        dropdown.innerHTML = xhr.responseText;
+
+                                                        // Only show dropdown if there are new results
+                                                        dropdown.style.display = dropdown.innerHTML.trim() !== "" ? "block" : "none";
+                                                    }
+                                                };
+                                                xhr.open("GET", "search.php?query=" + encodeURIComponent(input), true);
+                                                xhr.send();
+                                            }
+
+                                            function selectValue(element) {
+                                                document.getElementById("edit-part-number").value = element.textContent;
+                                                document.getElementById("dropdownList").style.display = "none";
+                                            }
+
+                                            // Hide dropdown when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                let inputField = document.getElementById("edit-part-number");
+
+                                                if (!inputField.contains(event.target) && !dropdown.contains(event.target)) {
+                                                    dropdown.style.display = "none";
+                                                }
+                                            });
+                                        </script>
+
+                                        <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
+                                            <input type="text" class="form-control" id="edit-part-name" name="part_name" placeholder="Enter Part Description" oninput="fetchSuggestions(this.value)" autocomplete="off">
+                                            <label>Part Description:</label>
+                                            <ul id="suggestionsList" class="list-group position-absolute bg-white border rounded"
+                                                style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                                            </ul>
                                         </div>
+                                        <script>
+                                            function fetchSuggestions(query) {
+                                                let suggestionsList = document.getElementById("suggestionsList");
+
+                                                // Clear previous results
+                                                suggestionsList.innerHTML = "";
+
+                                                if (query.length === 0) {
+                                                    suggestionsList.style.display = "none";
+                                                    return;
+                                                }
+
+                                                fetch("fetch_part_names.php?query=" + encodeURIComponent(query))
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.length > 0) {
+                                                            data.forEach(item => {
+                                                                let li = document.createElement("li");
+                                                                li.classList.add("list-group-item");
+                                                                li.style.cursor = "pointer";
+                                                                li.textContent = item;
+                                                                li.onclick = function() {
+                                                                    document.getElementById("edit-part-name").value = this.textContent;
+                                                                    suggestionsList.style.display = "none";
+                                                                };
+                                                                suggestionsList.appendChild(li);
+                                                            });
+                                                            suggestionsList.style.display = "block";
+                                                        } else {
+                                                            // Clear the list and hide it when no results are found
+                                                            suggestionsList.innerHTML = "";
+                                                            suggestionsList.style.display = "none";
+                                                        }
+                                                    })
+                                                    .catch(error => console.error("Error:", error));
+                                            }
+
+                                            // Hide suggestions when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let suggestionsList = document.getElementById("suggestionsList");
+                                                let inputField = document.getElementById("edit-part-name");
+
+                                                if (!inputField.contains(event.target) && !suggestionsList.contains(event.target)) {
+                                                    suggestionsList.style.display = "none";
+                                                }
+                                            });
+                                        </script>
+                                        <script>
+                                            function toggleDropdown() {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                dropdown.classList.toggle("d-block");
+                                            }
+
+                                            function selectValue(element) {
+                                                let inputField = document.getElementById("edit-part-number");
+                                                inputField.value = element.textContent;
+                                                document.getElementById("dropdownList").classList.remove("d-block");
+
+                                                // Manually trigger the input event to activate autofill logic
+                                                inputField.dispatchEvent(new Event("input"));
+                                            }
+
+                                            document.getElementById("edit-part-number").addEventListener("input", function() {
+                                                let partNumber = this.value;
+
+                                                if (partNumber.length > 0) {
+                                                    fetch("check_part.php?part_number=" + partNumber)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.exists) {
+                                                                document.getElementById("edit-part-name").value = data.part_name;
+                                                                document.getElementById("edit-part-name").readOnly = true; // Lock if found
+                                                            } else {
+                                                                document.getElementById("edit-part-name").value = "";
+                                                                document.getElementById("edit-part-name").readOnly = false; // Allow input for new entry
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                } else {
+                                                    document.getElementById("edit-part-name").value = "";
+                                                    document.getElementById("edit-part-name").readOnly = false;
+                                                }
+                                            });
+
+                                            // Close dropdown when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                let container = document.querySelector(".position-relative"); // Use Bootstrap-based container
+                                                if (!container.contains(event.target)) {
+                                                    dropdown.classList.remove("d-block");
+                                                }
+                                            });
+                                        </script>
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
                                             <input type="text" class="form-control" id="edit-process" name="process">
                                             <label class="form-label">Process</label>
@@ -564,7 +748,6 @@ require "config.php";
                             <table class="table table-bordered" id="edit-material-table">
                                 <thead>
                                     <tr>
-                                        <th>Material ID</th>
                                         <th>NTDJ Number</th>
                                         <th>MNS Number</th>
                                         <th>Lot/Sublot Quantity</th>
@@ -576,6 +759,116 @@ require "config.php";
                                     <!-- Material data will be inserted here dynamically -->
                                 </tbody>
                             </table>
+                            <button type="button" id="addRowBtn" class="btn btn-primary btn-sm">Add Material Detail</button>
+                            <div class="row mt-3 border m-0">
+                                <div class="col-md-3 border p-0">
+                                    <div class="form-floating">
+                                        <textarea id="edit-issue" name="issue" class="form-control form-control-lg" placeholder="Issue call-out" style="height: 120px; overflow-y: hidden; width: 100%;" required oninput="autoExpand(this)"></textarea>
+                                        <label for="issue" style="font-size: 12px; display: block; word-wrap: break-word; white-space: normal;">Issue call-out:</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 border p-1">
+                                    <div class="text-center p-0 m-0">
+                                        <span style="font-size: 10px">Issue in Detail</span>
+                                    </div>
+                                    <div class="row mb-1">
+                                        <div class="col-md-6">
+                                            <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                                <label for="awpi" class="form-label me-2"
+                                                    style="font-size: 10px; white-space: nowrap; margin-bottom: 0;">
+                                                    AWPI:
+                                                </label>
+                                                <input type="text" id="edit-awpi" name="awpi" class="form-control form-control"
+                                                    style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 160px;">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                                <label for="dc" class="form-label me-2" style="font-size: 10px; white-space: nowrap; margin-bottom: 0;">DC:</label>
+                                                <input type="text" id="edit-dc" name="dc" class="form-control form-control" style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 160px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row p-0 mb-1">
+                                        <div class="d-flex align-items-center">
+                                            <label style="font-size: 10px; margin-right: 29px;">Deviation:</label>
+
+                                            <input type="checkbox" id="deviation_yes" name="deviation" value="Yes" class="me-1">
+                                            <label for="deviation_yes" class="me-2" style="font-size: 10px;">Yes</label>
+
+                                            <input type="checkbox" id="deviation_no" name="deviation" value="No" class="me-1">
+                                            <label for="deviation_no" style="font-size: 10px;">No</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row p-0">
+                                        <div class="d-flex align-items-center">
+                                            <label style="font-size: 10px; margin-right: 25px;">Repeating:</label>
+
+                                            <input type="checkbox" id="repeating_yes" name="repeating" value="Yes" class="me-1">
+                                            <label for="repeating_yes" class="me-2" style="font-size: 10px;">Yes</label>
+
+                                            <input type="checkbox" id="repeating_no" name="repeating" value="No" class="me-1">
+                                            <label for="repeating_no" style="font-size: 10px;">No</label>
+                                        </div>
+                                    </div>
+                                    <div class="row p-0">
+                                        <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                            <label style="font-size: 10px; white-space: nowrap; margin-right: 30px;">Cavity:</label>
+                                            <input type="text" name="cavity" id="edit-cavity" style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 350px;">
+                                        </div>
+                                    </div>
+                                    <div class="row p-0">
+                                        <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                            <label style="font-size: 10px; white-space: nowrap; margin-right: 20px;">Machine:</label>
+                                            <input type="text" name="machine" id="edit-machine" style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 350px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 border p-0">
+                                    <div class="form-floating">
+                                        <textarea id="edit-ref" name="ref" class="form-control form-control-lg" placeholder="Critical Doc Reference" style="height: 120px; overflow-y: hidden; width: 100%;" required oninput="autoExpand(this)"></textarea>
+                                        <label for="ref" style="font-size: 12px; display: block; word-wrap: break-word; white-space: normal;">Critical Doc Reference</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 border p-0">
+                                    <div class="form-floating">
+                                        <textarea id="edit-bg" name="bg" class="form-control form-control-lg" placeholder="Critical Doc Reference" style="height: 120px; overflow-y: hidden; width: 100%;" required oninput="autoExpand(this)"></textarea>
+                                        <label for="bg" style="font-size: 12px; display: block; word-wrap: break-word; white-space: normal;">Issue background or information relevant in determining the root cause of the problem</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                // Ensure only one checkbox is selected at a time
+                                document.getElementById("deviation_yes").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("deviation_no").checked = false;
+                                    }
+                                });
+
+                                document.getElementById("deviation_no").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("deviation_yes").checked = false;
+                                    }
+                                });
+                            </script>
+
+                            <script>
+                                // Ensure only one checkbox is selected at a time
+                                document.getElementById("repeating_yes").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("repeating_no").checked = false;
+                                    }
+                                });
+
+                                document.getElementById("repeating_no").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("repeating_yes").checked = false;
+                                    }
+                                });
+                            </script>
                             <div class="row mt-2 me-0 ms-0 mb-0">
                                 <div class="col-md-6 border p-1">
                                     <span style="font-size: 12px">
@@ -741,6 +1034,7 @@ require "config.php";
                                 <div class="card-body">
                                     <h5>Attachment</h5>
                                     <div id="edit-file-list" class="d-block flex-wrap">
+
                                         <!-- Files will be dynamically inserted here -->
                                     </div>
                                     <!-- Image Preview Box -->
@@ -799,6 +1093,30 @@ require "config.php";
                                             newFileDiv.appendChild(removeButton);
 
                                             fileContainer.appendChild(newFileDiv);
+                                        }
+                                    </script>
+                                    <script>
+                                        function previewImage(event) {
+                                            var imagePreviewContainer = document.getElementById("imagePreviewContainer");
+                                            var imagePreview = document.getElementById("imagePreview");
+
+                                            var file = event.target.files[0]; // Get the selected file
+                                            if (file) {
+                                                var reader = new FileReader();
+
+                                                reader.onload = function(e) {
+                                                    imagePreview.src = e.target.result; // Set the image source
+                                                    imagePreview.style.display = "block"; // Show the image
+                                                    imagePreviewContainer.style.display = "flex"; // Show the preview container
+                                                };
+
+                                                reader.readAsDataURL(file); // Read the file as a Data URL
+                                            } else {
+                                                // Hide the preview if no file is selected
+                                                imagePreview.src = "";
+                                                imagePreview.style.display = "none";
+                                                imagePreviewContainer.style.display = "none";
+                                            }
                                         }
                                     </script>
                                 </div>
@@ -1027,7 +1345,6 @@ require "config.php";
                 $(selector).prop("checked", false);
             }
         }
-
         $(document).on("click", ".edit-btn", function() {
             var ncprId = $(this).data("id");
 
@@ -1051,11 +1368,35 @@ require "config.php";
                     } else {
                         $("#edit-urgent-checkbox").prop("checked", false);
                     }
-
                     $("#edit-issue").val(response.issue);
-                    $("#edit-repeating").val(response.repeating);
+                    $("#edit-awpi").val(response.awpi);
+                    $("#edit-dc").val(response.dc);
+                    // Product Recall and Shipment
+                    if (response.deviation === "yes") {
+                        $("#deviation_yes").prop("checked", true);
+                        $("#deviation_no").prop("checked", false);
+                    } else if (response.recall === "no") {
+                        $("#deviation_yes").prop("checked", false);
+                        $("#deviation_no").prop("checked", true);
+                    } else {
+                        $("#deviation_yes").prop("checked", false);
+                        $("#deviation_no").prop("checked", false);
+                    }
+                    // Product Recall and Shipment
+                    if (response.repeating === "yes") {
+                        $("#repeating_yes").prop("checked", true);
+                        $("#repeating_no").prop("checked", false);
+                    } else if (response.recall === "no") {
+                        $("#repeating_yes").prop("checked", false);
+                        $("#repeating_no").prop("checked", true);
+                    } else {
+                        $("#repeating_yes").prop("checked", false);
+                        $("#repeating_no").prop("checked", false);
+                    }
+                    $("#edit-cavity").val(response.cavity);
                     $("#edit-machine").val(response.machine);
                     $("#edit-ref").val(response.ref);
+                    $("#edit-bg").val(response.bg);
                     $("#edit-location").val(response.location);
                     $("#edit-supplier").val(response.supplier);
                     $("#edit-supplier-part-name").val(response.supplier_part_name);
@@ -1143,27 +1484,34 @@ require "config.php";
 
                     if (response.materials.length > 0) {
                         response.materials.forEach(function(material) {
-                            materialTable.append(`
-                        <tr>
-                            <td><input type="text" class="form-control" name="material_id[]" value="${material.material_id}"></td>
-                            <td><input type="text" class="form-control" name="ntdj_num[]" value="${material.ntdj_num}"></td>
-                            <td><input type="text" class="form-control" name="mns_num[]" value="${material.mns_num}"></td>
-                            <td><input type="text" class="form-control" name="lot_sublot_qty[]" value="${material.lot_sublot_qty}"></td>
-                            <td class="d-flex gap-2">
-                                <input type="number" class="form-control" name="qty_affected[]" value="${material.qty_affected}" required>
-                                <input type="text" class="form-control" name="qty_affected_text[]" value="${material.qty_affected_text}" placeholder="Enter text">
-                            </td>
+                            var newRow = $(`
+            <tr>
+                <td> <input type="hidden" name="material_id[]" value="${material.material_id}"><input type="text" class="form-control" name="ntdj_num[]" value="${material.ntdj_num}"></td>
+                <td><input type="text" class="form-control" name="mns_num[]" value="${material.mns_num}"></td>
+                <td><input type="number" class="form-control lot-qty" name="lot_sublot_qty[]" value="${material.lot_sublot_qty}" required></td>
+                <td class="d-flex gap-2">
+                    <input type="number" class="form-control qty-affected" name="qty_affected[]" value="${material.qty_affected}" required>
+                    <input type="text" class="form-control" name="qty_affected_text[]" value="${material.qty_affected_text}" placeholder="Enter text">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" value="${material.defect_rate}" readonly required>
+                        <span class="input-group-text">%</span>
+                    </div>
+                </td>
+            </tr>
+        `);
 
-                            <td><input type="text" class="form-control" name="defect_rate[]" value="${material.defect_rate}"></td>
-                        </tr>
-                    `);
+                            materialTable.append(newRow);
+                            attachEventListeners(newRow[0]); // Attach event listeners for calculation
                         });
                     } else {
                         materialTable.append(`<tr><td colspan="7">No material records found</td></tr>`);
                     }
 
+
                     // Handling file attachments
-                    var filesContainer = $('#edit-file-list'); // Ensure this matches the ID in your HTML
+                    var filesContainer = $('#edit-file-list');
                     filesContainer.empty();
 
                     if (response.files.length > 0) {
@@ -1171,39 +1519,74 @@ require "config.php";
                             let fileLink;
                             let fileType = file.file_type.toLowerCase();
 
-                            if (fileType === "jpg" || fileType === "png" || fileType === "jpeg" || fileType === "gif") {
-                                // Image preview
+                            if (["jpg", "png", "jpeg", "gif"].includes(fileType)) {
                                 fileLink = `<img src="${file.file_path}" class="img-thumbnail" style="max-width: 150px; margin: 5px; margin-bottom: 10px;" />`;
                             } else {
-                                // Download link
                                 fileLink = `<a href="${file.file_path}" download="${file.file_name}" class="btn btn-primary btn-sm" 
-                style="margin-bottom: 10px;">
-                    <i class="fa fa-download"></i> Download ${file.file_name}
-                </a>`;
+            style="margin-bottom: 10px;">
+                <i class="fa fa-download"></i> Download ${file.file_name}
+            </a>`;
                             }
 
-                            // Delete button
-                            let deleteButton = `<button class="btn btn-danger btn-sm delete-file" 
-                            data-id="${file.id}" style="margin-left: 10px;">
-                                <i class="fa fa-trash"></i> Delete
-                            </button>`;
+                            // Add a remove button for each file
+                            let fileItem = $(`
+            <div class="file-item d-flex align-items-center">
+                ${fileLink}
+                <button type="button" class="btn btn-danger btn-sm ms-2 remove-file" data-file-id="${file.id}">
+                    <i class="fa fa-trash"></i> Remove
+                </button>
+            </div>
+        `);
 
-                            filesContainer.append(`<div class="file-item d-flex align-items-center">${fileLink}${deleteButton}</div>`);
+                            filesContainer.append(fileItem);
                         });
                     } else {
                         filesContainer.append(`<p>No files uploaded</p>`);
                     }
+
 
                     $("#editModal").modal("show");
                 }
             });
         });
 
-        // Handle form submission
-        $("#editForm").submit(function(e) {
+        $(document).on("click", ".remove-file", function(e) {
             e.preventDefault();
 
+            var fileId = $(this).attr("data-file-id"); // Use attr() instead of data()
+
+            var parentDiv = $(this).closest(".file-item");
+
+            if (fileId && fileId !== "undefined") {
+                console.log("Removing File ID:", fileId); // Debugging Step
+                $("#editForm").append(`<input type="hidden" name="deleted_files[]" value="${fileId}">`);
+            } else {
+                console.error("Error: File ID is undefined!");
+            }
+
+            parentDiv.remove();
+        });
+
+
+        $("#editForm").submit(function(e) {
+            e.preventDefault();
             var formData = new FormData(this);
+
+            // Debugging: Check if deleted_files[] exists
+            console.log("Deleted files count:", $("input[name='deleted_files[]']").length);
+            $("input[name='deleted_files[]']").each(function() {
+                console.log("Deleted File Value:", $(this).val());
+            });
+
+            // Ensure deleted_files[] is appended manually
+            $("input[name='deleted_files[]']").each(function() {
+                formData.append("deleted_files[]", $(this).val());
+            });
+
+            console.log("Final FormData before sending:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ": " + pair[1]);
+            }
 
             $.ajax({
                 url: "update_ncpr.php",
@@ -1212,23 +1595,106 @@ require "config.php";
                 contentType: false,
                 processData: false,
                 success: function(response) {
+                    console.log("Server response:", response);
                     alert("NCPR updated successfully!");
                     $("#editModal").modal("hide");
                     location.reload();
                 }
             });
         });
+    </script>
+    <script>
+        document.getElementById("addRowBtn").addEventListener("click", function() {
+            var table = document.getElementById("edit-material-table").getElementsByTagName("tbody")[0];
+            var rowCount = table.getElementsByTagName("tr").length;
 
-        // Remove file functionality
-        $(document).on("click", ".remove-file", function() {
-            var fileId = $(this).data("id");
-            $(this).parent().remove();
+            if (rowCount >= 12) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Limit Reached',
+                    text: 'You can only add up to 12 rows.',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
 
-            $.post("delete_file.php", {
-                file_id: fileId
-            }, function(response) {
-                console.log("File removed:", response);
-            });
+            var newRow = document.createElement("tr");
+            var firstRow = table.querySelector("tr");
+            var ntdjValue = firstRow ? firstRow.querySelector('[name="ntdj_num[]"]').value : "";
+            var mnsValue = firstRow ? firstRow.querySelector('[name="mns_num[]"]').value : "";
+            var lotSublotValue = firstRow ? firstRow.querySelector('[name="lot_sublot_qty[]"]').value : "";
+
+            newRow.innerHTML = `
+        <td><input type="text" class="form-control" name="ntdj_num[]" value="${ntdjValue}"></td>
+        <td><input type="text" class="form-control" name="mns_num[]" value="${mnsValue}"></td>
+        <td><input type="number" class="form-control" name="lot_sublot_qty[]" value="${lotSublotValue}" required></td>
+        <td class="d-flex">
+            <input type="number" class="form-control qty-affected" name="qty_affected[]" required> 
+            <input type="text" class="form-control" name="qty_affected_text[]" placeholder="Enter text">
+        </td>
+        <td>
+            <div class="input-group">
+                <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" readonly required>
+                <span class="input-group-text">%</span>
+            </div>
+        </td>
+        <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">Remove</button>
+</td>
+    `;
+
+            table.appendChild(newRow);
+            attachEventListeners(newRow);
+        });
+
+        // Remove row functionality
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("remove-row")) {
+                event.target.closest("tr").remove();
+            }
+        });
+
+        function attachEventListeners(row) {
+            let lotQty = row.querySelector('[name="lot_sublot_qty[]"]');
+            let qtyAffected = row.querySelector('.qty-affected');
+            let defectRate = row.querySelector('.defect-rate');
+
+            function updateDefectRate() {
+                let lotValue = parseFloat(lotQty.value) || 0;
+                let affectedValue = parseFloat(qtyAffected.value) || 0;
+
+                if (lotValue > 0) {
+                    let calculatedRate = (affectedValue / lotValue) * 100;
+                    defectRate.value = calculatedRate.toFixed(2);
+                } else {
+                    defectRate.value = "";
+                }
+            }
+
+            function validateDefectRate() {
+                let lotValue = parseFloat(lotQty.value) || 0;
+                let affectedValue = parseFloat(qtyAffected.value) || 0;
+                let calculatedRate = (affectedValue / lotValue) * 100;
+
+                if (calculatedRate > 100) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Invalid Input",
+                        text: "Defect rate cannot exceed 100%!",
+                        confirmButtonColor: "#d33",
+                    });
+                    qtyAffected.value = "";
+                    defectRate.value = "";
+                }
+            }
+
+            lotQty.addEventListener("input", updateDefectRate);
+            qtyAffected.addEventListener("input", updateDefectRate);
+            qtyAffected.addEventListener("blur", validateDefectRate);
+        }
+
+        // Attach event listeners to existing rows on page load
+        document.querySelectorAll("#edit-material-table tbody tr").forEach(row => {
+            attachEventListeners(row);
         });
     </script>
 
@@ -1238,7 +1704,7 @@ require "config.php";
             // Initialize the DataTable
             var table = $('#ncprTable').DataTable({
                 "columnDefs": [{
-                    "targets": [0, 1],
+                    "targets": [0, 1, 6],
                     "visible": false
                 }],
                 "order": [8, 'desc'],
@@ -1274,8 +1740,18 @@ require "config.php";
 
             // Trigger refresh every 5 seconds (5000 milliseconds)
             setInterval(refreshTable, 5000);
+
+            // Using event delegation to handle button clicks
+            $(document).on('click', '.print-btn', function() {
+                let ncprNum = $(this).data('id'); // Get the ncpr_num from the button data attribute
+
+                // Open print preview (adjust URL as needed)
+                let printWindow = window.open("print_page.php?ncpr_num=" + ncprNum, "_blank");
+                printWindow.focus();
+            });
         });
     </script>
+
 
     <script>
         const hamBurger = document.querySelector(".toggle-btn");

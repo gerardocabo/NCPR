@@ -29,6 +29,7 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
 
     <style>
@@ -471,18 +472,18 @@ $name = $_SESSION["user"];
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editForm">
+                    <form id="editForm" method="POST" enctype="multipart/form-data">
                         <div class="position-relative">
                             <div class="row g-0">
                                 <div class="col-md-9">
                                     <div class="d-flex flex-wrap gap-3 mb-1 g-0 m-0 p-0">
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
                                             <input type="hidden" id="edit-id" name="id">
-                                            <input type="text" class="form-control" id="edit-initiator" name="initiator">
+                                            <input type="text" class="form-control" id="edit-initiator" name="initiator" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase();">
                                             <label class="form-label">Initiator</label>
                                         </div>
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="edit-ncpr-num" name="ncpr_num">
+                                            <input type="text" class="form-control" id="edit-ncpr-num" name="ncpr_num" readonly>
                                             <label class="form-label">NCPR Number</label>
                                         </div>
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
@@ -491,14 +492,172 @@ $name = $_SESSION["user"];
                                         </div>
                                     </div>
                                     <div class="d-flex flex-wrap gap-3 mb-1 g-0 m-0 p-0">
-                                        <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="edit-part-number" name="part_number">
-                                            <label class="form-label">Part Number</label>
+                                        <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
+                                            <input type="text" id="edit-part-number" name="part_number" class="form-control"
+                                                style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off">
+                                            <label for="part_number">Part Number/Model Number:</label>
+                                            <!-- Dropdown List -->
+                                            <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
+                                                style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                                                <?php
+                                                include 'connection.php'; // Include your existing connection file
+
+                                                // Fetch part numbers from the product_list table
+                                                $sql = "SELECT part_number FROM product_list";
+                                                $result = $conn->query($sql);
+
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<li class='list-group-item' style='cursor: pointer;' onclick='selectValue(this)'>" .
+                                                            htmlspecialchars($row["part_number"]) .
+                                                            "</li>";
+                                                    }
+                                                }
+                                                ?>
+                                            </ul>
                                         </div>
-                                        <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="edit-part-name" name="part_name">
-                                            <label class="form-label">Part Name</label>
+                                        <script>
+                                            function liveSearch() {
+                                                let input = document.getElementById("edit-part-number").value;
+                                                let dropdown = document.getElementById("dropdownList");
+
+                                                // Clear old results
+                                                dropdown.innerHTML = "";
+
+                                                if (input.length === 0) {
+                                                    dropdown.style.display = "none";
+                                                    return;
+                                                }
+
+                                                let xhr = new XMLHttpRequest();
+                                                xhr.onreadystatechange = function() {
+                                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                                        dropdown.innerHTML = xhr.responseText;
+
+                                                        // Only show dropdown if there are new results
+                                                        dropdown.style.display = dropdown.innerHTML.trim() !== "" ? "block" : "none";
+                                                    }
+                                                };
+                                                xhr.open("GET", "search.php?query=" + encodeURIComponent(input), true);
+                                                xhr.send();
+                                            }
+
+                                            function selectValue(element) {
+                                                document.getElementById("edit-part-number").value = element.textContent;
+                                                document.getElementById("dropdownList").style.display = "none";
+                                            }
+
+                                            // Hide dropdown when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                let inputField = document.getElementById("edit-part-number");
+
+                                                if (!inputField.contains(event.target) && !dropdown.contains(event.target)) {
+                                                    dropdown.style.display = "none";
+                                                }
+                                            });
+                                        </script>
+
+                                        <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
+                                            <input type="text" class="form-control" id="edit-part-name" name="part_name" placeholder="Enter Part Description" oninput="fetchSuggestions(this.value)" autocomplete="off">
+                                            <label>Part Description:</label>
+                                            <ul id="suggestionsList" class="list-group position-absolute bg-white border rounded"
+                                                style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                                            </ul>
                                         </div>
+                                        <script>
+                                            function fetchSuggestions(query) {
+                                                let suggestionsList = document.getElementById("suggestionsList");
+
+                                                // Clear previous results
+                                                suggestionsList.innerHTML = "";
+
+                                                if (query.length === 0) {
+                                                    suggestionsList.style.display = "none";
+                                                    return;
+                                                }
+
+                                                fetch("fetch_part_names.php?query=" + encodeURIComponent(query))
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        if (data.length > 0) {
+                                                            data.forEach(item => {
+                                                                let li = document.createElement("li");
+                                                                li.classList.add("list-group-item");
+                                                                li.style.cursor = "pointer";
+                                                                li.textContent = item;
+                                                                li.onclick = function() {
+                                                                    document.getElementById("edit-part-name").value = this.textContent;
+                                                                    suggestionsList.style.display = "none";
+                                                                };
+                                                                suggestionsList.appendChild(li);
+                                                            });
+                                                            suggestionsList.style.display = "block";
+                                                        } else {
+                                                            // Clear the list and hide it when no results are found
+                                                            suggestionsList.innerHTML = "";
+                                                            suggestionsList.style.display = "none";
+                                                        }
+                                                    })
+                                                    .catch(error => console.error("Error:", error));
+                                            }
+
+                                            // Hide suggestions when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let suggestionsList = document.getElementById("suggestionsList");
+                                                let inputField = document.getElementById("edit-part-name");
+
+                                                if (!inputField.contains(event.target) && !suggestionsList.contains(event.target)) {
+                                                    suggestionsList.style.display = "none";
+                                                }
+                                            });
+                                        </script>
+                                        <script>
+                                            function toggleDropdown() {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                dropdown.classList.toggle("d-block");
+                                            }
+
+                                            function selectValue(element) {
+                                                let inputField = document.getElementById("edit-part-number");
+                                                inputField.value = element.textContent;
+                                                document.getElementById("dropdownList").classList.remove("d-block");
+
+                                                // Manually trigger the input event to activate autofill logic
+                                                inputField.dispatchEvent(new Event("input"));
+                                            }
+
+                                            document.getElementById("edit-part-number").addEventListener("input", function() {
+                                                let partNumber = this.value;
+
+                                                if (partNumber.length > 0) {
+                                                    fetch("check_part.php?part_number=" + partNumber)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            if (data.exists) {
+                                                                document.getElementById("edit-part-name").value = data.part_name;
+                                                                document.getElementById("edit-part-name").readOnly = true; // Lock if found
+                                                            } else {
+                                                                document.getElementById("edit-part-name").value = "";
+                                                                document.getElementById("edit-part-name").readOnly = false; // Allow input for new entry
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                } else {
+                                                    document.getElementById("edit-part-name").value = "";
+                                                    document.getElementById("edit-part-name").readOnly = false;
+                                                }
+                                            });
+
+                                            // Close dropdown when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                let container = document.querySelector(".position-relative"); // Use Bootstrap-based container
+                                                if (!container.contains(event.target)) {
+                                                    dropdown.classList.remove("d-block");
+                                                }
+                                            });
+                                        </script>
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
                                             <input type="text" class="form-control" id="edit-process" name="process">
                                             <label class="form-label">Process</label>
@@ -548,7 +707,6 @@ $name = $_SESSION["user"];
                             <table class="table table-bordered" id="edit-material-table">
                                 <thead>
                                     <tr>
-                                        <th>Material ID</th>
                                         <th>NTDJ Number</th>
                                         <th>MNS Number</th>
                                         <th>Lot/Sublot Quantity</th>
@@ -560,6 +718,116 @@ $name = $_SESSION["user"];
                                     <!-- Material data will be inserted here dynamically -->
                                 </tbody>
                             </table>
+                            <button type="button" id="addRowBtn" class="btn btn-primary btn-sm">Add Material Detail</button>
+                            <div class="row mt-3 border m-0">
+                                <div class="col-md-3 border p-0">
+                                    <div class="form-floating">
+                                        <textarea id="edit-issue" name="issue" class="form-control form-control-lg" placeholder="Issue call-out" style="height: 120px; overflow-y: hidden; width: 100%;" required oninput="autoExpand(this)"></textarea>
+                                        <label for="issue" style="font-size: 12px; display: block; word-wrap: break-word; white-space: normal;">Issue call-out:</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 border p-1">
+                                    <div class="text-center p-0 m-0">
+                                        <span style="font-size: 10px">Issue in Detail</span>
+                                    </div>
+                                    <div class="row mb-1">
+                                        <div class="col-md-6">
+                                            <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                                <label for="awpi" class="form-label me-2"
+                                                    style="font-size: 10px; white-space: nowrap; margin-bottom: 0;">
+                                                    AWPI:
+                                                </label>
+                                                <input type="text" id="edit-awpi" name="awpi" class="form-control form-control"
+                                                    style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 160px;">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                                <label for="dc" class="form-label me-2" style="font-size: 10px; white-space: nowrap; margin-bottom: 0;">DC:</label>
+                                                <input type="text" id="edit-dc" name="dc" class="form-control form-control" style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 160px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row p-0 mb-1">
+                                        <div class="d-flex align-items-center">
+                                            <label style="font-size: 10px; margin-right: 29px;">Deviation:</label>
+
+                                            <input type="checkbox" id="deviation_yes" name="deviation" value="Yes" class="me-1">
+                                            <label for="deviation_yes" class="me-2" style="font-size: 10px;">Yes</label>
+
+                                            <input type="checkbox" id="deviation_no" name="deviation" value="No" class="me-1">
+                                            <label for="deviation_no" style="font-size: 10px;">No</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row p-0">
+                                        <div class="d-flex align-items-center">
+                                            <label style="font-size: 10px; margin-right: 25px;">Repeating:</label>
+
+                                            <input type="checkbox" id="repeating_yes" name="repeating" value="Yes" class="me-1">
+                                            <label for="repeating_yes" class="me-2" style="font-size: 10px;">Yes</label>
+
+                                            <input type="checkbox" id="repeating_no" name="repeating" value="No" class="me-1">
+                                            <label for="repeating_no" style="font-size: 10px;">No</label>
+                                        </div>
+                                    </div>
+                                    <div class="row p-0">
+                                        <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                            <label style="font-size: 10px; white-space: nowrap; margin-right: 30px;">Cavity:</label>
+                                            <input type="text" name="cavity" id="edit-cavity" style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 350px;">
+                                        </div>
+                                    </div>
+                                    <div class="row p-0">
+                                        <div class="d-flex" style="align-items: baseline; width: fit-content;">
+                                            <label style="font-size: 10px; white-space: nowrap; margin-right: 20px;">Machine:</label>
+                                            <input type="text" name="machine" id="edit-machine" style="border: none; border-bottom: 1px solid #ced4da; border-radius: 0; outline: none; padding: 0; height: auto; font-size: 10px; width: 350px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 border p-0">
+                                    <div class="form-floating">
+                                        <textarea id="edit-ref" name="ref" class="form-control form-control-lg" placeholder="Critical Doc Reference" style="height: 120px; overflow-y: hidden; width: 100%;" required oninput="autoExpand(this)"></textarea>
+                                        <label for="ref" style="font-size: 12px; display: block; word-wrap: break-word; white-space: normal;">Critical Doc Reference</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 border p-0">
+                                    <div class="form-floating">
+                                        <textarea id="edit-bg" name="bg" class="form-control form-control-lg" placeholder="Critical Doc Reference" style="height: 120px; overflow-y: hidden; width: 100%;" required oninput="autoExpand(this)"></textarea>
+                                        <label for="bg" style="font-size: 12px; display: block; word-wrap: break-word; white-space: normal;">Issue background or information relevant in determining the root cause of the problem</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                // Ensure only one checkbox is selected at a time
+                                document.getElementById("deviation_yes").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("deviation_no").checked = false;
+                                    }
+                                });
+
+                                document.getElementById("deviation_no").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("deviation_yes").checked = false;
+                                    }
+                                });
+                            </script>
+
+                            <script>
+                                // Ensure only one checkbox is selected at a time
+                                document.getElementById("repeating_yes").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("repeating_no").checked = false;
+                                    }
+                                });
+
+                                document.getElementById("repeating_no").addEventListener("change", function() {
+                                    if (this.checked) {
+                                        document.getElementById("repeating_yes").checked = false;
+                                    }
+                                });
+                            </script>
                             <div class="row mt-2 me-0 ms-0 mb-0">
                                 <div class="col-md-6 border p-1">
                                     <span style="font-size: 12px">
@@ -725,6 +993,7 @@ $name = $_SESSION["user"];
                                 <div class="card-body">
                                     <h5>Attachment</h5>
                                     <div id="edit-file-list" class="d-block flex-wrap">
+
                                         <!-- Files will be dynamically inserted here -->
                                     </div>
                                     <!-- Image Preview Box -->
@@ -785,6 +1054,30 @@ $name = $_SESSION["user"];
                                             fileContainer.appendChild(newFileDiv);
                                         }
                                     </script>
+                                    <script>
+                                        function previewImage(event) {
+                                            var imagePreviewContainer = document.getElementById("imagePreviewContainer");
+                                            var imagePreview = document.getElementById("imagePreview");
+
+                                            var file = event.target.files[0]; // Get the selected file
+                                            if (file) {
+                                                var reader = new FileReader();
+
+                                                reader.onload = function(e) {
+                                                    imagePreview.src = e.target.result; // Set the image source
+                                                    imagePreview.style.display = "block"; // Show the image
+                                                    imagePreviewContainer.style.display = "flex"; // Show the preview container
+                                                };
+
+                                                reader.readAsDataURL(file); // Read the file as a Data URL
+                                            } else {
+                                                // Hide the preview if no file is selected
+                                                imagePreview.src = "";
+                                                imagePreview.style.display = "none";
+                                                imagePreviewContainer.style.display = "none";
+                                            }
+                                        }
+                                    </script>
                                 </div>
                                 <button type="submit" class="btn btn-success  w-50 mx-auto d-block">
                                     <i class="fas fa-paper-plane"></i> Save Change</button>
@@ -794,10 +1087,6 @@ $name = $_SESSION["user"];
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-    </div>
-    </div>
     </div>
 
     <!-- Dispo viewonly Modal -->
@@ -1005,6 +1294,14 @@ $name = $_SESSION["user"];
             });
         });
 
+        // Function to set checkbox based on response value
+        function setCheckboxValue(selector, value) {
+            if (value === "yes") {
+                $(selector).prop("checked", true);
+            } else {
+                $(selector).prop("checked", false);
+            }
+        }
         $(document).on("click", ".edit-btn", function() {
             var ncprId = $(this).data("id");
 
@@ -1023,11 +1320,40 @@ $name = $_SESSION["user"];
                     $("#edit-part-number").val(response.part_number);
                     $("#edit-part-name").val(response.part_name);
                     $("#edit-process").val(response.process);
-                    $("#edit-urgent").val(response.urgent);
+                    if (response.urgent === "on") {
+                        $("#edit-urgent-checkbox").prop("checked", true);
+                    } else {
+                        $("#edit-urgent-checkbox").prop("checked", false);
+                    }
                     $("#edit-issue").val(response.issue);
-                    $("#edit-repeating").val(response.repeating);
+                    $("#edit-awpi").val(response.awpi);
+                    $("#edit-dc").val(response.dc);
+                    // Product Recall and Shipment
+                    if (response.deviation === "yes") {
+                        $("#deviation_yes").prop("checked", true);
+                        $("#deviation_no").prop("checked", false);
+                    } else if (response.recall === "no") {
+                        $("#deviation_yes").prop("checked", false);
+                        $("#deviation_no").prop("checked", true);
+                    } else {
+                        $("#deviation_yes").prop("checked", false);
+                        $("#deviation_no").prop("checked", false);
+                    }
+                    // Product Recall and Shipment
+                    if (response.repeating === "yes") {
+                        $("#repeating_yes").prop("checked", true);
+                        $("#repeating_no").prop("checked", false);
+                    } else if (response.recall === "no") {
+                        $("#repeating_yes").prop("checked", false);
+                        $("#repeating_no").prop("checked", true);
+                    } else {
+                        $("#repeating_yes").prop("checked", false);
+                        $("#repeating_no").prop("checked", false);
+                    }
+                    $("#edit-cavity").val(response.cavity);
                     $("#edit-machine").val(response.machine);
                     $("#edit-ref").val(response.ref);
+                    $("#edit-bg").val(response.bg);
                     $("#edit-location").val(response.location);
                     $("#edit-supplier").val(response.supplier);
                     $("#edit-supplier-part-name").val(response.supplier_part_name);
@@ -1035,32 +1361,79 @@ $name = $_SESSION["user"];
                     // New fields added
                     $("#edit-invoice-num").val(response.invoice_num);
                     $("#edit-purchase-order").val(response.purchase_order);
-                    $("#edit-one").val(response.one);
-                    $("#edit-one-one").val(response.one_one);
-                    $("#edit-two").val(response.two);
-                    $("#edit-two-one").val(response.two_one);
-                    $("#edit-three").val(response.three);
-                    $("#edit-three-one").val(response.three_one);
-                    $("#edit-four").val(response.four);
-                    $("#edit-five").val(response.five);
-                    $("#edit-six").val(response.six);
-                    $("#edit-seven").val(response.seven);
-                    $("#edit-seven-one").val(response.seven_one);
-                    $("#edit-seven-two").val(response.seven_two);
-                    $("#edit-eight").val(response.eight);
-                    $("#edit-eight-one").val(response.eight_one);
-                    $("#edit-nine").val(response.nine);
-                    $("#edit-nine-one").val(response.nine_one);
-                    $("#edit-recall").val(response.recall);
-                    $("#edit-fgparts").val(response.fgparts);
-                    $("#edit-shipment").val(response.shipment);
-                    $("#edit-ship-sched").val(response.ship_sched);
-                    $("#edit-wip").val(response.wip);
-                    $("#edit-stop-proc").val(response.stop_proc);
+                    // Set checkboxes
+                    setCheckboxValue("#edit-one", response.one);
+                    setCheckboxValue("#edit-one_one", response.one_one);
+                    setCheckboxValue("#edit-two", response.two);
+                    $("#edit-two_one").val(response.two_one);
+                    setCheckboxValue("#edit-three", response.three);
+                    $("#edit-three_one").val(response.three_one);
+                    setCheckboxValue("#edit-four", response.four);
+                    setCheckboxValue("#edit-five", response.five);
+                    setCheckboxValue("#edit-six", response.six);
+                    // Set the value of the text inputs
+                    $("#edit-seven_one").val(response.seven_one);
+                    $("#edit-seven_two").val(response.seven_two);
+                    // Check the correct checkbox based on response.seven value
+                    if (response.seven === "yes") {
+                        $("#seven-yes").prop("checked", true);
+                        $("#seven-no").prop("checked", false);
+                    } else if (response.seven === "no") {
+                        $("#seven-no").prop("checked", true);
+                        $("#seven-yes").prop("checked", false);
+                    } else {
+                        $("#seven-yes").prop("checked", false);
+                        $("#seven-no").prop("checked", false);
+                    }
+                    setCheckboxValue("#edit-eight", response.eight);
+                    $("#edit-eight_one").val(response.eight_one);
+                    setCheckboxValue("#edit-nine", response.nine);
+                    $("#edit-nine_one").val(response.nine_one);
+
+                    // Product Recall and Shipment
+                    if (response.recall === "yes") {
+                        $("#recall_yes").prop("checked", true);
+                        $("#recall_no").prop("checked", false);
+                    } else if (response.recall === "no") {
+                        $("#recall_yes").prop("checked", false);
+                        $("#recall_no").prop("checked", true);
+                    } else {
+                        $("#recall_yes").prop("checked", false);
+                        $("#recall_no").prop("checked", false);
+                    }
+                    setCheckboxValue("#edit-fgparts", response.fgparts);
+                    if (response.shipment === "yes") {
+                        $("#shipment_yes").prop("checked", true);
+                        $("#shipment_no").prop("checked", false);
+                    } else if (response.shipment === "no") {
+                        $("#shipment_yes").prop("checked", false);
+                        $("#shipment_no").prop("checked", true);
+                    } else {
+                        $("#shipment_yes").prop("checked", false);
+                        $("#shipment_no").prop("checked", false);
+                    }
+                    $("#edit-ship_sched").val(response.ship_sched);
+
+                    // WIP and Stop Process
+                    setCheckboxValue("#edit-wip", response.wip);
+                    if (response.stop_proc === "yes") {
+                        $("#stop_proc_yes").prop("checked", true);
+                        $("#stop_proc_no").prop("checked", false);
+                    } else if (response.stop_proc === "no") {
+                        $("#stop_proc_yes").prop("checked", false);
+                        $("#stop_proc_no").prop("checked", true);
+                    } else {
+                        $("#stop_proc_yes").prop("checked", false);
+                        $("#stop_proc_no").prop("checked", false);
+                    }
+
+                    // Locations and MCS
                     $("#edit-location").val(response.location);
-                    $("#edit-mcs").val(response.mcs);
-                    $("#edit-mcs-details").val(response.mcs_details);
-                    $("#edit-customer-notif").val(response.customer_notif);
+                    setCheckboxValue("#edit-mcs", response.mcs);
+                    $("#edit-mcs_details").val(response.mcs_details);
+
+                    // Customer Notification
+                    setCheckboxValue("#edit-customer_notif", response.customer_notif);
 
                     // Load Material Details into Edit Modal Table
                     var materialTable = $('#edit-material-table tbody');
@@ -1068,45 +1441,179 @@ $name = $_SESSION["user"];
 
                     if (response.materials.length > 0) {
                         response.materials.forEach(function(material) {
-                            materialTable.append(`
-                        <tr>
-                            <td><input type="text" class="form-control" name="material_id[]" value="${material.material_id}"></td>
-                            <td><input type="text" class="form-control" name="ntdj_num[]" value="${material.ntdj_num}"></td>
-                            <td><input type="text" class="form-control" name="mns_num[]" value="${material.mns_num}"></td>
-                            <td><input type="text" class="form-control" name="lot_sublot_qty[]" value="${material.lot_sublot_qty}"></td>
-                            <td><input type="text" class="form-control" name="qty_affected[]" value="${material.qty_affected}"></td>
-                            <td><input type="text" class="form-control" name="qty_affected_text[]" value="${material.qty_affected_text}"></td>
-                            <td><input type="text" class="form-control" name="defect_rate[]" value="${material.defect_rate}"></td>
-                        </tr>
-                    `);
+                            var newRow = $(`
+            <tr>
+                <td> <input type="hidden" name="material_id[]" value="${material.material_id}"><input type="text" class="form-control" name="ntdj_num[]" value="${material.ntdj_num}"></td>
+                <td><input type="text" class="form-control" name="mns_num[]" value="${material.mns_num}"></td>
+                <td><input type="number" class="form-control lot-qty" name="lot_sublot_qty[]" value="${material.lot_sublot_qty}" required></td>
+                <td class="d-flex gap-2">
+                    <input type="number" class="form-control qty-affected" name="qty_affected[]" value="${material.qty_affected}" required>
+                    <input type="text" class="form-control" name="qty_affected_text[]" value="${material.qty_affected_text}" placeholder="Enter text">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" value="${material.defect_rate}" readonly required>
+                        <span class="input-group-text">%</span>
+                    </div>
+                </td>
+            </tr>
+        `);
+
+                            materialTable.append(newRow);
+                            attachEventListeners(newRow[0]); // Attach event listeners for calculation
                         });
                     } else {
                         materialTable.append(`<tr><td colspan="7">No material records found</td></tr>`);
                     }
 
-                    // Load existing files
-                    var fileContainer = $("#edit-file-list");
-                    fileContainer.empty();
+
+                    // Handling file attachments
+                    var filesContainer = $('#edit-file-list');
+                    filesContainer.empty();
 
                     if (response.files.length > 0) {
                         response.files.forEach(function(file) {
-                            let fileHtml = `<div class="file-item">
-                                    <a href="${file.file_path}" target="_blank">${file.file_name}</a>
-                                    <button class="btn btn-danger btn-sm remove-file" data-id="${file.id}">Remove</button>
-                                </div>`;
-                            fileContainer.append(fileHtml);
+                            let fileLink;
+                            let fileType = file.file_type.toLowerCase();
+
+                            if (["jpg", "png", "jpeg", "gif"].includes(fileType)) {
+                                fileLink = `<img src="${file.file_path}" class="img-thumbnail" style="max-width: 150px; margin: 5px; margin-bottom: 10px;" />`;
+                            } else {
+                                fileLink = `<a href="${file.file_path}" download="${file.file_name}" class="btn btn-primary btn-sm" 
+            style="margin-bottom: 10px;">
+                <i class="fa fa-download"></i> Download ${file.file_name}
+            </a>`;
+                            }
+
+                            // Add a remove button for each file
+                            let fileItem = $(`
+            <div class="file-item d-flex align-items-center">
+                ${fileLink}
+                <button type="button" class="btn btn-danger btn-sm ms-2 remove-file" data-file-id="${file.id}">
+                    <i class="fa fa-trash"></i> Remove
+                </button>
+            </div>
+        `);
+
+                            filesContainer.append(fileItem);
                         });
+                    } else {
+                        filesContainer.append(`<p>No files uploaded</p>`);
                     }
+
 
                     $("#editModal").modal("show");
                 }
             });
         });
-        // Function to calculate defect rate for a row
-        function calculateDefectRate(row) {
+
+        $(document).on("click", ".remove-file", function(e) {
+            e.preventDefault();
+
+            var fileId = $(this).attr("data-file-id"); // Use attr() instead of data()
+
+            var parentDiv = $(this).closest(".file-item");
+
+            if (fileId && fileId !== "undefined") {
+                console.log("Removing File ID:", fileId); // Debugging Step
+                $("#editForm").append(`<input type="hidden" name="deleted_files[]" value="${fileId}">`);
+            } else {
+                console.error("Error: File ID is undefined!");
+            }
+
+            parentDiv.remove();
+        });
+
+
+        $("#editForm").submit(function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            // Debugging: Check if deleted_files[] exists
+            console.log("Deleted files count:", $("input[name='deleted_files[]']").length);
+            $("input[name='deleted_files[]']").each(function() {
+                console.log("Deleted File Value:", $(this).val());
+            });
+
+            // Ensure deleted_files[] is appended manually
+            $("input[name='deleted_files[]']").each(function() {
+                formData.append("deleted_files[]", $(this).val());
+            });
+
+            console.log("Final FormData before sending:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ": " + pair[1]);
+            }
+
+            $.ajax({
+                url: "update_ncpr.php",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    console.log("Server response:", response);
+                    alert("NCPR updated successfully!");
+                    $("#editModal").modal("hide");
+                    location.reload();
+                }
+            });
+        });
+    </script>
+    <script>
+        document.getElementById("addRowBtn").addEventListener("click", function() {
+            var table = document.getElementById("edit-material-table").getElementsByTagName("tbody")[0];
+            var rowCount = table.getElementsByTagName("tr").length;
+
+            if (rowCount >= 12) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Limit Reached',
+                    text: 'You can only add up to 12 rows.',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
+
+            var newRow = document.createElement("tr");
+            var firstRow = table.querySelector("tr");
+            var ntdjValue = firstRow ? firstRow.querySelector('[name="ntdj_num[]"]').value : "";
+            var mnsValue = firstRow ? firstRow.querySelector('[name="mns_num[]"]').value : "";
+            var lotSublotValue = firstRow ? firstRow.querySelector('[name="lot_sublot_qty[]"]').value : "";
+
+            newRow.innerHTML = `
+        <td><input type="text" class="form-control" name="ntdj_num[]" value="${ntdjValue}"></td>
+        <td><input type="text" class="form-control" name="mns_num[]" value="${mnsValue}"></td>
+        <td><input type="number" class="form-control" name="lot_sublot_qty[]" value="${lotSublotValue}" required></td>
+        <td class="d-flex">
+            <input type="number" class="form-control qty-affected" name="qty_affected[]" required> 
+            <input type="text" class="form-control" name="qty_affected_text[]" placeholder="Enter text">
+        </td>
+        <td>
+            <div class="input-group">
+                <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" readonly required>
+                <span class="input-group-text">%</span>
+            </div>
+        </td>
+        <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">Remove</button>
+</td>
+    `;
+
+            table.appendChild(newRow);
+            attachEventListeners(newRow);
+        });
+
+        // Remove row functionality
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("remove-row")) {
+                event.target.closest("tr").remove();
+            }
+        });
+
+        function attachEventListeners(row) {
             let lotQty = row.querySelector('[name="lot_sublot_qty[]"]');
-            let qtyAffected = row.querySelector('[name="qty_affected[]"]');
-            let defectRate = row.querySelector('[name="defect_rate[]"]');
+            let qtyAffected = row.querySelector('.qty-affected');
+            let defectRate = row.querySelector('.defect-rate');
 
             function updateDefectRate() {
                 let lotValue = parseFloat(lotQty.value) || 0;
@@ -1132,51 +1639,19 @@ $name = $_SESSION["user"];
                         text: "Defect rate cannot exceed 100%!",
                         confirmButtonColor: "#d33",
                     });
-                    qtyAffected.value = ""; // Clear invalid input
+                    qtyAffected.value = "";
                     defectRate.value = "";
                 }
             }
 
             lotQty.addEventListener("input", updateDefectRate);
             qtyAffected.addEventListener("input", updateDefectRate);
-            qtyAffected.addEventListener("blur", validateDefectRate); // Validate when user leaves the input field
+            qtyAffected.addEventListener("blur", validateDefectRate);
         }
 
-        // Apply defect rate calculation for existing rows on page load
-        document.querySelectorAll("#materialTable tbody tr").forEach(row => {
-            calculateDefectRate(row);
-        });
-
-        // Handle form submission
-        $("#editForm").submit(function(e) {
-            e.preventDefault();
-
-            var formData = new FormData(this);
-
-            $.ajax({
-                url: "update_ncpr.php",
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    alert("NCPR updated successfully!");
-                    $("#editModal").modal("hide");
-                    location.reload();
-                }
-            });
-        });
-
-        // Remove file functionality
-        $(document).on("click", ".remove-file", function() {
-            var fileId = $(this).data("id");
-            $(this).parent().remove();
-
-            $.post("delete_file.php", {
-                file_id: fileId
-            }, function(response) {
-                console.log("File removed:", response);
-            });
+        // Attach event listeners to existing rows on page load
+        document.querySelectorAll("#edit-material-table tbody tr").forEach(row => {
+            attachEventListeners(row);
         });
     </script>
 

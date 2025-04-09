@@ -16,6 +16,9 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
 <style>
@@ -40,12 +43,12 @@ $name = $_SESSION["user"];
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo $name ?></a>
+                    <a href="#">LOGO</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active">
-                    <a href="" class="sidebar-link">
+                    <a href="ncprfiling.php" class="sidebar-link">
                         <i class="fa-regular fa-folder-open"></i>
                         <span>NCPR Filing</span>
                     </a>
@@ -100,14 +103,8 @@ $name = $_SESSION["user"];
                                     <div class="d-flex flex-wrap gap-3 mb-1">
                                         <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
                                             <input type="text" id="part_number" name="part_number" class="form-control"
-                                                style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off">
+                                                style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off" required>
                                             <label for="part_number">Part Number/Model Number:</label>
-
-                                            <!-- Dropdown Button -->
-                                            <button type="button" class="btn btn-light position-absolute"
-                                                style="right: 10px; top: 50%; transform: translateY(-50%); border: none; font-size: 18px;"
-                                                onclick="toggleDropdown()">▼</button>
-
                                             <!-- Dropdown List -->
                                             <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
                                                 style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
@@ -128,18 +125,13 @@ $name = $_SESSION["user"];
                                                 ?>
                                             </ul>
                                         </div>
-
-                                        <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
-                                            <input type="text" class="form-control" id="part_name" name="part_name" placeholder="Enter Part Description" oninput="fetchSuggestions(this.value)" autocomplete="off">
-                                            <label>Part Description:</label>
-                                            <ul id="suggestionsList" class="list-group position-absolute bg-white border rounded"
-                                                style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
-                                            </ul>
-                                        </div>
                                         <script>
                                             function liveSearch() {
                                                 let input = document.getElementById("part_number").value;
                                                 let dropdown = document.getElementById("dropdownList");
+
+                                                // Clear old results
+                                                dropdown.innerHTML = "";
 
                                                 if (input.length === 0) {
                                                     dropdown.style.display = "none";
@@ -150,10 +142,12 @@ $name = $_SESSION["user"];
                                                 xhr.onreadystatechange = function() {
                                                     if (xhr.readyState === 4 && xhr.status === 200) {
                                                         dropdown.innerHTML = xhr.responseText;
-                                                        dropdown.style.display = "block";
+
+                                                        // Only show dropdown if there are new results
+                                                        dropdown.style.display = dropdown.innerHTML.trim() !== "" ? "block" : "none";
                                                     }
                                                 };
-                                                xhr.open("GET", "fetch_part_numbers.php?query=" + encodeURIComponent(input), true);
+                                                xhr.open("GET", "search.php?query=" + encodeURIComponent(input), true);
                                                 xhr.send();
                                             }
 
@@ -162,8 +156,30 @@ $name = $_SESSION["user"];
                                                 document.getElementById("dropdownList").style.display = "none";
                                             }
 
+                                            // Hide dropdown when clicking outside
+                                            document.addEventListener("click", function(event) {
+                                                let dropdown = document.getElementById("dropdownList");
+                                                let inputField = document.getElementById("part_number");
+
+                                                if (!inputField.contains(event.target) && !dropdown.contains(event.target)) {
+                                                    dropdown.style.display = "none";
+                                                }
+                                            });
+                                        </script>
+
+                                        <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
+                                            <input type="text" class="form-control" id="part_name" name="part_name" placeholder="Enter Part Description" oninput="fetchSuggestions(this.value)" autocomplete="off" required>
+                                            <label>Part Description:</label>
+                                            <ul id="suggestionsList" class="list-group position-absolute bg-white border rounded"
+                                                style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
+                                            </ul>
+                                        </div>
+                                        <script>
                                             function fetchSuggestions(query) {
                                                 let suggestionsList = document.getElementById("suggestionsList");
+
+                                                // Clear previous results
+                                                suggestionsList.innerHTML = "";
 
                                                 if (query.length === 0) {
                                                     suggestionsList.style.display = "none";
@@ -173,7 +189,6 @@ $name = $_SESSION["user"];
                                                 fetch("fetch_part_names.php?query=" + encodeURIComponent(query))
                                                     .then(response => response.json())
                                                     .then(data => {
-                                                        suggestionsList.innerHTML = "";
                                                         if (data.length > 0) {
                                                             data.forEach(item => {
                                                                 let li = document.createElement("li");
@@ -188,6 +203,8 @@ $name = $_SESSION["user"];
                                                             });
                                                             suggestionsList.style.display = "block";
                                                         } else {
+                                                            // Clear the list and hide it when no results are found
+                                                            suggestionsList.innerHTML = "";
                                                             suggestionsList.style.display = "none";
                                                         }
                                                     })
@@ -266,7 +283,6 @@ $name = $_SESSION["user"];
                                     </div>
                                 </div>
                             </div>
-
                             <script>
                                 function toggleDropdown() {
                                     let dropdown = document.getElementById("dropdownList");
@@ -312,15 +328,73 @@ $name = $_SESSION["user"];
                                         dropdown.classList.remove("d-block");
                                     }
                                 });
-                            </script>
-                            <script>
-                                // Set the current date as the default value
+
                                 document.addEventListener("DOMContentLoaded", function() {
                                     let today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
                                     document.getElementById("dateInput").value = today;
+
+                                    const supplierCheckbox = document.getElementById("supplierCheckbox");
+                                    const supplierSection = document.getElementById("supplierSection");
+                                    const supplierFields = supplierSection.querySelectorAll("input");
+                                    const submitButton = document.getElementById("submitButton"); // Ensure your submit button has an ID
+
+                                    function toggleSupplierFields() {
+                                        if (supplierCheckbox.checked) {
+                                            supplierSection.style.display = "block";
+                                            supplierFields.forEach(field => {
+                                                field.setAttribute("required", "required");
+                                                field.classList.add("is-invalid"); // Ensure Bootstrap validation is applied
+                                            });
+                                        } else {
+                                            supplierSection.style.display = "none";
+                                            supplierFields.forEach(field => {
+                                                field.removeAttribute("required");
+                                                field.classList.remove("is-invalid"); // Remove validation styles when hiding
+                                            });
+                                        }
+                                    }
+
+                                    // Attach event listener
+                                    supplierCheckbox.addEventListener("change", function() {
+                                        toggleSupplierFields();
+                                        checkFields(); // Ensure validation updates when toggling the checkbox
+                                    });
+
+                                    function checkFields() {
+                                        let allFilled = true;
+                                        const requiredFields = document.querySelectorAll("input[required], textarea[required]");
+
+                                        requiredFields.forEach(field => {
+                                            if (!field.value.trim()) {
+                                                field.classList.add("is-invalid"); // Bootstrap invalid class (red border)
+                                                allFilled = false;
+                                            } else {
+                                                field.classList.remove("is-invalid");
+                                            }
+                                        });
+
+                                        if (!allFilled) {
+                                            submitButton.classList.add("btn-danger");
+                                            submitButton.innerHTML = "Submit <span style='color: yellow;'>&#9888;</span>";
+                                        } else {
+                                            submitButton.classList.remove("btn-danger");
+                                            submitButton.innerHTML = "Submit";
+                                        }
+                                    }
+
+                                    // Re-run validation when user types in fields
+                                    document.querySelectorAll("input, textarea").forEach(field => {
+                                        field.addEventListener("input", checkFields);
+                                    });
+
+                                    submitButton.addEventListener("click", function(event) {
+                                        checkFields();
+                                        if (submitButton.classList.contains("btn-danger")) {
+                                            event.preventDefault(); // Prevent submission if there are empty fields
+                                        }
+                                    });
                                 });
                             </script>
-
                             <!-- JavaScript to Toggle Fields -->
                             <script>
                                 function toggleSupplierFields() {
@@ -694,7 +768,7 @@ $name = $_SESSION["user"];
 
                                     <button type="button" class="btn btn-sm btn-primary" onclick="addExcelInput()">Add Another Excel File</button>
                                 </div>
-                                <button type="submit" class="btn btn-success  w-50 mx-auto d-block">
+                                <button type="submit" class="btn btn-success  w-50 mx-auto d-block" id="submitButton">
                                     <i class="fas fa-paper-plane"></i> Submit
                                 </button>
                             </div>
@@ -704,15 +778,61 @@ $name = $_SESSION["user"];
             </form>
         </div>
     </div>
-
-    <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/DataTables/datatables.min.js"></script>
-    <script src="assets/js/sweetalert2.min.js"></script>
-
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const requiredFields = document.querySelectorAll("input[required], textarea[required]");
+            const submitButton = document.getElementById("submitButton"); // Ensure your submit button has an ID
+
+            function checkFields() {
+                let allFilled = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add("is-invalid"); // Bootstrap invalid class (red border)
+                        allFilled = false;
+                    } else {
+                        field.classList.remove("is-invalid");
+                    }
+                });
+
+                if (!allFilled) {
+                    submitButton.classList.add("btn-danger");
+                    submitButton.innerHTML = "Submit <span style='color: yellow;'>&#9888;</span>";
+                } else {
+                    submitButton.classList.remove("btn-danger");
+                    submitButton.innerHTML = "Submit";
+                }
+            }
+
+            requiredFields.forEach(field => {
+                field.addEventListener("input", checkFields);
+            });
+
+            submitButton.addEventListener("click", function(event) {
+                checkFields();
+                if (submitButton.classList.contains("btn-danger")) {
+                    event.preventDefault(); // Prevent submission if there are empty fields
+                }
+            });
+        });
+
         document.getElementById("addRowBtn").addEventListener("click", function() {
             var table = document.getElementById("materialTable").getElementsByTagName("tbody")[0];
+
+            // Count current rows
+            var rowCount = table.getElementsByTagName("tr").length;
+
+            // Check if the limit is reached
+            if (rowCount >= 12) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Limit Reached',
+                    text: 'You can only add up to 12 rows.',
+                    confirmButtonColor: '#d33'
+                });
+                return; // Stop execution if limit is reached
+            }
+
             var newRow = document.createElement("tr");
 
             // Get values from the first row if available
@@ -742,7 +862,13 @@ $name = $_SESSION["user"];
 
             // Call function to enable defect rate calculation for this row
             calculateDefectRate(newRow);
+
+            // Attach event listener to remove button
+            newRow.querySelector(".remove-row").addEventListener("click", function() {
+                newRow.remove();
+            });
         });
+
 
         // Remove row functionality
         document.addEventListener("click", function(event) {
@@ -824,92 +950,67 @@ $name = $_SESSION["user"];
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            let ncprForm = document.getElementById("ncprForm");
+        document.getElementById("ncprForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
 
-            if (!ncprForm) {
-                console.error("Error: #ncprForm not found in the DOM!");
-                return;
-            }
+            let formData = new FormData(this); // Get form data
+            let originalNcprNum = document.getElementById("ncpr_num").value; // Store original ncpr_num
 
-            ncprForm.addEventListener("submit", function(event) {
-                event.preventDefault(); // Prevent default form submission
-
-                let formData = new FormData(this); // Get form data
-                let originalNcprNum = document.getElementById("ncpr_num").value; // Store original NCPR number
-
-                fetch("insert.php", {
-                        method: "POST",
-                        body: formData
-                    })
-                    .then(response => {
-                        console.log("Raw response status:", response.status);
-                        return response.text(); // Get raw text response for debugging
-                    })
-                    .then(text => {
-                        console.log("Raw Response:", text); // Log the raw response
-
-                        try {
-                            let data = JSON.parse(text); // Attempt to parse JSON
-                            console.log("Parsed JSON:", data); // Log parsed data
-
-                            if (data.status === "success") {
-                                if (data.new_ncpr_num && data.new_ncpr_num !== originalNcprNum) {
-                                    Swal.fire({
-                                        title: "Notice!",
-                                        text: "Your NCPR number has been updated to " + data.new_ncpr_num + " because the previous number was taken.",
-                                        icon: "info",
-                                        confirmButtonText: "OK"
-                                    }).then(() => {
-                                        document.getElementById("ncpr_num").value = data.new_ncpr_num; // Update field
-                                        window.location.href = "guest_ncprfiling.php"; // Redirect after acknowledging
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: "Success!",
-                                        text: "Data successfully inserted!",
-                                        icon: "success",
-                                        confirmButtonText: "OK"
-                                    }).then(() => {
-                                        window.location.href = "guest_ncprfiling.php"; // Redirect after clicking OK
-                                    });
-                                }
-                            } else {
-                                Swal.fire({
-                                    title: "Error!",
-                                    text: data.message || "An unexpected error occurred.",
-                                    icon: "error",
-                                    confirmButtonText: "OK"
-                                });
-                            }
-                        } catch (jsonError) {
-                            console.error("JSON Parsing Error:", jsonError);
+            fetch("insert.php", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        if (data.new_ncpr_num && data.new_ncpr_num !== originalNcprNum) {
+                            // Notify user that the NCPR number has changed
                             Swal.fire({
-                                title: "Error!",
-                                text: "Invalid server response. Check console for details.",
-                                icon: "error",
+                                title: "Notice!",
+                                text: "Your NCPR number has been updated to " + data.new_ncpr_num + " because the previous number was taken.",
+                                icon: "info",
                                 confirmButtonText: "OK"
+                            }).then(() => {
+                                document.getElementById("ncpr_num").value = data.new_ncpr_num; // Update field
+                                window.location.href = "ncprfiling.php"; // Redirect after acknowledging
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Success!",
+                                text: "Data successfully inserted!",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                window.location.href = "ncprfiling.php"; // Redirect after clicking OK
                             });
                         }
-                    })
-                    .catch(error => {
-                        console.error("Fetch error:", error);
+                    } else {
                         Swal.fire({
                             title: "Error!",
-                            text: "An unexpected error occurred.",
+                            text: data.message,
                             icon: "error",
                             confirmButtonText: "OK"
                         });
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An unexpected error occurred.",
+                        icon: "error",
+                        confirmButtonText: "OK"
                     });
-            });
+                });
         });
 
-        /** Auto-expand textarea */
+
         function autoExpand(textarea) {
             textarea.style.height = "auto"; // Reset height
             textarea.style.height = textarea.scrollHeight + "px"; // Set new height
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

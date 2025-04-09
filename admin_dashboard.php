@@ -11,6 +11,7 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
 
 </head>
@@ -57,7 +58,7 @@ $name = $_SESSION["user"];
 
     .urgent-indicator {
         position: absolute;
-        top: -5px;
+        top: -10px;
         right: 0;
         /* Move above the buttons */
         background: red;
@@ -121,12 +122,6 @@ $name = $_SESSION["user"];
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Engineer List</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
                     <a href="" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
@@ -134,12 +129,33 @@ $name = $_SESSION["user"];
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="main p-3">
             <div class="row">
                 <div class="col-md-6 col-lg-3">
@@ -252,7 +268,7 @@ $name = $_SESSION["user"];
                                     <th>Initiator</th>
                                     <th>Status</th>
                                     <th>Date</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -272,14 +288,14 @@ $name = $_SESSION["user"];
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                     <!-- First Image (Left Corner) -->
-                    <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                    <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                     <!-- Second Image (Right Corner) -->
                     <div style="position: relative;">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="position: absolute; top: -10px; right: -10px;" class="m-5">
                         </button>
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
                 </div>
 
@@ -346,19 +362,9 @@ $name = $_SESSION["user"];
                         className: 'btn btn-success'
                     },
                     {
-                        extend: 'csvHtml5',
-                        text: 'Export CSV',
-                        className: 'btn btn-primary'
-                    },
-                    {
                         extend: 'pdfHtml5',
                         text: 'Export PDF',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        className: 'btn btn-warning'
+                        className: 'btn btn-info ms-2'
                     }
                 ],
                 "processing": false, // Show loading message while processing
@@ -388,31 +394,27 @@ $name = $_SESSION["user"];
 
                             let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
 
-                            newRecords.forEach(record => {
+                            json.ncprs.forEach(record => {
                                 let createdAt = new Date(record.created_at).getTime();
-                                let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
+                                let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert ms to hours
 
-                                // ✅ Check if Overdue (Older than 24 hours)
-                                if (diffHours > 24) {
-                                    overdueNCPRs.push(record.ncpr_num);
-                                    record.isOverdue = true;
-                                } else {
-                                    record.isOverdue = false;
-                                }
+                                // Set overdue flag
+                                record.isOverdue = diffHours > 24;
 
-                                // ✅ Check if Urgent (record.urgent === "on")
-                                if (record.urgent === "on") {
-                                    urgentNCPRs.push(record.ncpr_num);
-                                    record.isUrgent = true;
-                                } else {
-                                    record.isUrgent = false;
-                                }
+                                // Set urgent flag
+                                record.isUrgent = record.urgent === "on";
 
+                                // Push to appropriate arrays
+                                if (record.isUrgent) urgentNCPRs.push(record.ncpr_num);
+                                if (record.isOverdue) overdueNCPRs.push(record.ncpr_num);
+
+                                // Check if unseen
                                 if (!notifiedNCPRs.includes(record.ncpr_num)) {
                                     unseenNCPRs.push(record.ncpr_num);
                                     notifiedNCPRs.push(record.ncpr_num);
                                 }
                             });
+
 
                             // ✅ Show overdue warning if there are overdue NCPRs
                             if (overdueNCPRs.length > 0) {
@@ -457,40 +459,53 @@ $name = $_SESSION["user"];
                         "visible": false
                     }, // Hide ID column
                     {
-                        "data": "ncpr_num"
+                        "data": "ncpr_num",
+                        "className": "text-center"
                     },
                     {
-                        "data": "initiator"
+                        "data": "initiator",
+                        "className": "text-center"
                     },
                     {
-                        "data": "status"
+                        "data": "status",
+                        "className": "text-center",
+                        "render": function(data, type, row) {
+                            if (data === "open") {
+                                return '<span class="badge bg-success">Open</span>';
+                            } else if (data === "Close") {
+                                return '<span class="badge bg-danger">Close</span>';
+                            } else {
+                                return '<span class="badge bg-secondary">' + data + '</span>';
+                            }
+                        }
                     },
                     {
-                        "data": "date"
+                        "data": "date",
+                        "className": "text-center"
                     },
                     {
                         "data": "id",
                         "render": function(data, type, row) {
-                            // Show "URGENT" indicator if row.urgent is true
-                            let urgentIndicator = (row.isUrgent|| row.isOverdue) ?
-                                `<div class="urgent-indicator">URGENT</div>` :
-                                ""; // ✅ Conditional indicator for either urgent or overdue
+                            console.log("Row Data:", row); // Debug: check if isUrgent and isOverdue are present
 
-                            // Show "Overdue/24hrs" indicator if row.isOverdue is true
-                            let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : "";
+                            let urgentIndicator = row.isUrgent ?
+                                `<div class="urgent-indicator">URGENT</div>` : "";
 
-                            // View button for the NCPR
+                            let exceedIndicator = row.isOverdue ?
+                                `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : "";
+
                             let viewButton = `<button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
         <i class="fas fa-eye"></i> View
-        </button>`;
+    </button>`;
 
                             return `
         <div class="action-container">
-            ${urgentIndicator} <!-- Show if urgent -->
-            ${exceedIndicator} <!-- Show if overdue -->
+            ${urgentIndicator}
+            ${exceedIndicator}
             ${viewButton}
         </div>`;
                         }
+
                     }
                 ],
                 "order": [
