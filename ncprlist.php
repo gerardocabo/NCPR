@@ -132,7 +132,14 @@ require "config.php";
                         <tbody id="ncpr-table-body">
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id FROM ncpr_table";
+                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id 
+                                    FROM ncpr_table
+                                    ORDER BY
+                                        CASE status
+                                            WHEN 'Open' THEN 1
+                                            ELSE 2
+                                        END,
+                                        ncpr_num DESC";
                             $result = $conn->query($query);
 
                             while ($row = $result->fetch_assoc()): ?>
@@ -1177,7 +1184,7 @@ require "config.php";
 
     <script>
         $(document).ready(function() {
-            $('.view-btn').click(function() {
+            $('#ncpr-table-body').on('click', '.view-btn', function() {
                 var ncprNum = $(this).data('id');
                 // AJAX call to fetch full details
                 $.ajax({
@@ -1338,9 +1345,9 @@ require "config.php";
                                 } else {
                                     // Download link
                                     fileLink = `<a href="${file.file_path}" download="${file.file_name}" class="btn btn-primary btn-sm" 
-                style="margin-bottom: 10px;">
-                    <i class="fa fa-download"></i> Download ${file.file_name}
-                </a>`;
+                    style="margin-bottom: 10px;">
+                        <i class="fa fa-download"></i> Download ${file.file_name}
+                    </a>`;
                                 }
 
 
@@ -1520,7 +1527,7 @@ require "config.php";
                     </div>
                 </td>
             </tr>
-        `);
+            `);
 
                             materialTable.append(newRow);
                             attachEventListeners(newRow[0]); // Attach event listeners for calculation
@@ -1556,7 +1563,7 @@ require "config.php";
                     <i class="fa fa-trash"></i> Remove
                 </button>
             </div>
-        `);
+            `);
 
                             filesContainer.append(fileItem);
                         });
@@ -1727,7 +1734,7 @@ require "config.php";
                     "targets": [0, 1, 6],
                     "visible": false
                 }],
-                "order": [8, 'desc'],
+                "order": [],
             });
 
             // Function to refresh the table content via AJAX

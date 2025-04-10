@@ -106,7 +106,14 @@ if (isset($_SESSION['page'])) {
                     <tbody>
                         <?php
                         // Fetch data from ncpr_table
-                        $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent FROM ncpr_table ORDER BY ncpr_num desc";
+                        $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent 
+                        FROM ncpr_table 
+                        ORDER BY 
+                            CASE status
+                                WHEN 'Open' THEN 1
+                                ELSE 2
+                            END,
+                            ncpr_num desc";
                         $result = $conn->query($query);
 
                         while ($row = $result->fetch_assoc()): ?>

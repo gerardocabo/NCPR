@@ -1,7 +1,14 @@
 <?php
 include 'conn.php'; // Make sure you have a proper database connection here
 // Fetch data from ncpr_table
-$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id FROM ncpr_table";
+$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id 
+FROM ncpr_table
+ORDER BY
+  CASE status
+    WHEN 'Open' THEN 1
+    ELSE 2
+  END,
+  ncpr_num DESC";
 $result = $conn->query($query);
 
 while ($row = $result->fetch_assoc()): ?>
@@ -28,7 +35,7 @@ while ($row = $result->fetch_assoc()): ?>
             $status = $row['status'];
             $badgeClass = '';
 
-            if ($status === 'Open') {
+            if ($status === 'open') {
                 $badgeClass = 'badge bg-success';
             } elseif ($status === 'Close') {
                 $badgeClass = 'badge bg-danger';
