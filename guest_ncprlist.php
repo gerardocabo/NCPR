@@ -26,10 +26,8 @@ $name = $_SESSION["user"];
 
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
 
     <style>
@@ -137,14 +135,14 @@ $name = $_SESSION["user"];
                     <div class="modal-content">
                         <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                             <!-- First Image (Left Corner) -->
-                            <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                            <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                             <!-- Second Image (Right Corner) -->
                             <div style="position: relative;">
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                                     style="position: absolute; top: -10px; right: -10px;" class="m-5">
                                 </button>
-                                <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                                <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                             </div>
                         </div>
 
@@ -753,11 +751,11 @@ $name = $_SESSION["user"];
                                         <div class="d-flex align-items-center">
                                             <label style="font-size: 10px; margin-right: 29px;">Deviation:</label>
 
-                                            <input type="checkbox" id="deviation_yes" name="deviation" value="Yes" class="me-1">
-                                            <label for="deviation_yes" class="me-2" style="font-size: 10px;">Yes</label>
+                                            <input type="checkbox" id="deviation-yes" name="deviation" value="Yes" class="me-1">
+                                            <label for="deviation-yes" class="me-2" style="font-size: 10px;">Yes</label>
 
-                                            <input type="checkbox" id="deviation_no" name="deviation" value="No" class="me-1">
-                                            <label for="deviation_no" style="font-size: 10px;">No</label>
+                                            <input type="checkbox" id="deviation-no" name="deviation" value="No" class="me-1">
+                                            <label for="deviation-no" style="font-size: 10px;">No</label>
                                         </div>
                                     </div>
 
@@ -1127,6 +1125,7 @@ $name = $_SESSION["user"];
                     },
                     dataType: 'json',
                     success: function(response) {
+                        console.log(response); // Log the JSON response to the console
                         $('#view-id').text(response.id);
                         $('#view-initiator').text(response.initiator);
                         $('#view-ncpr-num').text(response.ncpr_num);
@@ -1141,15 +1140,18 @@ $name = $_SESSION["user"];
                         } else {
                             $('#view-urgent-checkbox').prop('checked', false); // Uncheck the checkbox
                         }
-                        if (response.repeating === "Yes") {
-                            $('#repeating-yes').prop('checked', true);
-                        }
 
                         $('#view-awpi').text(response.awpi);
                         $('#view-dc').text(response.dc);
                         if (response.deviation === "Yes") {
                             $('#deviation-yes').prop('checked', true);
                             $('#deviation-no').prop('checked', false);
+                        } else if (response.deviation === "No") {
+                            $('#deviation-yes').prop('checked', false);
+                            $('#deviation-no').prop('checked', true);
+                        }
+                        if (response.repeating === "Yes") {
+                            $('#repeating-yes').prop('checked', true);
                         }
                         $('#view-cavity').text(response.cavity);
                         $('#view-machine').text(response.machine);

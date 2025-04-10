@@ -198,6 +198,8 @@ $(document).ready(function () {
       prod_dispo.push($(this).val());
     });
 
+    
+
     console.log("Sending AJAX request...");
     $.ajax({
       url: "approval.php",

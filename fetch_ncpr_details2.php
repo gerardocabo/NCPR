@@ -43,6 +43,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
         // ✅ Fix: Remove second $result->fetch_assoc()
         $urgent = $ncpr['urgent'] ?? 'off'; // Default to 'off' if NULL
         $checked = ($urgent === "on" || $urgent === "1") ? 'checked' : ''; // Set checkbox checked if urgent
+
+        $checkbox_values = [
+            'deviation' => $ncpr['deviation'],
+            'repeating' => $ncpr['repeating'],
+            'one' => $ncpr['one'],
+            'one_one' => $ncpr['one_one'],
+            'two' => $ncpr['one_one'],
+            'three' => $ncpr['one_one'],
+            'four' => $ncpr['one_one'],
+            'five' => $ncpr['one_one'],
+            'six' => $ncpr['one_one'],
+            'seven' => $ncpr['one_one'],
+            'eight' => $ncpr['one_one'],
+            'nine' => $ncpr['one_one'],
+            'recall' => $ncpr['recall'],
+            'shipment' => $ncpr['shipment'],
+            'wip' => $ncpr['wip'],
+            'fgpart' => $ncpr['fgparts'],
+            'stop_proc' => $ncpr['stop_proc'],
+            'mcs' => $ncpr['mcs'],
+            'cust_notif' => $ncpr['customer_notif'] // Value from deviation_type
+        ];
 ?>
         <style>
             .locked {
@@ -176,11 +198,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                 <div class="d-flex">
                     <p style="font-size: 12px;"><strong>Deviation?</strong></p>
                     <div class="form-check form-check-inline ms-5">
-                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="deviation-yes">
+                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="deviation-yes" 
+                        <?php echo $checkbox_values['deviation'] == 'Yes' ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="deviation-yes" style="font-size: 10px;">Yes</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="deviation-no">
+                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="deviation-no"
+                        <?php echo $checkbox_values['deviation'] == 'No' ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="deviation-no" style="font-size: 10px;">No</label>
                     </div>
                 </div>
@@ -188,22 +212,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                 <div class="d-flex align-items-center">
                     <p class="m-0" style="font-size: 12px;"><strong>Issue Repeating?</strong></p>
                     <div class="form-check form-check-inline" style="margin-left: 12px;">
-                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="repeating-yes">
+                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="repeating-yes" 
+                        <?php echo $checkbox_values['repeating'] == 'Yes' ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="repeating-yes" style="font-size: 10px;">Yes</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="repeating-no">
+                        <input class="locked form-check-input form-check-input-sm" type="checkbox" id="repeating-no" 
+                        <?php echo $checkbox_values['repeating'] == 'No' ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="repeating-no" style="font-size: 10px;">No</label>
                     </div>
                 </div>
                 <div style="display: d-block; align-items: center;">
                     <span class="d-inline-block" style="font-size: 12px;"><strong>Cavity Affected:</strong></span>
-                    <span id="view-cavity" class="border-bottom border-dark d-inline-block text-center" style="min-width: 100px; font-size: 12px"><?= htmlspecialchars($ncpr['cavity'] ?? 'N/A') ?></span>
+                    <span id="view-cavity" class="border-bottom border-dark d-inline-block text-center" style="min-width: 100px; font-size: 12px">
+                        <?= htmlspecialchars($ncpr['cavity'] ?? 'N/A') ?>
+                    </span>
                 </div>
 
                 <div style="display: d-block; align-items: center;">
                     <span class="d-inline-block" style="font-size: 12px;"><strong>Machine:</strong></span>
-                    <span id="view-machine" class="border-bottom border-dark d-inline-block text-center" style="min-width: 100px; font-size: 12px"><?= htmlspecialchars($ncpr['machine'] ?? 'N/A') ?></span>
+                    <span id="view-machine" class="border-bottom border-dark d-inline-block text-center" style="min-width: 100px; font-size: 12px">
+                        <?= htmlspecialchars($ncpr['machine'] ?? 'N/A') ?>
+                </span>
                 </div>
             </div>
             <div class="col-md-3 border p-2">
@@ -218,46 +248,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                 <span style="font-size: 12px" class="fw-bold">Immediate containment action/s or countermeasure/s taken (tick as many as appropriate):</span>
                 <div style="display: block; margin-bottom: 5px;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-one" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-one" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['one'] == 'yes' ? 'checked' : ''; ?>>
                         <span style="font-size: 12px;">1. Segregate affected part/s - write custodian of the segregated parts</span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-one-one" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-one-one" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['one_one'] == 'yes' ? 'checked' : ''; ?>>
                         <span style="font-size: 12px;"><strong>1.1. At Hotpress:</strong>Put on hold inventory of affected lay-up materials together with the parts</span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-two" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-two" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['two'] == 'yes' ? 'checked' : ''; ?>>
 
                         <span style="font-size: 12px;" class="me-2">2. Yield off/ 100% inspection. <strong>INSPECTION RESULTS:</strong></span>
-                        <span id="view-two-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 100px;"></span>
+                        <span id="view-two-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 100px;"><?= htmlspecialchars($ncpr['two_one'] ?? 'N/A') ?></span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-three" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-three" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['three'] == 'yes' ? 'checked' : ''; ?>>
                         <span style="font-size: 12px;" class="me-2">3. Call the attention of QAE/PE/EE/TECH/CHIEF:</span>
-                        <span id="view-three-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 200px;"></span>
+                        <span id="view-three-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 200px;"><?= htmlspecialchars($ncpr['three_one'] ?? 'N/A') ?></span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-four" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-four" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['four'] == 'yes' ? 'checked' : ''; ?>>
                         <span id="view-four" style="font-size: 12px;" class="me-2">4. Attach On-hold Tag and put in On-Hold cage/area</span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-five" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-five" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['five'] == 'yes' ? 'checked' : ''; ?>>
                         <span id="view-five" style="font-size: 12px;">5. Check MCS stock for similar Lot Number/AWPI/DC and request to file NCPR</span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-six" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-six" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['six'] == 'yes' ? 'checked' : ''; ?>>
                         <span id="view-six" style="font-size: 12px;">6. Attach copy of OCAP if available, and/or other log forms as part of the containment action</span>
                     </div>
                 </div>
@@ -265,29 +302,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                     <span style="font-size: 12px;">7. File Shutdown Record</span>
 
                     <label style="font-size: 12px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"> Yes
+                        <input type="checkbox" class="locked form-check-input" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['seven'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
                     <label style="font-size: 12px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"> No
+                        <input type="checkbox" class="locked form-check-input" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['seven'] == 'no' ? 'checked' : ''; ?>> No
                     </label>
                     <span style="font-size: 12px;">WHO:</span>
-                    <span id="view-seven-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 80px;"></span>
+                    <span id="view-seven-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 80px;"><?= htmlspecialchars($ncpr['seven_one'] ?? 'N/A') ?></span>
                     <span style="font-size: 12px;">TIME/SHIFT:</span>
-                    <span id="view-seven-two" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 80px;"></span>
+                    <span id="view-seven-two" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 80px;"><?= htmlspecialchars($ncpr['seven_two'] ?? 'N/A') ?></span>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-eight" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-eight" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['eight'] == 'yes' ? 'checked' : ''; ?>>
                         <span style="font-size: 12px;" class="me-2">8. Others (please specify):</span>
-                        <span id="view-eight-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 300px;"></span>
+                        <span id="view-eight-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 300px;"><?= htmlspecialchars($ncpr['eight'] ?? 'N/A') ?></span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-nine" style="width: 12px; height: 12px; margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-nine" style="width: 12px; height: 12px; margin-right: 5px;"
+                        <?php echo $checkbox_values['nine'] == 'yes' ? 'checked' : ''; ?>>
                         <span style="font-size: 12px;" class="me-2">9. Find affected WIP, FG & raw materials - specify DJ/s and LN/s</span>
-                        <span id="view-nine-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 150px;"></span>
+                        <span id="view-nine-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 150px;"><?= htmlspecialchars($ncpr['nine '] ?? 'N/A') ?></span>
                     </div>
                 </div>
             </div>
@@ -296,17 +337,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                     <span style="font-size: 15px;">Product Recall</span>
 
                     <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-recall-yes" style="margin-right: 5px;"> Yes
+                        <input type="checkbox" class="locked form-check-input" id="view-recall-yes" style="margin-right: 5px;" 
+                        <?php echo $checkbox_values['recall'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
                     <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-recall-no" style="margin-right: 5px;"> No
+                        <input type="checkbox" class="locked form-check-input" id="view-recall-no" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['recall'] == 'yes' ? 'checked' : ''; ?>> No
                     </label>
-                </div>
+                </div>  
                 <div style="display: inline-flex; align-items: center; gap: 50px;" class="mb-3">
                     <div style="display: block;">
                         <div style="display: inline-flex; align-items: center;">
-                            <input type="checkbox" class="locked form-check-input" id="view-fgparts" style="margin-right: 5px;">
+                            <input type="checkbox" class="locked form-check-input" id="view-fgparts" style="margin-right: 5px;"
+                            <?php echo $checkbox_values['fgpart'] == 'yes' ? 'checked' : ''; ?>>
                             <span id="view-fgparts" style="font-size: 15px;">FG PARTS</span>
                         </div>
                     </div>
@@ -314,20 +358,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                     <span style="font-size: 15px;">Cancel Shipment</span>
 
                     <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-shipment-yes" style="margin-right: 5px;"> Yes
+                        <input type="checkbox" class="locked form-check-input" id="view-shipment-yes" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['shipment'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
                     <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-shipment-no" style="margin-right: 5px;"> No
+                        <input type="checkbox" class="locked form-check-input" id="view-shipment-no" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['shipment'] == 'no' ? 'checked' : ''; ?>> No
                     </label>
                 </div>
 
                 <span class="d-inline-block" style="font-size: 15px;"><strong>Shipment SCHEDULE:</strong></span>
-                <span id="view-ship_sched" class="border-bottom border-dark d-inline-block text-center" style="min-width: 500px; font-size: 15px"></span>
+                <span id="view-ship_sched" class="border-bottom border-dark d-inline-block text-center" style="min-width: 500px; font-size: 15px"><?= htmlspecialchars($ncpr['ship_sched'] ?? 'N/A') ?></span>
                 <div style="display: inline-flex; align-items: center; gap: 50px;" class="mt-3">
                     <div style="display: block;">
                         <div style="display: inline-flex; align-items: center;">
-                            <input type="checkbox" class="locked form-check-input" id="view-wip" style="margin-right: 5px;">
+                            <input type="checkbox" class="locked form-check-input" id="view-wip" style="margin-right: 5px;"
+                            <?php echo $checkbox_values['wip'] == 'yes' ? 'checked' : ''; ?>>
                             <span id="view-wip" style="font-size: 15px;">WIP</span>
                         </div>
                     </div>
@@ -335,32 +382,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                     <span style="font-size: 15px;">Stop Process</span>
 
                     <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-stop_proc-yes" style="margin-right: 5px;"> Yes
+                        <input type="checkbox" class="locked form-check-input" id="view-stop_proc-yes" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['stop_proc'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
                     <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-stop_proc-no" style="margin-right: 5px;"> No
+                        <input type="checkbox" class="locked form-check-input" id="view-stop_proc-no" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['stop_proc'] == 'yes' ? 'checked' : ''; ?>> No
                     </label>
                 </div>
                 <div style="display: block;">
                     <div style="display: d-block; align-items: center;">
                         <span class="d-inline-block" style="font-size: 15px;"><strong>LOCATIONS:</strong></span>
-                        <span id="view-location" class="border-bottom border-dark d-inline-block text-center" style="min-width: 500px; font-size: 15px"></span>
+                        <span id="view-location" class="border-bottom border-dark d-inline-block text-center" style="min-width: 500px; font-size: 15px"><?= htmlspecialchars($ncpr['location'] ?? 'N/A') ?></span>
                     </div>
                 </div>
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-mcs" style="margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-mcs" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['mcs'] == 'yes' ? 'checked' : ''; ?>>
                         <div style="display: d-block; align-items: center;">
                             <span id="view-mcs" style="font-size: 15px;">MCS</span>
-                            <span id="view-mcs_details" class="border-bottom border-dark d-inline-block text-center" style="min-width: 300px; font-size: 15px"></span>
+                            <span id="view-mcs_details" class="border-bottom border-dark d-inline-block text-center" style="min-width: 300px; font-size: 15px"><?= htmlspecialchars($ncpr['mcs_details'] ?? 'N/A') ?></span>
                         </div>
                     </div>
                 </div>
 
                 <div style="display: block;">
                     <div style="display: inline-flex; align-items: center;">
-                        <input type="checkbox" class="locked form-check-input" id="view-customer_notif" style="margin-right: 5px;">
+                        <input type="checkbox" class="locked form-check-input" id="view-customer_notif" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['cust_notif'] == 'yes' ? 'checked' : ''; ?>>
                         <span id="view-customer_notif" style="font-size: 15px;">Customer notification if non-conforming products have been shipped.</span>
                     </div>
                 </div>
