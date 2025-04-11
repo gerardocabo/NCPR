@@ -54,14 +54,6 @@ $(document).ready(function () {
 
     var action = $(this).data("action");
     var role = $(this).data("role");
-    var selectedId; // Declare variable before the condition
-
-    // If action is "cancel" and role is "QA Engineer", use #view-ncpr-num
-    if (action === "cancel" && role === "QA Engineer") {
-      selectedId = $("#view-ncpr-num").text();
-    } else {
-      selectedId = $("#modal-id").text(); // Default selector
-    }
 
     Swal.fire({
       title: "Are you sure?",
@@ -76,7 +68,7 @@ $(document).ready(function () {
       if (result.isConfirmed) {
         if (role === "QA Engineer" && action !== "cancel") {
           // Then, upload file attachments and include the ncpr_num
-          uploadFileAttachments(selectedId);
+          uploadFileAttachments();
           sendApprovalRequest(action, role); // ENGINEER approval function
         } else if (role === "QA Manager" || "Representative") {
           sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
@@ -93,7 +85,8 @@ $(document).ready(function () {
     });
   });
 
-  function uploadFileAttachments(ncpr_num) {
+  function uploadFileAttachments() {
+    let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
     // Collect all file attachments and append them to FormData
     var files = $("input[name='attachments[]']")[0].files;
 
@@ -110,7 +103,7 @@ $(document).ready(function () {
     }
 
     // Append the ncpr_num to the FormData so it is sent along with the files
-    fileFormData.append("ncpr_num", ncpr_num);
+    fileFormData.append("ncpr_num", selectedId);
 
     // Send the file attachments using AJAX
     $.ajax({
@@ -198,9 +191,9 @@ $(document).ready(function () {
       prod_dispo.push($(this).val());
     });
 
-    
+    var interventionData = getIntervention();
+    console.log(interventionData);
 
-    console.log("Sending AJAX request...");
     $.ajax({
       url: "approval.php",
       type: "POST",
@@ -240,10 +233,12 @@ $(document).ready(function () {
         bd_report: bdReport,
         mrb: mrb,
         customer_approval: custApp,
+
+        ...interventionData,
       },
       dataType: "json", // Expect JSON response
       beforeSend: function () {
-        console.log("Sending AJAX request...");
+        console.log("Sending before the succes/error AJAX request...");
       },
       success: function (response) {
         console.log("Raw response:", response);
@@ -286,11 +281,14 @@ $(document).ready(function () {
     let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
     console.log("Sending AJAX request for MANAGER/SUPERVISOR...");
 
-    let viewmodalID = $("#view-ncpr-num").text(); // Ensure selected ID is correctly retrieved
+    /*let viewmodalID = $("#view-ncpr-num").text(); // Ensure selected ID is correctly retrieved
     if(viewmodalID){console.log("Sending AJAX request for cancel...");}
 
     if (role === "QA Engineer") {
       selectedId = viewmodalID;
+    }*/
+    if (action === "cancel") {
+      console.log("Sending AJAX request for cancel...");
     }
 
     $.ajax({
@@ -342,5 +340,77 @@ $(document).ready(function () {
         Swal.fire("Error", "AJAX request failed. Check console.", "error");
       },
     });
+  }
+
+  function getIntervention() {
+    var result = {};
+
+    // Collect values only if at least one is selected/filled
+
+    var action_taken = $("input[name='actions_taken[]']:checked");
+    if (action_taken.length)
+      result.action_taken = action_taken
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+    var process_dispo = $("input[name='process_dispo[]']:checked");
+    if (process_dispo.length)
+      result.process_dispo = process_dispo
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+    var aff_process = $("input[name='affected_process']").val();
+    if (aff_process) result.affected_process = aff_process;
+
+    var further_eval = $("input[name='F1']:checked").val();
+    if (further_eval) result.further_eval = further_eval;
+
+    var resumption = $("input[name='resumption_reason[]']:checked");
+    if (resumption.length)
+      result.resumption = resumption
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+    var otherResumption = $("input[name='other_resumption']").val();
+    if (otherResumption) result.other_resumption = otherResumption;
+
+    var processInstruction = $("textarea[name='process_instruction']").val(); // fixed to textarea, not input
+    if (processInstruction) result.process_instruction = processInstruction;
+
+    var instru_details = $("input[name='instructions_detail[]']:checked");
+    if (instru_details.length)
+      result.instru_details = instru_details
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+    var doc_alert = $("input[name='document_alert_s']").val();
+    if (doc_alert) result.document_alert_s = doc_alert;
+
+    var others = $("input[name='other_specify_s']").val();
+    if (others) result.other_specify_s = others;
+
+    console.log(result);
+
+    var docu_rev = $("input[name='documents_revision[]']:checked");
+    if (docu_rev.length)
+      result.docu_rev = docu_rev
+        .map(function () {
+          return $(this).val();
+        })
+        .get();
+
+    var Sign_Date = $("input[name='released_by']").val();
+    if (Sign_Date) result.released_by = Sign_Date;
+
+    // Return the result if at least one value exists
+    return Object.keys(result).length ? result : false;
   }
 });

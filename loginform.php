@@ -1,5 +1,10 @@
 <?php
+require_once 'apatternVS.php';
 require "config.php";
+/*if (!isset($_SESSION['allowed'])) {
+    header('Location: index.html');
+    exit();
+}*/
 ?>
 
 <!DOCTYPE html>

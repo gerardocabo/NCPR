@@ -78,7 +78,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="setting.php" class="sidebar-link">
+                    <a href="" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>
@@ -477,7 +477,16 @@ $user_role = $_SESSION['role'];
                                 let urgentIndicator = (row.isUrgent || row.overdueLevel) ?
                                     `<div class="urgent-indicator">URGENT</div>` :
                                     ""; // ✅ Conditional indicator for either urgent or overdue
-                                let exceedIndicator = row.isOverdue ? `<div class="urgent-indicator" style="top: 15px;">Overdue/24hrs</div>` : ""; // ✅ Conditional indicator
+                                // Show "Overdue/24hrs" indicator if row.isOverdue is true
+                                let exceedIndicator = "";
+
+                                if (row.overdueLevel === "24") {
+                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: orange;">Overdue/24hrs</div>`;
+                                } else if (row.overdueLevel === "48") {
+                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: darkorange;">Overdue/48hrs</div>`;
+                                } else if (row.overdueLevel === "72") {
+                                    exceedIndicator = `<div class="urgent-indicator" style="top: 15px; background-color: red;">Overdue/72hrs</div>`;
+                                }
                                 let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold" data-id="${row.ncpr_num}">
                                                     View
                                                 </button>`;
@@ -489,9 +498,8 @@ $user_role = $_SESSION['role'];
                                     Disposition
                                 </button>`;
 
-                                let editButton = `<button class="btn btn-warning btn-sm edit-btn" 
-                              data-id="${row.ncpr_num}">
-                              <i class="fas fa-edit"></i> Edit
+                                let editButton = `<button class="btn btn-warning btn-sm edit-btn fw-bold" 
+                              data-id="${row.ncpr_num}"> Edit
                           </button>`;
 
                                 // Only show edit button if the NCPR is approved

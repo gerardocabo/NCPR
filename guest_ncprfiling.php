@@ -778,6 +778,11 @@ $name = $_SESSION["user"];
             </form>
         </div>
     </div>
+    
+    <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/DataTables/datatables.min.js"></script>
+    <script src="assets/js/sweetalert2.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const requiredFields = document.querySelectorAll("input[required], textarea[required]");
@@ -1010,7 +1015,7 @@ $name = $_SESSION["user"];
             textarea.style.height = textarea.scrollHeight + "px"; // Set new height
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

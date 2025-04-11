@@ -24,7 +24,7 @@ function getPendingApprovals($user_role)
                     WHERE ncpr.status = 'open' 
                     AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
                     AND (
-                        dispo.status = 'Approved' 
+                        dispo.status = 'Approved'
                         OR ncpr.ncpr_num NOT IN (
                             SELECT ncpr_num FROM dispo_approval 
                         WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')

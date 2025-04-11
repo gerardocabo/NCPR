@@ -102,6 +102,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!$radio_sakses) {
                 throw new Exception("Execute radio failed: " . $stmt->error);
             }
+
+            $intervention = include 'insert_intervention.php';
+            if (!$intervention) {
+                throw new Exception("Execute intervention failed: " . $stmt->error);
+            }
         } else {
             error_log("Skipping dispo execution as user role is not ENGINEER.");
         }
@@ -162,7 +167,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Always set status to "Close" in ncpr_table
             $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
-            executeQuery($conn, $query, [$status, $ncpr_num], "ss");
+            executeQuery($conn, $query, ["Close", $ncpr_num], "ss");
 
             // Insert into dispo_approval
             $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 

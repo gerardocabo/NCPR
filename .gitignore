@@ -12,3 +12,15 @@ assets/attachments/
 fontawesome-free-6.7.2-web
 
 .vscode
+setting.php
+
+
+# for some basic vulnerabilities check hahaha.
+
+adashboardVS.php
+adashboardVSfetch.php
+apatternVS.php
+vulnerability_scan.log
+
+#critical/sensitive data
+setting.php

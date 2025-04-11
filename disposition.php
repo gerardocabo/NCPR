@@ -1,18 +1,3 @@
-<?php
-// Assuming you have a function to get the current user's role, like getUserRole()
-// Replace this with the actual method of fetching the user's role
-$user_role = $_SESSION['role']; // This should return the current user's role
-
-// Check if the role is not "ENGINEER"
-if ($user_role !== 'QA ENGINEER') {
-    echo '<style>
-            .locked {
-                pointer-events: none;
-                /* Prevent clicking */
-            }
-          </style>';
-}
-?>
 <form id="dispoForm" action="dispo_process.php" method="POST">
     <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
     <div class="form-floating mb-3">
@@ -56,9 +41,9 @@ if ($user_role !== 'QA ENGINEER') {
                     <div class="me-4">
                         <input class="locked" type="checkbox" name="cause[]" value="Man"> Man<br>
                         <label>ID No:</label>
-                        <input type="text" name="id_no" id="id_no" class="locked border-0 border-bottom w-75"><br>
+                        <input type="text" name="id_no" id="id_no" class="border-0 border-bottom w-75"><br>
                         <label>Name:</label>
-                        <input type="text" name="name" id="name" class="locked border-0 border-bottom w-75"><br>
+                        <input type="text" name="name" id="name" class="border-0 border-bottom w-75"><br>
                         <input class="locked" type="checkbox" name="cause[]" value="Method"> Method<br>
                         <input class="locked" type="checkbox" name="cause[]" value="Machine"> Machine<br>
                     </div>
@@ -82,14 +67,14 @@ if ($user_role !== 'QA ENGINEER') {
             <td>
                 <div class="d-flex align-items-center mb-2">
                     <input class="locked" type="checkbox" name="car" value="CAR"> CAR, CAR No:
-                    <input type="text" name="car_no" class="locked border-0 border-bottom w-20 ms-2">
+                    <input type="text" name="car_no" class="border-0 border-bottom w-20 ms-2">
                     <span class="me-2">8D Report:</span>
                     <input class="locked" type="radio" name="bd_report" value="YES" class="me-1"> YES
                     <input class="locked" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
                 </div>
                 <div class="d-flex align-items-center mt-5">
                     <input class="locked" type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
-                    <input type="text" name="scar_no" class="locked border-0 border-bottom w-50"><br>
+                    <input type="text" name="scar_no" class="border-0 border-bottom w-50"><br>
                 </div>
             </td>
         </tr>
@@ -122,7 +107,7 @@ if ($user_role !== 'QA ENGINEER') {
                     <input class="locked" type="radio" name="customer_approval" value="YES"> YES
                     <input class="locked" type="radio" name="customer_approval" value="NO"> NO
                     <span>Document Alert No:</span>
-                    <input type="text" name="document_alert" class="locked border-0 border-bottom w-25">
+                    <input type="text" name="document_alert" class="border-0 border-bottom w-25">
                 </div>
 
             </td>
@@ -148,12 +133,12 @@ if ($user_role !== 'QA ENGINEER') {
                     <div class="h-100 d-flex flex-column justify-content-between">
                         <div class="mb-2">
                             <input class="locked" type="checkbox" name="affected_business" value="Affected business"> Affected business unit/ contact person <br>
-                            <input type="text" name="contact_person" class="locked border-0 border-bottom w-100">
+                            <input type="text" name="contact_person" class="border-0 border-bottom w-100">
                         </div>
                         <div>
                             <input class="locked" type="checkbox" name="other_instructions" value="Other instructions"> Other instructions,
                             <span>pls specify;</span><br>
-                            <input type="text" name="other_specify" class="locked border-0 border-bottom w-100">
+                            <input type="text" name="other_specify" class="border-0 border-bottom w-100">
                         </div>
                     </div>
                 </td>
@@ -169,17 +154,17 @@ if ($user_role !== 'QA ENGINEER') {
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Run under normal process"> Run under normal process
                     </div>
                     <div class="d-flex align-items-center mt-2">
-                        Yield-off $ <input type="text" name="yield_off" class="locked border-0 border-bottom w-25 ms-2">
+                        Yield-off $ <input type="text" name="yield_off" class="border-0 border-bottom w-25 ms-2">
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Re-grade"> Re-grade, DA No:
-                        <input type="text" name="da_no" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="da_no" class="border-0 border-bottom w-25 ms-2">
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Rework"> Rework, DA No:
-                        <input type="text" name="rework_da_no" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="rework_da_no" class="border-0 border-bottom w-25 ms-2">
                         WIS No:
-                        <input type="text" name="wis_no" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="wis_no" class="border-0 border-bottom w-25 ms-2">
                     </div>
                     <div class="d-flex gap-3 align-items-center flex-wrap mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Re-press"> Re-press
@@ -190,16 +175,16 @@ if ($user_role !== 'QA ENGINEER') {
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
-                        <input type="text" name="repair_DA" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="repair_DA" class="border-0 border-bottom w-25 ms-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
-                        <input type="text" name="scrap_amount" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="scrap_amount" class="border-0 border-bottom w-25 ms-2">
                     </div>
                     <div class="d-flex align-items-center mt-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date:</span>
-                        <input type="text" name="shipment_date" class="locked border-0 border-bottom w-25 ms-2">
+                        <input type="text" name="shipment_date" class="border-0 border-bottom w-25 ms-2">
                     </div>
                 </td>
             </tr>
@@ -226,8 +211,8 @@ if ($user_role !== 'QA ENGINEER') {
                     <input class="locked" type="checkbox" name="process_dispo[]" value="PD2"> Stop Production
                     <br><br>
                     <span>Affected process/es:</span>
-                    <input type="text" name="affected_process" class="locked border-0 border-bottom w-100"><br><br>
-                    <input class="locked" type="checkbox" name="F1" value="For further Eng'g Evaluation">
+                    <input type="text" name="affected_process" class="border-0 border-bottom w-100"><br><br>
+                    <input class="locked" type="checkbox" name="further_eval" value="F1">
                     <span>For further Eng’g Evaluation</span>
                 </td>
 
@@ -242,7 +227,7 @@ if ($user_role !== 'QA ENGINEER') {
                     <input class="locked" type="checkbox" name="resumption_reason[]" value="Others">
                     <span>Others, pls specify</span>
                     <br>
-                    <input type="text" name="other_resumption" class="locked border-0 border-bottom w-100"><br><br>
+                    <input type="text" name="other_resumption" class="border-0 border-bottom w-100"><br><br>
 
                     <strong>Process Instruction in general:</strong>
                     <span>(for <span>DJs</span> other than the affected)</span>
@@ -251,12 +236,12 @@ if ($user_role !== 'QA ENGINEER') {
 
                 <td style="width: 33%; vertical-align: top;">
                     <strong>Instructions in detail, see reference doc:</strong><br>
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Document Alert #"> Document Alert #:
-                    <input type="text" name="document_alert" class="locked border-0 border-bottom w-75"><br>
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Document Alert #"/> Document Alert #:
+                    <input type="text" name="document_alert_s" class="border-0 border-bottom w-75"/><br>
 
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Other">
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Other"/>
                     <span>Other (pls specify)</span>
-                    <input type="text" name="other_specify" class="locked border-0 border-bottom w-75">
+                    <input type="text" name="other_specify_s" class="border-0 border-bottom w-75"/>
                     <br><br>
 
                     <strong>Documents needing revision:</strong><br>
@@ -290,7 +275,7 @@ if ($user_role !== 'QA ENGINEER') {
                     <br><br>
 
                     <strong>Process Released By:</strong>
-                    <input type="text" name="released_by" class="locked border-0 border-bottom w-100">
+                    <input type="text" name="released_by" class="border-0 border-bottom w-100" style="text-align: center;">
                     <br>
                     <div class="text-center mt-3">
                         <small>(Signature Above Printed Name/ Date)</small>
