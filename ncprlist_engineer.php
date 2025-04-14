@@ -80,33 +80,55 @@ if (isset($_SESSION['page'])) {
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="main">
-            <div class="page-wrapper">
-                <h2 class="mb-3">NCPR Table</h2>
-                <table id="ncprTable" class="table table-bordered table-hover table-striped text-center">
-                    <thead class="table-secondary">
-                        <tr>
-                            <th hidden>ID</th>
-                            <th class="text-center">NCPR Number</th>
-                            <th class="text-center">Initiator</th>
-                            <th class="text-center">Date</th>
-                            <th class="text-center">Part Number</th>
-                            <th hidden>Part Name</th>
-                            <th class="text-center">Urgent</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Fetch data from ncpr_table
-                        $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent 
+            <div class="page-wrapper p-2">
+                <div class="card p-3">
+                    <div class="card-title">
+                        <h4 class="mb-3">NCPR Table</h4>
+                    </div>
+                    <table id="ncprTable" class="table table-bordered table-hover table-striped text-center">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th hidden>ID</th>
+                                <th class="text-center">NCPR Number</th>
+                                <th class="text-center">Initiator</th>
+                                <th class="text-center">Date</th>
+                                <th class="text-center" hidden>Part Number</th>
+                                <th hidden>Part Name</th>
+                                <th class="text-center">Urgent</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Fetch data from ncpr_table
+                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent 
                         FROM ncpr_table 
                         ORDER BY 
                             CASE status
@@ -114,55 +136,56 @@ if (isset($_SESSION['page'])) {
                                 ELSE 2
                             END,
                             ncpr_num desc";
-                        $result = $conn->query($query);
+                            $result = $conn->query($query);
 
-                        while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td hidden><?php echo $row['id']; ?></td>
-                                <td><?php echo $row['ncpr_num']; ?></td>
-                                <td><?php echo $row['initiator']; ?></td>
-                                <td><?php echo $row['date']; ?></td>
-                                <td><?php echo $row['part_number']; ?></td>
-                                <td hidden><?php echo $row['part_name']; ?></td>
-                                <td>
-                                    <?php
-                                    if ($row['urgent'] === 'on') {
-                                        echo '<i class="fas fa-exclamation-circle text-danger" title="Urgent"></i>';
-                                    } else {
-                                        echo '<i class="fas fa-minus-circle text-muted" title="Not Urgent"></i>';
-                                    }
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $status = $row['status'];
-                                    $badgeClass = '';
+                            while ($row = $result->fetch_assoc()): ?>
+                                <tr>
+                                    <td hidden><?php echo $row['id']; ?></td>
+                                    <td><?php echo $row['ncpr_num']; ?></td>
+                                    <td><?php echo $row['initiator']; ?></td>
+                                    <td><?php echo $row['date']; ?></td>
+                                    <td class="text-center"><?php echo $row['part_number']; ?></td>
+                                    <td hidden><?php echo $row['part_name']; ?></td>
+                                    <td>
+                                        <?php
+                                        if ($row['urgent'] === 'on') {
+                                            echo '<i class="fas fa-exclamation-circle text-danger" title="Urgent"></i>';
+                                        } else {
+                                            echo '<i class="fas fa-minus-circle text-muted" title="Not Urgent"></i>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $status = $row['status'];
+                                        $badgeClass = '';
 
-                                    if ($status === 'open') {
-                                        $badgeClass = 'badge bg-success';
-                                    } elseif ($status === 'Close') {
-                                        $badgeClass = 'badge bg-danger';
-                                    } else {
-                                        $badgeClass = 'badge bg-danger'; // default/unknown status
-                                    }
+                                        if ($status === 'open') {
+                                            $badgeClass = 'badge bg-success';
+                                        } elseif ($status === 'Close') {
+                                            $badgeClass = 'badge bg-danger';
+                                        } else {
+                                            $badgeClass = 'badge bg-danger'; // default/unknown status
+                                        }
 
-                                    echo "<span class='$badgeClass'>$status</span>";
-                                    ?>
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex flex-wrap gap-1 justify-content-center">
-                                        <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                            NCPR
-                                        </button>
-                                        <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                            DISPOSITION
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
+                                        echo "<span class='$badgeClass'>$status</span>";
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                            <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                                NCPR
+                                            </button>
+                                            <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                                DISPOSITION
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -553,7 +576,7 @@ if (isset($_SESSION['page'])) {
         $(document).ready(function() {
             $('#ncprTable').DataTable({
                 "columnDefs": [{
-                    "targets": [0, 5],
+                    "targets": [0, 4, 5],
                     "visible": false
                 }],
                 "order": [],

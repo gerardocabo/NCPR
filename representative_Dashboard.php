@@ -111,12 +111,31 @@ $user_role = $_SESSION['role'];
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="main p-3">
             <div class="row">
                 <div class="col-md-6 col-lg-3">
@@ -221,15 +240,15 @@ $user_role = $_SESSION['role'];
                         <h5 class="mb-3">NCPR Table</h5>
                     </div>
                     <div class="table-container table-responsive mt-3">
-                        <table id="ncprTable" class="table table-bordered table-hover" style="width:100%">
+                        <table id="ncprTable" class="table table-bordered table-hover" style="width:100% text-center">
                             <thead class="table-secondary">
                                 <tr>
                                     <th hidden>ID</th>
-                                    <th>NCPR Number</th>
-                                    <th>Initiator</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
+                                    <th class="text-center">NCPR Number</th>
+                                    <th class="text-center">Initiator</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -333,20 +352,10 @@ $user_role = $_SESSION['role'];
                             className: 'btn btn-success'
                         },
                         {
-                            extend: 'csvHtml5',
-                            text: 'Export CSV',
-                            className: 'btn btn-primary'
-                        },
-                        {
                             extend: 'pdfHtml5',
                             text: 'Export PDF',
-                            className: 'btn btn-danger'
+                            className: 'btn btn-info ms-2'
                         },
-                        {
-                            extend: 'print',
-                            text: 'Print',
-                            className: 'btn btn-warning'
-                        }
                     ],
                     "ajax": {
                         "url": "fetch_ncpr.php",
@@ -431,19 +440,33 @@ $user_role = $_SESSION['role'];
                             "visible": false
                         }, // Hide ID column
                         {
-                            "data": "ncpr_num"
+                            "data": "ncpr_num",
+                            "className": "text-center"
                         },
                         {
-                            "data": "initiator"
+                            "data": "initiator",
+                            "className": "text-center"
                         },
                         {
-                            "data": "status"
+                            "data": "status",
+                            "className": "text-center",
+                            "render": function(data, type, row) {
+                                if (data === "open") {
+                                    return '<span class="badge bg-success">open</span>';
+                                } else if (data === "Close") {
+                                    return '<span class="badge bg-danger">Close</span>';
+                                } else {
+                                    return '<span class="badge bg-secondary">' + data + '</span>';
+                                }
+                            }
                         },
                         {
-                            "data": "date"
+                            "data": "date",
+                            "className": "text-center"
                         },
                         {
                             "data": "id",
+                            "className": "text-center",
                             "render": function(data, type, row) {
                                 let urgentIndicator = row.isUrgent ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
                                 let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold" data-id="${row.ncpr_num}">
