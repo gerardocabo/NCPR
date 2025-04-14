@@ -687,6 +687,30 @@ $user_role = $_SESSION['role'];
                         targetForm.find('input[name="shipment_date"').val(response.shipment_date || "");
                         targetForm.find('input[name="document_alert"').val(response.document_alert || "");
 
+                        if (Array.isArray(response.intervention_checkboxes) && response.intervention_checkboxes.length > 0) {
+                            let intervention_cb = ['actions_taken', 'process_dispo', 'resumption_reason', 'instructions_detail', 'documents_revision']; // Add more names here if needed
+
+                            targetForm.find('input[name="further_eval"]').prop('checked', response.intervention_checkboxes.some(cb => cb.checkbox_name === 'F1'));
+                            intervention_cb.forEach(function(checkbox) {
+                                targetForm.find('input[name="' + checkbox + '[]"]').each(function() {
+                                    let checkboxValue = $(this).val();
+                                    let isChecked = response.intervention_checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                                    $(this).prop('checked', isChecked);
+                                });
+                            });
+                        }
+
+                        if (Array.isArray(response.intervention_inputs) && response.intervention_inputs.length > 0) {
+                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by'];
+
+                            intervention_inp.forEach(function(input) {
+                                let found = response.intervention_inputs.find(obj => obj.input_name === input);
+                                if (found) {
+                                    $(`[name="${input}"]`).val(found.inputted_data || "");
+                                }
+                            });
+                        }
+
                         $('#editDispoModal').modal('show');
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

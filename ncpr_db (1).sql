@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2025 at 04:31 PM
+-- Generation Time: Apr 14, 2025 at 02:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,23 +31,55 @@ CREATE TABLE `disposition_tbl` (
   `id` int(11) NOT NULL,
   `ncpr_num` varchar(255) NOT NULL,
   `containment` text DEFAULT NULL,
-  `non_conformance` text DEFAULT NULL,
   `id_no` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `car_no` varchar(50) DEFAULT NULL,
   `scar_no` varchar(50) DEFAULT NULL,
   `document_alert` varchar(255) DEFAULT NULL,
   `contact_person` varchar(100) DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
   `other_specify` varchar(255) DEFAULT NULL,
   `yield_off` varchar(50) DEFAULT NULL,
   `da_no` varchar(50) DEFAULT NULL,
   `rework_da_no` varchar(50) DEFAULT NULL,
   `wis_no` varchar(50) DEFAULT NULL,
+  `repair_DA` varchar(255) DEFAULT NULL,
   `scrap_amount` decimal(10,2) DEFAULT NULL,
   `shipment_date` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `disposition_tbl`
+--
+
+INSERT INTO `disposition_tbl` (`id`, `ncpr_num`, `containment`, `id_no`, `name`, `car_no`, `scar_no`, `document_alert`, `contact_person`, `notes`, `other_specify`, `yield_off`, `da_no`, `rework_da_no`, `wis_no`, `repair_DA`, `scrap_amount`, `shipment_date`, `created_at`, `updated_at`) VALUES
+(1, '26-0001', 'trial for intervention insertion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 04:56:22', '2025-04-11 04:56:22'),
+(2, '26-0002', 'trial 2', '123', 'gumana', '123', '123', '123', '123', NULL, 'asdqwe123', '123', '123', '123', '123', '123', 123.00, '0000-00-00', '2025-04-11 05:01:36', '2025-04-11 05:01:36'),
+(3, '26-0003', 'trial inputs', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 06:39:08', '2025-04-11 06:39:08'),
+(4, '26-0004', 'sdasdsadas', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 06:52:08', '2025-04-11 06:52:08'),
+(5, '26-0005', 'qwerty', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 06:56:04', '2025-04-11 06:56:04'),
+(6, '26-0006', 'trail', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:13:30', '2025-04-11 07:13:30'),
+(7, '26-0007', '123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:16:35', '2025-04-11 07:16:35'),
+(8, '26-0008', '123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:25:00', '2025-04-11 07:25:00'),
+(9, '26-0008', '123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:26:24', '2025-04-11 07:26:24'),
+(10, '26-0008', '123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:26:55', '2025-04-11 07:26:55'),
+(11, '26-0008', 'addsd', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:28:39', '2025-04-11 07:28:39'),
+(12, '26-0008', 'addsd', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:29:41', '2025-04-11 07:29:41'),
+(13, '26-0008', 'okay na triall', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:30:53', '2025-04-11 07:30:53'),
+(14, '26-0008', 'tiral secured', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:34:27', '2025-04-11 07:34:27'),
+(15, '26-0008', 'tiral secured', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:34:55', '2025-04-11 07:34:55'),
+(16, '26-0008', 'tiral secured', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:37:45', '2025-04-11 07:37:45'),
+(17, '26-0008', 'secrued naba ', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 07:45:35', '2025-04-11 07:45:35'),
+(18, '26-0008', '123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:05:10', '2025-04-11 08:05:10'),
+(19, '26-0008', '123', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:12:01', '2025-04-11 08:12:01'),
+(20, '26-0008', '123wqe', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:34:39', '2025-04-11 08:34:39'),
+(21, '26-0008', 'qwe', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:38:20', '2025-04-11 08:38:20'),
+(22, '26-0008', 'doeuble pala name ng sa intervention\n', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:42:30', '2025-04-11 08:42:30'),
+(23, '26-0008', 'secured naba?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:43:05', '2025-04-11 08:43:05'),
+(24, '26-0008', '123qwesdasd', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 08:49:18', '2025-04-11 08:49:18'),
+(25, '26-0009', 'gagana na ba parama delte', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-11 09:08:57', '2025-04-11 09:08:57');
 
 -- --------------------------------------------------------
 
@@ -60,10 +92,26 @@ CREATE TABLE `dispo_approval` (
   `ncpr_num` varchar(255) NOT NULL,
   `approver_role` varchar(255) NOT NULL,
   `approver_id` int(11) NOT NULL,
-  `status` enum('Approved','Rejected','Cancel') NOT NULL,
+  `status` enum('Approved','Rejected','Canceled') NOT NULL,
   `approval_date` datetime DEFAULT current_timestamp(),
   `remarks` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `dispo_approval`
+--
+
+INSERT INTO `dispo_approval` (`id`, `ncpr_num`, `approver_role`, `approver_id`, `status`, `approval_date`, `remarks`) VALUES
+(3, '26-0001', 'QA ENGINEER', 5, 'Approved', '2025-04-11 18:56:24', NULL),
+(4, '26-0002', 'QA ENGINEER', 5, 'Approved', '2025-04-11 19:01:40', NULL),
+(5, '26-0003', 'QA ENGINEER', 5, 'Approved', '2025-04-11 20:39:08', NULL),
+(6, '26-0004', 'QA ENGINEER', 5, 'Approved', '2025-04-11 20:52:08', NULL),
+(7, '26-0005', 'QA ENGINEER', 5, 'Approved', '2025-04-11 20:56:06', NULL),
+(8, '26-0006', 'QA ENGINEER', 5, 'Approved', '2025-04-11 21:13:31', NULL),
+(9, '26-0007', 'QA ENGINEER', 5, 'Approved', '2025-04-11 21:16:35', NULL),
+(10, '26-0008', 'QA ENGINEER', 5, 'Approved', '2025-04-11 22:49:19', NULL),
+(11, '26-0009', 'QA ENGINEER', 5, 'Approved', '2025-04-11 23:09:00', NULL),
+(12, '26-0009', 'QA SUPERVISOR', 6, 'Approved', '2025-04-12 12:56:50', NULL);
 
 -- --------------------------------------------------------
 
@@ -80,6 +128,28 @@ CREATE TABLE `dispo_radio_values` (
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `dispo_radio_values`
+--
+
+INSERT INTO `dispo_radio_values` (`id`, `ncpr_num`, `field_name`, `field_value`, `created_at`, `updated_at`) VALUES
+(1, '26-0001', 'corrective_action', 'YES', '2025-04-04 02:20:30', '2025-04-04 02:20:30'),
+(2, '26-0001', 'potential_failure', 'YES', '2025-04-04 02:20:30', '2025-04-04 02:20:30'),
+(3, '26-0002', 'corrective_action', 'NO', '2025-04-04 04:15:13', '2025-04-04 14:28:18'),
+(4, '26-0002', 'potential_failure', 'NO', '2025-04-04 04:15:13', '2025-04-04 04:15:13'),
+(5, '26-0002', 'bd_report', 'YES', '2025-04-04 04:15:13', '2025-04-04 04:15:13'),
+(6, '26-0002', 'mrb', 'NO', '2025-04-04 04:15:13', '2025-04-04 04:15:13'),
+(7, '26-0002', 'customer_approval', 'YES', '2025-04-04 04:15:13', '2025-04-04 04:15:13'),
+(8, '26-0004', 'corrective_action', 'NO', '2025-04-04 09:37:21', '2025-04-04 09:37:21'),
+(9, '26-0004', 'potential_failure', 'NO', '2025-04-04 09:37:21', '2025-04-04 09:37:21'),
+(10, '26-0004', 'bd_report', 'NO', '2025-04-04 09:37:21', '2025-04-04 09:37:21'),
+(11, '26-0004', 'mrb', 'NO', '2025-04-04 09:37:21', '2025-04-04 09:37:21'),
+(12, '26-0002', 'corrective_action', 'NO', '2025-04-11 13:01:39', '2025-04-11 13:01:39'),
+(13, '26-0002', 'potential_failure', 'NO', '2025-04-11 13:01:39', '2025-04-11 13:01:39'),
+(14, '26-0002', 'bd_report', 'YES', '2025-04-11 13:01:39', '2025-04-11 13:01:39'),
+(15, '26-0002', 'mrb', 'YES', '2025-04-11 13:01:39', '2025-04-11 13:01:39'),
+(16, '26-0002', 'customer_approval', 'YES', '2025-04-11 13:01:39', '2025-04-11 13:01:39');
+
 -- --------------------------------------------------------
 
 --
@@ -94,6 +164,43 @@ CREATE TABLE `dispo_table` (
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `dispo_table`
+--
+
+INSERT INTO `dispo_table` (`id`, `ncpr_num`, `checkbox_id`, `created_at`, `updated_at`) VALUES
+(1, '26-0002', 1, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(2, '26-0002', 2, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(3, '26-0002', 3, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(4, '26-0002', 9, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(5, '26-0002', 4, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(6, '26-0002', 5, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(7, '26-0002', 6, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(8, '26-0002', 7, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(9, '26-0002', 8, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(10, '26-0002', 10, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(11, '26-0002', 11, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(12, '26-0002', 16, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(13, '26-0002', 17, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(14, '26-0002', 12, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(15, '26-0002', 13, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(16, '26-0002', 14, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(17, '26-0002', 15, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(18, '26-0002', 18, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(19, '26-0002', 19, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(20, '26-0002', 20, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(21, '26-0002', 21, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(22, '26-0002', 22, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(23, '26-0002', 23, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(24, '26-0002', 24, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(25, '26-0002', 25, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(26, '26-0002', 26, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(27, '26-0002', 28, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(28, '26-0002', 27, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(29, '26-0002', 28, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(30, '26-0002', 29, '2025-04-11 13:01:36', '2025-04-11 13:01:36'),
+(31, '26-0002', 30, '2025-04-11 13:01:36', '2025-04-11 13:01:36');
+
 -- --------------------------------------------------------
 
 --
@@ -105,10 +212,20 @@ CREATE TABLE `fomo` (
   `supplier` varchar(255) NOT NULL,
   `supplier_part_name` varchar(255) NOT NULL,
   `supplier_part_number` varchar(255) NOT NULL,
-  `invoice_num` int(255) NOT NULL,
-  `purchase_order` int(255) NOT NULL,
+  `invoice_num` varchar(255) NOT NULL,
+  `purchase_order` varchar(255) NOT NULL,
   `ncpr_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `fomo`
+--
+
+INSERT INTO `fomo` (`fomo_id`, `supplier`, `supplier_part_name`, `supplier_part_number`, `invoice_num`, `purchase_order`, `ncpr_id`) VALUES
+(1, 'werty', 'spn', '4321', '331', '123', 1),
+(2, 'werty', 'spn', '4321', '331', '123', 2),
+(3, 'n/a', 'n./a', 'n/a', '0', '0', 9),
+(4, 'N/A', 'N/A', 'N/A', '123', '1234', 10);
 
 -- --------------------------------------------------------
 
@@ -127,7 +244,18 @@ CREATE TABLE `key_person` (
 --
 
 INSERT INTO `key_person` (`id`, `fname`, `lname`) VALUES
-(1, 'QA', 'Engineer');
+(1, 'QA', 'Engineer'),
+(2, 'Yhanie', 'Janohan'),
+(3, 'Mardonio', 'Cordero'),
+(4, 'Ma. Vidalyn', 'Moran'),
+(5, 'bella', 'gomez'),
+(6, 'Aubrey', 'Candelosas'),
+(7, 'Esmeralda', 'Quijano'),
+(8, 'Mae', 'Gozo'),
+(9, 'Regine', 'Canela'),
+(10, 'Jun', 'Marcos'),
+(11, 'Bing', 'Marte'),
+(12, 'Jim', 'Rutt');
 
 -- --------------------------------------------------------
 
@@ -145,6 +273,24 @@ CREATE TABLE `material` (
   `defect_rate` varchar(255) NOT NULL,
   `ncpr_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `material`
+--
+
+INSERT INTO `material` (`material_id`, `ntdj_num`, `mns_num`, `lot_sublot_qty`, `qty_affected`, `qty_affected_text`, `defect_rate`, `ncpr_id`) VALUES
+(1, 'qwe', 'asd', 123, 111, 'aguy', '90.24', 1),
+(2, 'qwe', 'asd', 123, 111, 'aguy', '90.24', 2),
+(3, 'qwe', 'qwe', 123, 23, 'asd', '18.70', 3),
+(4, '589987', '587654-14', 1440, 42, '', '2.92', 4),
+(5, '589987', '587654-15', 1440, 50, '', '3.47', 4),
+(6, '589987', '587654-16', 1680, 66, '', '3.93', 4),
+(7, 'q', 'w', 12, 1, '', '8.33', 5),
+(8, 'asd', '123', 123, 22, '', '17.89', 6),
+(9, 'qwe', 'asdf', 123, 23, '', '18.70', 7),
+(10, 'qwe', 'qwe', 123, 12, '', '9.76', 8),
+(11, 'n/a', 'n/a', 12, 2, 'n/a', '16.67', 9),
+(12, 'asd', 'qwe', 123, 23, 'N/A', '18.70', 10);
 
 -- --------------------------------------------------------
 
@@ -200,6 +346,22 @@ CREATE TABLE `ncpr_table` (
   `dispo_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ncpr_table`
+--
+
+INSERT INTO `ncpr_table` (`id`, `initiator`, `ncpr_num`, `date`, `part_number`, `part_name`, `process`, `urgent`, `status`, `issue`, `awpi`, `dc`, `deviation`, `repeating`, `cavity`, `machine`, `ref`, `bg`, `one`, `one_one`, `two`, `two_one`, `three`, `three_one`, `four`, `five`, `six`, `seven`, `seven_one`, `seven_two`, `eight`, `eight_one`, `nine`, `nine_one`, `recall`, `fgparts`, `shipment`, `ship_sched`, `wip`, `stop_proc`, `location`, `mcs`, `mcs_details`, `customer_notif`, `dispo_id`, `created_at`) VALUES
+(1, 'ACUACO', '26-0001', '2025-04-03', '170031-001', 'CONTINENTAL D4/D42', 'QCFVI', 'on', 'open', 'called-out', '', '', '', '', '', '', 'critics', 'unknown either unme', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 3, '2025-04-03 19:42:21'),
+(2, 'ACUACO', '26-0002', '2025-04-03', '170031-001', 'CONTINENTAL D4/D42', 'QCFVI', 'off', 'open', 'called-out', '', '', '', '', '', '', 'critics', 'unknown either unme', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 4, '2025-04-03 19:44:05'),
+(3, 'ACUACO', '26-0003', '2025-04-04', '187303-001', 'AB MIKRO', 'QC', 'on', 'open', 'called-out', '', '', '', '', '', '', 'docref', 'bgisgueasd', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 5, '2025-04-04 12:02:05'),
+(4, 'C BINALA', '26-0004', '2025-04-04', '189828-001', 'IC; CKT; MCLAREN; LEFT ARTICULATION; D50074P01; ASSY; NTPI', 'loa hotpress', 'off', 'open', 'wrinkle base materials', '7851', '03-10', '', '', '', '', 'q000537', 'shipment date: 07-04-25\r\nshipment qty: 12,000 ea', '', '', '', '', '', ' sir erencio', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 6, '2025-04-04 14:42:23'),
+(5, 'ACUACO', '26-0005', '2025-04-05', '187303-001', 'AB MIKRO', 'qwe', 'off', 'open', 'c', '', '', '', '', '', '', 'x', 'z', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 7, '2025-04-05 17:10:31'),
+(6, 'ACUACO', '26-0006', '2025-04-05', '172893-001', 'AB MIKRO 0065', 'asdasd', 'on', 'open', 'se', '', '', '', '', '', '', 'cdr', 'adca', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 8, '2025-04-05 20:38:03'),
+(7, 'CABONTIS', '26-0007', '2025-04-07', '187303-001', 'AB MIKRO', 'QC', 'off', 'open', 'issue', '', '', '', '', '', '', 'crits', 'dter', '', '', '', '', '', 'sir caborat', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 9, '2025-04-07 22:43:42'),
+(8, 'ACUACO', '26-0008', '2025-04-09', '187303-001', 'AB MIKRO', 'QC', 'on', 'open', 'asd', '', '', '', '', '', '', 'asd', 'asd', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 10, '2025-04-09 10:50:40'),
+(9, 'ACUACO', '26-0009', '2025-04-10', '179123-001', 'FLEXTRONICS DODGE RH', 'QC', 'off', 'open', 'n/a', 'n/a', 'n/a', 'No', 'Yes', 'n/a', '', 'n/a', 'n/a', 'yes', 'yes', 'yes', 'n/a', 'yes', 'n/a', 'yes', 'yes', 'yes', 'yes', 'n/a', 'n/a', 'yes', 'n/a', 'yes', 'n/a', 'yes', 'yes', 'no', 'n/a', 'yes', 'yes', 'n/a', 'yes', 'n/a', 'yes', 12, '2025-04-10 09:39:07'),
+(10, 'ACUACO', '26-0010', '2025-04-10', '186213-001', 'PREH 038', 'QC', '', 'open', 'N/A', '123', '123', '', '', '4432', '23', 'N/A', 'N/A', 'yes', 'yes', 'yes', 'N/A', 'yes', 'N/A', 'yes', 'yes', 'yes', 'yes', 'N/A', 'N/A', '', '', 'yes', 'N/A', 'yes', 'yes', 'no', 'N/A', 'yes', 'yes', 'N/A', 'yes', 'N/A', 'yes', NULL, '2025-04-10 12:08:20');
 
 -- --------------------------------------------------------
 
@@ -1189,6 +1351,42 @@ CREATE TABLE `uploaded_file` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `uploaded_file`
+--
+
+INSERT INTO `uploaded_file` (`id`, `ncpr_id`, `file_name`, `file_path`, `file_type`, `uploaded_at`) VALUES
+(1, 2, 'sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'assets/img/1743680645_sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'image', '2025-04-03 11:44:05'),
+(2, 6, 'sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'assets/img/1743856684_sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'image', '2025-04-05 12:38:04'),
+(3, 7, 'download.jpg', 'assets/img/1744037022_download.jpg', 'image', '2025-04-07 14:43:42'),
+(4, 9, 'download (1).jpg', 'assets/img/1744249147_download (1).jpg', 'image', '2025-04-10 01:39:07'),
+(5, 10, 'download (1).jpg', 'assets/img/1744258101_download (1).jpg', 'image', '2025-04-10 04:08:21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `uploaded_filedispo`
+--
+
+CREATE TABLE `uploaded_filedispo` (
+  `id` int(11) NOT NULL,
+  `ncpr_num` varchar(255) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` text NOT NULL,
+  `file_type` varchar(100) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `uploaded_filedispo`
+--
+
+INSERT INTO `uploaded_filedispo` (`id`, `ncpr_num`, `file_name`, `file_path`, `file_type`, `uploaded_at`) VALUES
+(1, '26-0001', 'sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'assets/attachments/1743725874_sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'image/jpeg', '2025-04-04 00:17:54'),
+(2, '26-0001', 'sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'assets/attachments/1743725884_sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'image/jpeg', '2025-04-04 00:18:04'),
+(3, '26-0001', 'sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'assets/attachments/1743725888_sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'image/jpeg', '2025-04-04 00:18:08'),
+(4, '26-0001', 'sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'assets/attachments/1743726026_sam-hull-KCJKsJPe9pQ-unsplash.jpg', 'image/jpeg', '2025-04-04 00:20:26');
+
 -- --------------------------------------------------------
 
 --
@@ -1228,24 +1426,25 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role_id`, `created_at`, `person_id`, `last_seen_id`) VALUES
 (2, 'jr.gerardo14@gmail.com', '$2y$10$TYELwL2PhUlikVxs2kh6OeE.oDpj91gEooI2pKY1FPwRaj.MYKsH.', '', 2, '2025-03-17 06:53:25', 0, 0),
-(3, 'Superadmin@gmail.com', '$2y$10$nqr.jgUU5knN8gEWd1YlB.2VGLDPCH.fhNHeFiYwD3nGGeIk.W28C', '', 1, '2025-03-17 06:55:18', 0, 0),
-(4, 'qastaff1@ntphil.com', '$2y$10$./PMVLBHDHh05BPvTaON3.zvvvBFvD9RDhsZiC8zXeGNXGLVZoFVa', '', 4, '2025-03-17 07:02:11', 0, 0),
-(5, 'engr_user', '$2y$10$MKfvuNI6yfh4/IGo.QkrjOlt0vg1w1r8uOLgRmNRZdTJfz/7.Wrgu', '', 7, '2025-03-19 02:30:54', 1, 113),
-(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', '', 9, '2025-03-23 13:38:27', 0, 103),
-(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', '', 7, '2025-03-23 13:38:44', 0, 0),
-(8, 'admin', '$2y$10$sYkHASxQdYPQVu7GMwz1P.z21qPb6LWXPtvfLTohUNiPdqSwRzm3u', '', 4, '2025-03-23 13:38:50', 0, 113),
-(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', '', 10, '2025-03-24 02:13:14', 0, 108),
+(3, 'Superadmin', '$2y$10$nqr.jgUU5knN8gEWd1YlB.2VGLDPCH.fhNHeFiYwD3nGGeIk.W28C', '', 1, '2025-03-17 06:55:18', 0, 0),
+(4, 'qastaff1@ntphil.com', '$2y$10$./PMVLBHDHh05BPvTaON3.zvvvBFvD9RDhsZiC8zXeGNXGLVZoFVa', '', 4, '2025-03-17 07:02:11', 2, 0),
+(5, 'engr_user', '$2y$10$MKfvuNI6yfh4/IGo.QkrjOlt0vg1w1r8uOLgRmNRZdTJfz/7.Wrgu', '', 7, '2025-03-19 02:30:54', 8, 10),
+(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', '', 9, '2025-03-23 13:38:27', 7, 9),
+(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', '', 7, '2025-03-23 13:38:44', 8, 10),
+(8, 'admin', '$2y$10$sYkHASxQdYPQVu7GMwz1P.z21qPb6LWXPtvfLTohUNiPdqSwRzm3u', '', 4, '2025-03-23 13:38:50', 0, 8),
+(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', 'rep@gmail.com', 10, '2025-03-24 02:13:14', 10, 9),
 (20, 'jim.rutt', '$2y$10$IxIvbZqokUAhD4JjBhQfhe1O4jZeTh00/NC55zyn9mbrAk/b.759a', 'jim.rutt@shedahl.com', 10, '2025-04-02 07:05:12', 0, 0),
-(21, 'bing.marte', '$2y$10$pD3DP2nB6pc9p/GQRlnC3u7BDcmIWkAT5ondiLFf.rf1LJTFW2kXW', 'bing.marte@shedahl.com', 10, '2025-04-02 07:05:13', 0, 0),
-(22, 'jun,marcos', '$2y$10$4CdnrSriJEDxw5l8/NeLGeWEO48tvJq1otv5esZBq1WUbq.nOnILa', 'jun,marcos@sheldahl.com', 10, '2025-04-02 07:05:13', 0, 0),
-(23, 'areaso', '$2y$10$8e/pTekoO5m/haH8EM4M5edAE8oDgTmcEZ0Rxc4Lf5FsAjYSum6dK', 'areaso@ntphil.com', 8, '2025-04-02 07:05:13', 0, 0),
-(24, 'mquijano', '$2y$10$pTS680z8Nta4HGzn.g0DletTJL1mV7qILubl0AZQyfVfLwWQiIWqS', 'mquijano@ntphil.com', 9, '2025-04-02 07:05:13', 0, 0),
-(25, 'qaengineer', '$2y$10$0rci5jbRmUIQR9OGqng.RuGQUAsVJuvFKwO51OP6Z6FDv2mlR725O', 'qaengineer@ntphil.com', 7, '2025-04-02 07:05:13', 0, 0),
-(26, 'qaengineer2', '$2y$10$h6n5wi61AWRnHiB5u1tkSOk88yZvZpM8xOf1AuVoaAXcsNAJRrIey', 'qaengineer2@ntphil.com', 7, '2025-04-02 07:05:13', 0, 0),
+(21, 'bing.marte', '$2y$10$pD3DP2nB6pc9p/GQRlnC3u7BDcmIWkAT5ondiLFf.rf1LJTFW2kXW', 'bing.marte@shedahl.com', 10, '2025-04-02 07:05:13', 11, 0),
+(22, 'jun.marcos', '$2y$10$4CdnrSriJEDxw5l8/NeLGeWEO48tvJq1otv5esZBq1WUbq.nOnILa', 'jun.marcos@sheldahl.com', 10, '2025-04-02 07:05:13', 10, 0),
+(23, 'areaso', '$2y$10$8e/pTekoO5m/haH8EM4M5edAE8oDgTmcEZ0Rxc4Lf5FsAjYSum6dK', 'areaso@ntphil.com', 8, '2025-04-02 07:05:13', 6, 0),
+(24, '016283', '$2y$10$pTS680z8Nta4HGzn.g0DletTJL1mV7qILubl0AZQyfVfLwWQiIWqS', 'mquijano@ntphil.com', 9, '2025-04-02 07:05:13', 7, 0),
+(25, '207137', '$2y$10$0rci5jbRmUIQR9OGqng.RuGQUAsVJuvFKwO51OP6Z6FDv2mlR725O', 'qaengineer@ntphil.com', 7, '2025-04-02 07:05:13', 8, 0),
+(26, '175558', '$2y$10$h6n5wi61AWRnHiB5u1tkSOk88yZvZpM8xOf1AuVoaAXcsNAJRrIey', 'qaengineer2@ntphil.com', 7, '2025-04-02 07:05:13', 9, 0),
 (27, 'qaengineer3', '$2y$10$0GLe4djFUe3tcN8SxrQ06eRxJmCpy9STNv6.Pxdz7xHl20W4y9L1G', 'qaengineer3@ntphil.com', 7, '2025-04-02 07:05:13', 0, 0),
-(28, 'qastaff', '$2y$10$x86BxWqLAqOATbZZ5wQ7HOp/jfop6EKcVB/9CTvp6ZFautLB.CUGS', 'qastaff@ntphil.com', 6, '2025-04-02 07:05:14', 0, 0),
-(29, 'qastaff1', '$2y$10$or03n/5fqpOZhwId8Kv3mOXh7aZCr2OEfSvFNXiKRygev5fBzDxhy', 'qastaff1@ntphil.com', 4, '2025-04-02 07:05:14', 0, 0),
-(30, 'pcop1', '$2y$10$RgOaGFCebFo/K1ZzBcapmeX/YvsQ.wF/KfvqCafA.1BHNY5jZu4qe', 'pcop1@ntphil.com', 5, '2025-04-02 07:05:14', 0, 0);
+(28, '175590', '$2y$10$x86BxWqLAqOATbZZ5wQ7HOp/jfop6EKcVB/9CTvp6ZFautLB.CUGS', 'qastaff@ntphil.com', 6, '2025-04-02 07:05:14', 5, 0),
+(29, '240035', '$2y$10$or03n/5fqpOZhwId8Kv3mOXh7aZCr2OEfSvFNXiKRygev5fBzDxhy', 'qastaff1@ntphil.com', 4, '2025-04-02 07:05:14', 3, 0),
+(30, '144097', '$2y$10$RgOaGFCebFo/K1ZzBcapmeX/YvsQ.wF/KfvqCafA.1BHNY5jZu4qe', 'pcop1@ntphil.com', 5, '2025-04-02 07:05:14', 4, 0),
+(32, '217331', '$2y$10$or03n/5fqpOZhwId8Kv3mOXh7aZCr2OEfSvFNXiKRygev5fBzDxhy', 'qastaff1@ntphil.com', 4, '2025-04-02 07:05:14', 2, 0);
 
 -- --------------------------------------------------------
 
@@ -1362,6 +1561,12 @@ ALTER TABLE `uploaded_file`
   ADD KEY `ncpr_id` (`ncpr_id`);
 
 --
+-- Indexes for table `uploaded_filedispo`
+--
+ALTER TABLE `uploaded_filedispo`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `uploaded_files`
 --
 ALTER TABLE `uploaded_files`
@@ -1389,49 +1594,49 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT for table `disposition_tbl`
 --
 ALTER TABLE `disposition_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `dispo_approval`
 --
 ALTER TABLE `dispo_approval`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `dispo_radio_values`
 --
 ALTER TABLE `dispo_radio_values`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `dispo_table`
 --
 ALTER TABLE `dispo_table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `fomo`
 --
 ALTER TABLE `fomo`
-  MODIFY `fomo_id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `fomo_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `key_person`
 --
 ALTER TABLE `key_person`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `material_id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `material_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `ncpr_table`
 --
 ALTER TABLE `ncpr_table`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `predefined_checkboxes`
@@ -1461,7 +1666,13 @@ ALTER TABLE `register`
 -- AUTO_INCREMENT for table `uploaded_file`
 --
 ALTER TABLE `uploaded_file`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `uploaded_filedispo`
+--
+ALTER TABLE `uploaded_filedispo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `uploaded_files`
@@ -1473,7 +1684,7 @@ ALTER TABLE `uploaded_files`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- Constraints for dumped tables

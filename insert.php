@@ -156,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_FILES['image_name']) && $_FILES['image_name']['error'] == 0) {
             $image_name = $_FILES['image_name']['name'];
             $image_tmp = $_FILES['image_name']['tmp_name'];
-            $image_path = 'assets/img/' . time() . '_' . $image_name; // Unique file name
+            $image_path = 'asset/img/' . time() . '_' . $image_name; // Unique file name
 
             if (move_uploaded_file($image_tmp, $image_path)) {
                 $img_sql = "INSERT INTO uploaded_file (ncpr_id, file_name, file_path, file_type, uploaded_at) 

@@ -12,160 +12,9 @@ require "config.php";
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
 
 </head>
-<style>
-    ::after,
-    ::before {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    a {
-        text-decoration: none;
-    }
-
-    li {
-        list-style: none;
-    }
-
-    h1 {
-        font-weight: 600;
-        font-size: 1.5rem;
-    }
-
-    body {
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .wrapper {
-        display: flex;
-    }
-
-    .main {
-        min-height: 100vh;
-        width: 100%;
-        overflow: hidden;
-        transition: all 0.35s ease-in-out;
-        background-color: #fafbfe;
-    }
-
-    #sidebar {
-        width: 70px;
-        min-width: 70px;
-        z-index: 1000;
-        transition: all .25s ease-in-out;
-        background-color: #0e2238;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #sidebar.expand {
-        width: 260px;
-        min-width: 260px;
-    }
-
-    .toggle-btn {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 1rem 1.5rem;
-    }
-
-    .toggle-btn i {
-        font-size: 1.5rem;
-        color: #FFF;
-    }
-
-    .sidebar-logo {
-        margin: auto 0;
-    }
-
-    .sidebar-logo a {
-        color: #FFF;
-        font-size: 1.15rem;
-        font-weight: 600;
-    }
-
-    #sidebar:not(.expand) .sidebar-logo,
-    #sidebar:not(.expand) a.sidebar-link span {
-        display: none;
-    }
-
-    .sidebar-nav {
-        padding: 2rem 0;
-        flex: 1 1 auto;
-    }
-
-    a.sidebar-link {
-        padding: .625rem 1.5rem;
-        color: #FFF;
-        display: block;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        border-left: 3px solid transparent;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-link i {
-        font-size: 1.2rem;
-        color: white;
-        margin-right: 10px;
-    }
-
-    a.sidebar-link:hover {
-        background-color: rgba(255, 255, 255, .075);
-        border-left: 3px solid #3b7ddd;
-    }
-
-    .sidebar-item {
-        position: relative;
-    }
-
-    #sidebar:not(.expand) .sidebar-link span {
-        display: none;
-        position: absolute;
-        left: 80px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #0e2238;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #sidebar:not(.expand) .sidebar-item:hover .sidebar-link span,
-    #sidebar:not(.expand) .sidebar-footer:hover .sidebar-link span {
-        display: block;
-    }
-
-    .sidebar-item,
-    .sidebar-footer {
-        position: relative;
-    }
-
-    .sidebar-item.active a {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-left: 3px solid #3b7ddd;
-        color: #3b7ddd;
-    }
-
-    .hover-shadow:hover {
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
-        transform: translateY(-5px);
-        transition: all 0.3s ease-in-out;
-        background-color: #0e2238 !important;
-        color: white;
-    }
-</style>
 
 <body class="bg-white">
     <div class="wrapper bg-white">
@@ -186,30 +35,6 @@ require "config.php";
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="ncprfiling.php" class="sidebar-link">
-                        <i class="fa-regular fa-folder-open"></i>
-                        <span>NCPR Filing</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="ncprlist.php" class="sidebar-link">
-                        <i class="fa-regular fa-address-card"></i>
-                        <span>NCPR List</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
-                        <span>Product Key</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="status.php" class="sidebar-link">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <span>Engineer List</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
                     <a href="Setting_SAdmin.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
@@ -224,196 +49,31 @@ require "config.php";
             </div>
         </aside>
         <div class="main p-3">
-            <div class="row">
-                <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
-                        <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
-                            <div class="card border-0 shadow-sm flex-fill hover-shadow">
-                                <div class="card-body p-0 d-flex flex-fill">
-                                    <div class="row g-5 align-items-center">
-                                        <div class="col-6">
-                                            <div class="p-3 m-1">
-                                                <h5>NCPR Files</h5>
-                                                <p class="mb-0">#</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/folder.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
-                        <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
-                            <div class="card border-0 shadow-sm flex-fill hover-shadow">
-                                <div class="card-body p-0 d-flex flex-fill">
-                                    <div class="row g-5 align-items-center">
-                                        <div class="col-6">
-                                            <div class="p-3 m-1">
-                                                <h5>Open Files</h5>
-                                                <p class="mb-0">#</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/open.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <a href="productkey.php" class="text-decoration-none">
-                        <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
-                            <div class="card border-0 shadow-sm flex-fill hover-shadow">
-                                <div class="card-body p-0 d-flex flex-fill">
-                                    <div class="row g-5 align-items-center">
-                                        <div class="col-6">
-                                            <div class="p-3 m-1">
-                                                <h5>Closed NCPR</h5>
-                                                <p class="mb-0">#</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/close.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <a href="status.php" class="text-decoration-none">
-                        <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
-                            <div class="card border-0 shadow-sm flex-fill hover-shadow">
-                                <div class="card-body p-0 d-flex flex-fill">
-                                    <div class="row g-5 align-items-center">
-                                        <div class="col-6">
-                                            <div class="p-3 m-1">
-                                                <h5>Urgent NCPR</h5>
-                                                <p class="mb-0">#</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 d-flex justify-content-end">
-                                            <img src="asset/eng.png" alt="Icon" class="img-fluid" style="width: 100px; height: 100px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title">
-                        <h5 class="mb-3">NCPR Table</h5>
-                    </div>
-                    <div class="table-container table-responsive mt-3">
-                        <table id="ncprTable" class="table table-bordered table-hover" style="width:100%">
-                            <thead class="table-secondary">
-                                <tr>
-                                    <th hidden>ID</th>
-                                    <th>NCPR Number</th>
-                                    <th>Initiator</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div id="log-section">
+
             </div>
         </div>
     </div>
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
-    <!-- DataTable Initialization -->
+    \
     <script>
-        $(document).ready(function() {
-            $('#ncprTable').DataTable({
-                dom: 'Bfrtip',
-                buttons: [{
-                        extend: 'excelHtml5',
-                        text: 'Export Excel',
-                        className: 'btn btn-success'
-                    },
-                    {
-                        extend: 'csvHtml5',
-                        text: 'Export CSV',
-                        className: 'btn btn-primary'
-                    },
-                    {
-                        extend: 'pdfHtml5',
-                        text: 'Export PDF',
-                        className: 'btn btn-danger'
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print',
-                        className: 'btn btn-warning'
-                    }
-                ],
-                "ajax": {
-                    "url": "fetch_ncpr.php",
-                    "type": "GET",
-                    "dataSrc": ""
-                },
-                "columns": [{
-                        "data": "id",
-                        "visible": false
-                    }, // Hides ID column
-                    {
-                        "data": "ncpr_num"
-                    },
-                    {
-                        "data": "initiator"
-                    },
-                    {
-                        "data": "status"
-                    },
-                    {
-                        "data": "date"
-                    },
-                    {
-                        "data": "id",
-                        "render": function(data, type, row) {
-                            return `
-                        <button class="btn btn-primary btn-sm view-btn" data-id="${row.ncpr_num}">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="btn btn-success btn-sm add-btn" 
-                                data-id="${row.ncpr_num}" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#dispoModal"><i class="fas fa-add"></i>
-                            Dispo
-                        </button>`;
-                        }
-                    }
-                ],
-                "order": [
-                    [0, "asc"]
-                ],
-                "language": {
-                    "emptyTable": "No Available NCPR Filing"
-                }
-            });
-        });
+        function loadLogs() {
+            fetch('adashboardVSfetch.php')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('log-section').innerHTML = html;
+                });
+        }
+
+        // Initial load
+        loadLogs();
+
+        // Refresh every 5 seconds
+        setInterval(loadLogs, 5000);
     </script>
     <script>
         const hamBurger = document.querySelector(".toggle-btn");

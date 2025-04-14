@@ -201,30 +201,30 @@
             <tr>
                 <td style="width: 33%; vertical-align: top;">
                     <strong>Actions Taken:</strong><br>
-                    <input class="locked" type="checkbox" name="actions_taken[]" value="Problem solving/troubleshooting"> Problem solving/troubleshooting<br>
-                    <input class="locked" type="checkbox" name="actions_taken[]" value="Process Verification/Engg Eval"> Process Verification /
+                    <input class="locked" type="checkbox" name="actions_taken[]" value="AT1"> Problem solving/troubleshooting<br>
+                    <input class="locked" type="checkbox" name="actions_taken[]" value="AT2"> Process Verification /
                     <span>Eng'g Eval.</span>
 
                     <br><br>
                     <strong>Process Disposition:</strong><br>
-                    <input class="locked" type="checkbox" name="process_dispo[]" value="Resume Production"> Resume Production<br>
-                    <input class="locked" type="checkbox" name="process_dispo[]" value="Stop Production"> Stop Production
+                    <input class="locked" type="checkbox" name="process_dispo[]" value="PD1"> Resume Production<br>
+                    <input class="locked" type="checkbox" name="process_dispo[]" value="PD2"> Stop Production
                     <br><br>
                     <span>Affected process/es:</span>
                     <input type="text" name="affected_process" class="locked border-0 border-bottom w-100"><br><br>
-                    <input class="locked" type="checkbox" name="further_eval" value="For further Eng'g Evaluation">
+                    <input class="locked" type="checkbox" name="further_eval" value="F1">
                     <span>For further Eng’g Evaluation</span>
                 </td>
 
                 <td style="width: 33%; vertical-align: top;">
                     <strong>Reason for Resumption:</strong><br>
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Criteria"> Criteria
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Method"> Method
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Materials"> Materials
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Machine"> Machine
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R1"> Criteria
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R2"> Method
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R3"> Materials
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R4"> Machine
                     <br><br>
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Machine/fixture repair"> Machine/fixture repair<br>
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Others">
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R5"> Machine/fixture repair<br>
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R6">
                     <span>Others, pls specify</span>
                     <br>
                     <input type="text" name="other_resumption" class="locked border-0 border-bottom w-100"><br><br>
@@ -236,38 +236,38 @@
 
                 <td style="width: 33%; vertical-align: top;">
                     <strong>Instructions in detail, see reference doc:</strong><br>
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Document Alert #"> Document Alert #:
-                    <input type="text" name="document_alert" class="locked border-0 border-bottom w-75"><br>
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1"> Document Alert #:
+                    <input type="text" name="document_alert_s" class="locked border-0 border-bottom w-75"><br>
 
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Other">
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2">
                     <span>Other (pls specify)</span>
-                    <input type="text" name="other_specify" class="locked border-0 border-bottom w-75">
+                    <input type="text" name="other_specify_s" class="locked border-0 border-bottom w-75">
                     <br><br>
 
                     <strong>Documents needing revision:</strong><br>
                     <div class="d-flex flex-wrap gap-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="N/A" id="doc_na">
+                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR1" id="doc_na">
                             <label class="form-check-label" for="doc_na" style="font-size: 12px;">N/A</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="WIS" id="doc_wis">
+                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR2" id="doc_wis">
                             <label class="form-check-label" for="doc_wis" style="font-size: 12px;">WIS</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DJ" id="doc_dj">
+                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR3" id="doc_dj">
                             <label class="form-check-label" for="doc_dj" style="font-size: 12px;">DJ</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="PROC" id="doc_proc">
+                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR4" id="doc_proc">
                             <label class="form-check-label" for="doc_proc" style="font-size: 12px;">PROC</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="CP" id="doc_cp">
+                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR5" id="doc_cp">
                             <label class="form-check-label" for="doc_cp" style="font-size: 12px;">CP</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="PFMEA" id="doc_pfmea">
+                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR6" id="doc_pfmea">
                             <label class="form-check-label" for="doc_pfmea" style="font-size: 12px;">PFMEA</label>
                         </div>
                     </div>

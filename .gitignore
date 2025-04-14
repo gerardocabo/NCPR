@@ -17,10 +17,10 @@ setting.php
 
 # for some basic vulnerabilities check hahaha.
 
-adashboardVS.php
-adashboardVSfetch.php
-apatternVS.php
-vulnerability_scan.log
+#adashboardVS.php
+#adashboardVSfetch.php
+#apatternVS.php
+#vulnerability_scan.log
 
 #critical/sensitive data
 setting.php

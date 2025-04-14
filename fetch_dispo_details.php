@@ -22,24 +22,49 @@ try {
     $ncpr_num = $_POST['ncpr_num'];
 
     $query = "
-    SELECT 
-        d.id, d.ncpr_num, d.containment, d.id_no, d.name, d.car_no, d.scar_no, 
-        d.document_alert, d.contact_person, d.notes, d.other_specify, d.yield_off, d.da_no, 
-        d.rework_da_no, d.wis_no, d.repair_DA, d.scrap_amount, d.shipment_date, d.created_at, d.updated_at,
-        r.field_name, r.field_value,
-        p.id AS checkbox_id, p.checkbox_name,
-        a.approver_id, a.approver_role,
-        k.fname, k.lname
-    FROM disposition_tbl d
-    LEFT JOIN dispo_radio_values r ON d.ncpr_num = r.ncpr_num
-    LEFT JOIN dispo_table dt ON d.ncpr_num = dt.ncpr_num
-    LEFT JOIN predefined_checkboxes p ON dt.checkbox_id = p.id
-    LEFT JOIN dispo_approval a ON d.ncpr_num = a.ncpr_num
-    LEFT JOIN users u ON a.approver_id = u.id
-    LEFT JOIN key_person k ON u.person_id = k.id
-    WHERE d.ncpr_num = :ncpr_num
-";
+            SELECT 
+                d.ncpr_num,
+                d.id,
+                d.containment,
+                d.id_no,
+                d.name,
+                d.car_no,
+                d.scar_no,
+                d.document_alert,
+                d.contact_person,
+                d.notes,
+                d.other_specify,
+                d.yield_off,
+                d.da_no,
+                d.rework_da_no,
+                d.wis_no,
+                d.repair_DA,
+                d.scrap_amount,
+                d.shipment_date,
+                d.created_at,
+                d.updated_at,
 
+                -- Grouped fields
+                GROUP_CONCAT(DISTINCT CONCAT(r.field_name, ':', r.field_value) SEPARATOR ' | ') AS radio_fields,
+                GROUP_CONCAT(DISTINCT p.checkbox_name SEPARATOR ', ') AS checkboxes,
+                GROUP_CONCAT(DISTINCT p2.key SEPARATOR ', ') AS intervention_checkboxes,
+                GROUP_CONCAT(DISTINCT CONCAT(dti.input_name, ':', dti.inputted_data) SEPARATOR ', ') AS intervention_inputs,
+                GROUP_CONCAT(DISTINCT a.approver_role SEPARATOR ', ') AS approver_roles,
+                GROUP_CONCAT(DISTINCT CONCAT(k.fname, ' ', k.lname) SEPARATOR ', ') AS approvers
+
+            FROM disposition_tbl d
+            LEFT JOIN dispo_radio_values r ON d.ncpr_num = r.ncpr_num
+            LEFT JOIN dispo_table dt ON d.ncpr_num = dt.ncpr_num
+            LEFT JOIN predefined_checkboxes p ON dt.checkbox_id = p.id
+            LEFT JOIN dispo_table_intervention di ON d.ncpr_num = di.ncpr_num
+            LEFT JOIN predefined_checkboxes_2 p2 ON di.checkbox_id = p2.id
+            LEFT JOIN disposition_tbl_intervention dti ON d.ncpr_num = dti.ncpr_num
+            LEFT JOIN dispo_approval a ON d.ncpr_num = a.ncpr_num
+            LEFT JOIN users u ON a.approver_id = u.id
+            LEFT JOIN key_person k ON u.person_id = k.id
+            WHERE d.ncpr_num = :ncpr_num
+            GROUP BY d.ncpr_num
+        ";
 
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':ncpr_num', $ncpr_num, PDO::PARAM_STR);
@@ -50,86 +75,115 @@ try {
         throw new Exception('No matching records found');
     }
 
-    // Extract primary disposition data
+    // Assume $results[0] exists from PDO fetch
+    $row = $results[0];
+
     $disposition = [
-        'id' => $results[0]['id'],
-        'ncpr_num' => $results[0]['ncpr_num'],
-        'containment' => $results[0]['containment'],
-        'id_no' => $results[0]['id_no'],
-        'name' => $results[0]['name'],
-        'car_no' => $results[0]['car_no'],
-        'scar_no' => $results[0]['scar_no'],
-        'document_alert' => $results[0]['document_alert'],
-        'contact_person' => $results[0]['contact_person'],
-        'notes' => $results[0]['notes'],
-        'other_specify' => $results[0]['other_specify'],
-        'yield_off' => $results[0]['yield_off'],
-        'da_no' => $results[0]['da_no'],
-        'rework_da_no' => $results[0]['rework_da_no'],
-        'wis_no' => $results[0]['wis_no'],
-        'repair_DA' => $results[0]['repair_DA'],
-        'scrap_amount' => $results[0]['scrap_amount'],
-        'shipment_date' => $results[0]['shipment_date'],
-        'created_at' => $results[0]['created_at'],
-        'updated_at' => $results[0]['updated_at'],
+        'id' => $row['id'],
+        'ncpr_num' => $row['ncpr_num'],
+        'containment' => $row['containment'],
+        'id_no' => $row['id_no'],
+        'name' => $row['name'],
+        'car_no' => $row['car_no'],
+        'scar_no' => $row['scar_no'],
+        'document_alert' => $row['document_alert'],
+        'contact_person' => $row['contact_person'],
+        'notes' => $row['notes'],
+        'other_specify' => $row['other_specify'],
+        'yield_off' => $row['yield_off'],
+        'da_no' => $row['da_no'],
+        'rework_da_no' => $row['rework_da_no'],
+        'wis_no' => $row['wis_no'],
+        'repair_DA' => $row['repair_DA'],
+        'scrap_amount' => $row['scrap_amount'],
+        'shipment_date' => $row['shipment_date'],
+        'created_at' => $row['created_at'],
+        'updated_at' => $row['updated_at'],
+
+        // Radio fields
         'corrective_action' => null,
         'pff' => null,
         'bd_report' => null,
         'mrb' => null,
-        'customer_approval' => null, // Added customer approval
-        'checkboxes' => [], // Array for checkboxes
-        'approvers' => [] // Array for approvers
-    ];
-    $checkboxNames = []; // Array to track unique checkboxes
-    $maxApprovers = 3;  // Limit to 3 approvers
-    $approverCount = 0;  // Initialize counter for approvers
-    $approverRoles = []; // Array to track unique approver roles
+        'customer_approval' => null,
 
-    // Process radio values and checkboxes
-    foreach ($results as $row) {
-        if (!empty($row['field_name']) && !empty($row['field_value'])) {
-            switch ($row['field_name']) {
+        // Arrays
+        'checkboxes' => [],
+        'intervention_checkboxes' => [],
+        'intervention_inputs' => [],
+        'approvers' => []
+    ];
+
+    // Parse grouped radio_fields (if your SQL used the format: "field_name:field_value")
+    if (!empty($row['radio_fields'])) {
+        $radioPairs = explode(' | ', $row['radio_fields']);
+        foreach ($radioPairs as $pair) {
+            list($field, $value) = explode(':', $pair);
+            switch ($field) {
                 case 'corrective_action':
-                    $disposition['corrective_action'] = $row['field_value'];
+                    $disposition['corrective_action'] = $value;
                     break;
                 case 'potential_failure':
-                    $disposition['pff'] = $row['field_value'];
+                    $disposition['pff'] = $value;
                     break;
                 case 'bd_report':
-                    $disposition['bd_report'] = $row['field_value'];
+                    $disposition['bd_report'] = $value;
                     break;
                 case 'mrb':
-                    $disposition['mrb'] = $row['field_value'];
+                    $disposition['mrb'] = $value;
                     break;
-                case 'customer_approval': // Added case for customer approval
-                    $disposition['customer_approval'] = $row['field_value'];
+                case 'customer_approval':
+                    $disposition['customer_approval'] = $value;
                     break;
             }
         }
+    }
 
-        // Process checkboxes, but ensure unique values
-        if (!empty($row['checkbox_id']) && !empty($row['checkbox_name']) && !in_array($row['checkbox_name'], $checkboxNames)) {
-            $disposition['checkboxes'][] = [
-                'checkbox_name' => $row['checkbox_name']
+    // Parse checkboxes (assumes comma-separated values)
+    if (!empty($row['checkboxes'])) {
+        $checkboxNames = array_unique(array_map('trim', explode(',', $row['checkboxes'])));
+        foreach ($checkboxNames as $name) {
+            $disposition['checkboxes'][] = ['checkbox_name' => $name];
+        }
+    }
+
+    // Parse intervention checkboxes (assumes comma-separated values)
+    if (!empty($row['intervention_checkboxes'])) {
+        $interventionCheckboxNames = array_unique(array_map('trim', explode(',', $row['intervention_checkboxes'])));
+        foreach ($interventionCheckboxNames as $name) {
+            $disposition['intervention_checkboxes'][] = ['checkbox_name' => $name];
+        }
+    }
+
+    // Parse intervention inputs (assumes "input_name:inputted_data" format)
+    if (!empty($row['intervention_inputs'])) {
+        $inputs = array_map('trim', explode(',', $row['intervention_inputs']));
+        foreach ($inputs as $input) {
+            list($inputName, $inputData) = explode(':', $input);
+            $disposition['intervention_inputs'][] = [
+                'input_name' => $inputName,
+                'inputted_data' => $inputData
             ];
-            $checkboxNames[] = $row['checkbox_name']; // Track unique checkboxes
         }
+    }
 
-        // Process approvers (approver_id and approval_role)
-        if (!empty($row['approver_id']) && !empty($row['approver_role']) && $approverCount < $maxApprovers) {
-            // Ensure the role is unique
-            if (!in_array($row['approver_role'], $approverRoles)) {
-                $disposition['approvers'][] = [
-                    'approver_id' => $row['approver_id'],
-                    'approver_role' => $row['approver_role'],
-                    'fname' => $row['fname'], // Added fname
-                    'lname' => $row['lname']  // Added lname
-                ];
+    // Parse approvers (limit to 3, assuming comma-separated roles and names are in same order)
+    if (!empty($row['approver_roles']) && !empty($row['approvers'])) {
+        $roles = array_map('trim', explode(',', $row['approver_roles']));
+        $names = array_map('trim', explode(',', $row['approvers']));
 
-                // Add the role to the approverRoles array to avoid duplicates
-                $approverRoles[] = $row['approver_role'];
-                $approverCount++; // Increment counter to ensure no more than 3 approvers are added
-            }
+        $maxApprovers = 3;
+        for ($i = 0; $i < min(count($roles), count($names), $maxApprovers); $i++) {
+            $fullName = explode(' ', $names[$i], 2); // split fname and lname
+            $fname = $fullName[0] ?? '';
+            $lname = $fullName[1] ?? '';
+
+            $disposition['approvers'][] = [
+                'approver_id' => null, // approver_id isn't available in grouped version
+                'approver_role' => $roles[$i],
+                'fname' => $fname,
+                'lname' => $lname
+            ];
         }
     }
 

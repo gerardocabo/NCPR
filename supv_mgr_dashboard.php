@@ -572,9 +572,6 @@ $user_role = $_SESSION['role'];
                     },
                     dataType: 'json',
                     success: function(response) {
-                        // Log the full response for debugging
-                        console.log("Encoded JSON response:", response);
-
                         console.log("Dispo ID found. Disabling inputs.", response);
 
                         // Populate fields with existing data
@@ -643,6 +640,30 @@ $user_role = $_SESSION['role'];
                         $('#scrap_amount').text(response.scrap_amount || "");
                         $('#shipment_date').text(response.shipment_date || "");
                         $('#document_alert').text(response.document_alert || "");
+
+                        if (Array.isArray(response.intervention_checkboxes) && response.intervention_checkboxes.length > 0) {
+                            let intervention_cb = ['actions_taken', 'process_dispo', 'resumption_reason', 'instructions_detail', 'documents_revision']; // Add more names here if needed
+
+                            $('input[name="further_eval"]').prop('checked', response.intervention_checkboxes.some(cb => cb.checkbox_name === 'F1'));
+                            intervention_cb.forEach(function(checkbox) {
+                                $('input[name="' + checkbox + '[]"]').each(function() {
+                                    let checkboxValue = $(this).val();
+                                    let isChecked = response.intervention_checkboxes.some(cb => cb.checkbox_name === checkboxValue);
+                                    $(this).prop('checked', isChecked);
+                                });
+                            });
+                        }
+
+                        if (Array.isArray(response.intervention_inputs) && response.intervention_inputs.length > 0) {
+                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by'];
+
+                            intervention_inp.forEach(function(input) {
+                                let found = response.intervention_inputs.find(obj => obj.input_name === input);
+                                if (found) {
+                                    $('#' + input).text(found.inputted_data || "");
+                                }
+                            });
+                        }
 
                         //filled the approvals
                         // Loop through the approvers and update the elements accordingly

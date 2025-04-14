@@ -1,10 +1,13 @@
 <?php
-require_once 'apatternVS.php';
+
 require "config.php";
-/*if (!isset($_SESSION['allowed'])) {
-    header('Location: index.html');
-    exit();
-}*/
+require_once 'csrf.php';
+$token = generateCSRFToken();
+// Block direct access if not coming from the gateway
+/* if (!isset($_SESSION['GATEWAY_VERIFIED']) || $_SESSION['GATEWAY_VERIFIED'] !== true) {
+    http_response_code(403);
+    exit;
+} */
 ?>
 
 <!DOCTYPE html>
@@ -13,11 +16,12 @@ require "config.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="secure-token" content="ABC123SECRET">
+
     <title>NCPR System</title>
 
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/fontawesome.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 
@@ -25,22 +29,23 @@ require "config.php";
 <style>
     body {
         font-family: 'Roboto', sans-serif;
+        background: linear-gradient(to right, #1e3c72, #2a5298);
     }
 </style>
 
 <body class="d-flex flex-column min-vh-100">
-    <header class="py-3 shadow-sm" style="background-color: #0e2238">
-        <div class="container d-flex align-items-center">
+    <header class="py-3 shadow-sm" style="background-color: rgba(0, 0, 0, 0.3);">
+        <div class="container d-flex justify-content-center align-items-center">
             <a class="navbar-brand" href="#">
-                <span class="fs-4 fw-bold ms-2">LOGO</span>
+                <span class="fs-4 fw-bold ms-2" style="color:rgb(252, 253, 255);">NON-CONFORMING PRODUCT RECORD</span>
             </a>
         </div>
     </header>
     <div class="container d-flex flex-grow-1 justify-content-center align-items-center">
         <div class="login-form bg-light p-4 rounded shadow" style="width: 500px;">
             <h2 class="text-center">Login</h2>
-            <form method="POST" action="login.php">
-                <input type="hidden" name="login" value="1">
+            <form>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($token); ?>">
                 <div class="mb-3">
                     <label class="form-label">EMAIL</label>
                     <input type="text" class="form-control p-2 fs-6" name="username" placeholder="Enter Email or ID number">
@@ -58,7 +63,8 @@ require "config.php";
                 <button type="submit" class="btn btn-success w-100 p-2" name="login"><span class="fs-5 fw-bold text-dark">LOGIN</span></button>
             </form>
             <hr>
-            <form id="loginForm" method="POST" action="login.php">
+            <form>
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($token); ?>">
                 <input type="hidden" name="guest_role" value="GUEST"> <!-- Hidden field for guest role -->
                 <button type="submit" class="btn btn-primary w-100 p-2" name="guest" id="guestLogin">
                     <span class="fs-5 fw-bold text-dark">GUEST</span>
@@ -104,7 +110,6 @@ require "config.php";
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/vendor/bootstrap/js/all.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/fontawesome.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
 
@@ -116,7 +121,7 @@ require "config.php";
                 var username = $("#username").val();
                 var password = $("#password").val();
                 var guestRole = $("#guest_role").val(); // Assuming there's a dropdown for guest roles
-
+                var secureToken = $('meta[name="secure-token"]').attr('content'); // or $('body').data('token')
                 var requestData = {};
 
                 if (guestRole) {
@@ -136,6 +141,9 @@ require "config.php";
                     type: "POST",
                     url: "login.php",
                     data: requestData,
+                    headers: {
+                        "X-SECURE-TOKEN": secureToken
+                    },
                     success: function(response) {
                         console.log("Response from server:", response); // Debugging
                         var data = JSON.parse(response);

@@ -224,7 +224,7 @@
                     <input class="locked" type="checkbox" name="resumption_reason[]" value="R4"> Machine
                     <br><br>
                     <input class="locked" type="checkbox" name="resumption_reason[]" value="R5"> Machine/fixture repair<br>
-                    <input class="locked" type="checkbox" name="resumption_reason[]" value="Others">
+                    <input class="locked" type="checkbox" name="resumption_reason[]" value="R6">
                     <span>Others, pls specify</span>
                     <br>
                     <input type="text" name="other_resumption" class="border-0 border-bottom w-100"><br><br>
@@ -236,10 +236,10 @@
 
                 <td style="width: 33%; vertical-align: top;">
                     <strong>Instructions in detail, see reference doc:</strong><br>
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Document Alert #"/> Document Alert #:
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1"/> Document Alert #:
                     <input type="text" name="document_alert_s" class="border-0 border-bottom w-75"/><br>
 
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="Other"/>
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2"/>
                     <span>Other (pls specify)</span>
                     <input type="text" name="other_specify_s" class="border-0 border-bottom w-75"/>
                     <br><br>

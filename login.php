@@ -1,4 +1,6 @@
 <?php
+//require_once 'vfry_tkn.php'; // 💡 Always validate before doing anything else
+
 ob_start();
 session_start();
 require "connection.php"; // Database connection
@@ -19,31 +21,6 @@ function handleGuestLogin($guestRole)
 
     return json_encode(["status" => "success", "message" => "Guest", "redirect" => "guest_dashboard.php"]);
 }
-/* function handleGuestLogin($guestRole)
-{
-    // Allow only the "GUEST" role
-    // Vulnerable to Command Injection: $guestRole can be manipulated to inject commands if used unsanitized
-    if ($guestRole !== "GUEST") {
-        // XSS Vulnerability: User input directly echoed without sanitization
-        return json_encode(["status" => "error", "message" => "Invalid Guest Role Selected. <script>alert('XSS');</script>"]);
-    }
-
-    // Vulnerable session management: session fixation risk by not regenerating the session ID
-    $_SESSION["user"] = "GUEST"; // Assuming you always set the user to GUEST
-    $_SESSION["role"] = "GUEST"; // Set role to GUEST
-
-    // Potential SQL Injection: if this role is ever used in a query without sanitization
-    // Example (in an external query): `SELECT * FROM users WHERE role = '$_SESSION["role"]'`
-
-    // Just for testing, injecting a log message to show as part of the vulnerability
-    // Directly using user-controlled $_SESSION data without sanitization
-    $role = $_SESSION["role"];
-    $message = "Logged in as $role"; // Vulnerable to XSS if not sanitized
-    error_log($message); // Log the message in a file (could be exploited in some scenarios)
-
-    return json_encode(["status" => "success", "message" => "Guest", "redirect" => "guest_dashboard.php"]);
-} */
-
 
 // Admin Login Function
 function handleAdminLogin($username, $password, $pdo)
@@ -95,13 +72,21 @@ function handleAdminLogin($username, $password, $pdo)
 
 // Handle Requests
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (isset($_POST["guest_role"])) {
-        echo handleGuestLogin($_POST["guest_role"]);
-        exit();
-    }
-    if (isset($_POST["username"]) && isset($_POST["password"])) {
-        echo handleAdminLogin($_POST["username"], $_POST["password"], $pdo);
-        exit();
+    if (
+        isset($_POST['csrf_token'], $_SESSION['csrf_token']) ||
+        $_POST['csrf_token'] !== $_SESSION['csrf_token']
+    ) {
+
+        if (isset($_POST["guest_role"])) {
+            echo handleGuestLogin($_POST["guest_role"]);
+            exit();
+        }
+        if (isset($_POST["username"]) && isset($_POST["password"])) {
+            echo handleAdminLogin($_POST["username"], $_POST["password"], $pdo);
+            exit();
+        }
+    } else {
+        die("Invalid CSRF token.");
     }
 }
 

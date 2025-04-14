@@ -4,6 +4,14 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 include "config.php";
+
+/*
+if (!isset($_SESSION['GATEWAY_VERIFIED']) || $_SESSION['GATEWAY_VERIFIED'] !== true) {
+    http_response_code(403);
+    exit;
+}
+*/
+
 $name = $_SESSION["user"];
 ?>
 <!DOCTYPE html>
