@@ -69,12 +69,32 @@ $name = $_SESSION["user"];
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
+        
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="main p-3">
             <form id="ncprForm" method="POST" enctype="multipart/form-data">
@@ -786,7 +806,7 @@ $name = $_SESSION["user"];
             </form>
         </div>
     </div>
-    
+
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/DataTables/datatables.min.js"></script>
@@ -985,7 +1005,7 @@ $name = $_SESSION["user"];
                                 confirmButtonText: "OK"
                             }).then(() => {
                                 document.getElementById("ncpr_num").value = data.new_ncpr_num; // Update field
-                                window.location.href = "ncprfiling.php"; // Redirect after acknowledging
+                                window.location.href = "guest_ncprfiling.php"; // Redirect after acknowledging
                             });
                         } else {
                             Swal.fire({
@@ -994,7 +1014,7 @@ $name = $_SESSION["user"];
                                 icon: "success",
                                 confirmButtonText: "OK"
                             }).then(() => {
-                                window.location.href = "ncprfiling.php"; // Redirect after clicking OK
+                                window.location.href = "guest_ncprfiling.php"; // Redirect after clicking OK
                             });
                         }
                     } else {

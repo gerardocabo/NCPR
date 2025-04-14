@@ -75,60 +75,84 @@ $name = $_SESSION["user"];
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a href="logout.php" class="sidebar-link">
+                <a href="#" class="sidebar-link" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
         </aside>
-        <div class="main">
-            <div class="page-wrapper">
-                <h2 class="mb-3">NCPR Table</h2>
-                <table id="ncprTable" class="table table-bordered table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th hidden>ID</th>
-                            <th>NCPR Number</th>
-                            <th>Initiator</th>
-                            <th>Date</th>
-                            <!-- <th>Part Number</th>
-                            <th>Part Name</th> -->
-                            <th>Urgent</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td hidden><?php echo $row['id']; ?></td>
-                                <td><?php echo $row['ncpr_num']; ?></td>
-                                <td><?php echo $row['initiator']; ?></td>
-                                <td><?php echo $row['date']; ?></td>
-                                <!-- <td><?php echo $row['part_number']; ?></td>
-                                <td><?php echo $row['part_name']; ?></td> -->
-                                <td><?php echo $row['urgent'] ? 'Yes' : 'No'; ?></td>
-                                <td><?php echo $row['status']; ?></td>
-                                <td>
-                                    <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                        <i class="fas fa-eye"></i> NCPR
-                                    </button>
-                                    <?php if (is_null($row['dispo_id']) && ($row['status'] === "open")): ?>
-                                        <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                            <i class="fas fa-eye"></i> EDIT
-                                        </button>
-                                    <?php elseif (($row['dispo_id']) && ($row['status'] === "Close")): ?>
-                                        <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                            <i class="fas fa-eye"></i> DISPO
-                                        </button>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            </div>
 
+        <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning text-dark">
+                        <h5 class="modal-title" id="logoutModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirm Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to log out?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="logout.php" class="btn btn-danger">Yes, Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="page-wrapper p-2">
+                <div class="card p-3">
+                    <div class="card-title">
+                        <h4 class="mb-3">NCPR List</h4>
+                    </div>
+                    <table id="ncprTable" class="table table-bordered table-striped text-center">
+                        <thead class="table-secondary">
+                            <tr>
+                                <th hidden>ID</th>
+                                <th class="text-center">NCPR Number</th>
+                                <th class="text-center">Initiator</th>
+                                <th class="text-center">Date</th>
+                                <!-- <th>Part Number</th>
+                            <th>Part Name</th> -->
+                                <th class="text-center">Urgent</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                                <tr>
+                                    <td hidden><?php echo $row['id']; ?></td>
+                                    <td><?php echo $row['ncpr_num']; ?></td>
+                                    <td><?php echo $row['initiator']; ?></td>
+                                    <td class="text-center"><?php echo $row['date']; ?></td>
+                                    <!-- <td><?php echo $row['part_number']; ?></td>
+                                <td><?php echo $row['part_name']; ?></td> -->
+                                    <td><?php echo $row['urgent'] ? 'Yes' : 'No'; ?></td>
+                                    <td><?php echo $row['status']; ?></td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                            <i class="fas fa-eye"></i> NCPR
+                                        </button>
+                                        <?php if (is_null($row['dispo_id']) && ($row['status'] === "open")): ?>
+                                            <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                <i class="fas fa-eye"></i> EDIT
+                                            </button>
+                                        <?php elseif (($row['dispo_id']) && ($row['status'] === "Close")): ?>
+                                            <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                                <i class="fas fa-eye"></i> DISPO
+                                            </button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <!-- View Modal -->
             <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">

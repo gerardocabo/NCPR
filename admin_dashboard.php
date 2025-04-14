@@ -1,6 +1,30 @@
 <?php
+require "conn.php";
 require "config.php";
 $name = $_SESSION["user"];
+
+$user_role = $_SESSION['role'];
+
+$ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table");
+if ($row = $result->fetch_assoc()) {
+    $ncpr_count = $row['total'];
+}
+$open_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE status = 'open'");
+if ($row = $result->fetch_assoc()) {
+    $open_ncpr_count = $row['total'];
+}
+$closed_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE status = 'Close'");
+if ($row = $result->fetch_assoc()) {
+    $closed_ncpr_count = $row['total'];
+}
+$urgent_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE urgent = 'on' AND status = 'open'");
+if ($row = $result->fetch_assoc()) {
+    $urgent_ncpr_count = $row['total'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -166,7 +190,7 @@ $name = $_SESSION["user"];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>NCPR Files</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $open_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -189,7 +213,7 @@ $name = $_SESSION["user"];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Open Files</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $open_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -213,7 +237,7 @@ $name = $_SESSION["user"];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Closed NCPR</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $closed_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -237,7 +261,7 @@ $name = $_SESSION["user"];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Urgent NCPR</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $urgent_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">

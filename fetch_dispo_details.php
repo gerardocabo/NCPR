@@ -49,8 +49,7 @@ try {
                 GROUP_CONCAT(DISTINCT p.checkbox_name SEPARATOR ', ') AS checkboxes,
                 GROUP_CONCAT(DISTINCT p2.key SEPARATOR ', ') AS intervention_checkboxes,
                 GROUP_CONCAT(DISTINCT CONCAT(dti.input_name, ':', dti.inputted_data) SEPARATOR ', ') AS intervention_inputs,
-                GROUP_CONCAT(DISTINCT a.approver_role SEPARATOR ', ') AS approver_roles,
-                GROUP_CONCAT(DISTINCT CONCAT(k.fname, ' ', k.lname) SEPARATOR ', ') AS approvers
+                GROUP_CONCAT(DISTINCT CONCAT(a.approver_id, '::', a.approver_role, '::', k.fname, '::', k.lname) SEPARATOR '||') AS approver_data
 
             FROM disposition_tbl d
             LEFT JOIN dispo_radio_values r ON d.ncpr_num = r.ncpr_num
@@ -168,19 +167,15 @@ try {
     }
 
     // Parse approvers (limit to 3, assuming comma-separated roles and names are in same order)
-    if (!empty($row['approver_roles']) && !empty($row['approvers'])) {
-        $roles = array_map('trim', explode(',', $row['approver_roles']));
-        $names = array_map('trim', explode(',', $row['approvers']));
+    $disposition['approvers'] = [];
 
-        $maxApprovers = 3;
-        for ($i = 0; $i < min(count($roles), count($names), $maxApprovers); $i++) {
-            $fullName = explode(' ', $names[$i], 2); // split fname and lname
-            $fname = $fullName[0] ?? '';
-            $lname = $fullName[1] ?? '';
-
+    if (!empty($row['approver_data'])) {
+        $approverEntries = explode('||', $row['approver_data']);
+        foreach ($approverEntries as $entry) {
+            list($id, $role, $fname, $lname) = explode('::', $entry);
             $disposition['approvers'][] = [
-                'approver_id' => null, // approver_id isn't available in grouped version
-                'approver_role' => $roles[$i],
+                'approver_id' => $id,
+                'approver_role' => $role,
                 'fname' => $fname,
                 'lname' => $lname
             ];

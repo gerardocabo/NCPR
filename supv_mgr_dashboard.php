@@ -374,7 +374,7 @@ $user_role = $_SESSION['role'];
 
                                 let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
 
-                                newRecords.forEach(record => {
+                                json.ncprs.forEach(record => {
                                     let createdAt = new Date(record.created_at).getTime();
                                     let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
 
