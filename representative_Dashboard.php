@@ -87,7 +87,7 @@ $user_role = $_SESSION['role'];
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo $user_role ?></a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -266,14 +266,14 @@ $user_role = $_SESSION['role'];
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                     <!-- First Image (Left Corner) -->
-                    <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                    <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                     <!-- Second Image (Right Corner) -->
                     <div style="position: relative;">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="position: absolute; top: -10px; right: -10px;" class="m-5">
                         </button>
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
                 </div>
 
@@ -379,7 +379,7 @@ $user_role = $_SESSION['role'];
 
                                 let newRecords = json.ncprs.filter(item => parseInt(item.id) > lastSeenId);
 
-                                newRecords.forEach(record => {
+                                json.ncprs.forEach(record => {
                                     let createdAt = new Date(record.created_at).getTime();
                                     let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
 
@@ -411,9 +411,9 @@ $user_role = $_SESSION['role'];
                                 }*/
 
                                 // ✅ Show urgent warning if there are urgent NCPRs
-                                if (urgentNCPRs.length > 0) {
+                                /*if (urgentNCPRs.length > 0) {
                                     showNotification(urgentNCPRs, "Urgent");
-                                }
+                                }*/
 
                                 // ✅ Show notification for new unseen NCPRs
                                 if (unseenNCPRs.length > 0) {
@@ -422,8 +422,9 @@ $user_role = $_SESSION['role'];
 
                                 sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
 
-                                if (newRecords.length > 0) {
-                                    let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
+                                // Update last seen ID in sessionStorage and database
+                                if (unseenNCPRs.length > 0) {
+                                    let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
                                     sessionStorage.setItem("lastSeenId_" + username, latestId);
                                     updateLastSeenId(latestId);
                                 }
@@ -472,7 +473,7 @@ $user_role = $_SESSION['role'];
                                 let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold" data-id="${row.ncpr_num}">
                                 View
                             </button>`;
-                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn fw-bold  " 
+                                let dispoButton = `<button class="btn btn-primary btn-sm dispo-btn fw-bold  " 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">

@@ -232,44 +232,44 @@
                 <span id="other_resumption" ></span><br><br>
 
                 <strong>Process Instruction in general:</strong>
-                <span>(for <span>DJs</span> other than the affected)</span>
-                <span id="process_insttruction" ></span>
+                <span>(for <span>DJs</span> other than the affected)</span><br>
+                <span id="process_instruction" ></span>
             </td>
 
             <td style="width: 33%; vertical-align: top;">
                 <strong>Instructions in detail, see reference doc:</strong><br>
                 <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1"> Document Alert #:
-                <span id="document_alert" ></span><br>
+                <span id="document_alert_s" ></span><br>
 
                 <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2">
                 <span>Other (pls specify)</span>
-                <span id="other_specify" ></span>
+                <span id="other_specify_s" ></span>
                 <br><br>
 
                 <strong>Documents needing revision:</strong><br>
                 <div class="d-flex flex-wrap gap-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR1" id="doc_na">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR1" id="doc_na">
                         <label class="form-check-label" for="doc_na" style="font-size: 12px;">N/A</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR2" id="doc_wis">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR2" id="doc_wis">
                         <label class="form-check-label" for="doc_wis" style="font-size: 12px;">WIS</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR3" id="doc_dj">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR3" id="doc_dj">
                         <label class="form-check-label" for="doc_dj" style="font-size: 12px;">DJ</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR4" id="doc_proc">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR4" id="doc_proc">
                         <label class="form-check-label" for="doc_proc" style="font-size: 12px;">PROC</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR5" id="doc_cp">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR5" id="doc_cp">
                         <label class="form-check-label" for="doc_cp" style="font-size: 12px;">CP</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR6" id="doc_pfmea">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR6" id="doc_pfmea">
                         <label class="form-check-label" for="doc_pfmea" style="font-size: 12px;">PFMEA</label>
                     </div>
                 </div>
@@ -277,9 +277,9 @@
                 <br><br>
 
                 <strong>Process Released By:</strong><br>
-                <span id="released_by" ></span>
-                <br>
+
                 <div class="text-center mt-3">
+                <strong><span id="released_by" ></span></strong><br>
                     <small>(Signature Above Printed Name/ Date)</small>
                 </div>
             </td>

@@ -1,6 +1,27 @@
 <?php
 require "config.php";
 $user_role = $_SESSION['role'];
+require "conn.php";
+$ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table");
+if ($row = $result->fetch_assoc()) {
+    $ncpr_count = $row['total'];
+}
+$open_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE status = 'open'");
+if ($row = $result->fetch_assoc()) {
+    $open_ncpr_count = $row['total'];
+}
+$closed_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE status = 'Close'");
+if ($row = $result->fetch_assoc()) {
+    $closed_ncpr_count = $row['total'];
+}
+$urgent_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE urgent = 'on' AND status = 'open'");
+if ($row = $result->fetch_assoc()) {
+    $urgent_ncpr_count = $row['total'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,6 +70,21 @@ $user_role = $_SESSION['role'];
                 opacity: 0.5;
             }
         }
+
+        .signature-line {
+            display: flex;
+            justify-content: center;
+            /* Center the inner content */
+            margin-top: 5px;
+        }
+
+        .signature-line span {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            /* Underline just the name */
+            padding-bottom: 2px;
+            /* Space between text and line */
+        }
     </style>
 </head>
 
@@ -61,7 +97,7 @@ $user_role = $_SESSION['role'];
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo htmlspecialchars($user_role) ?></a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -115,7 +151,7 @@ $user_role = $_SESSION['role'];
         <div class="main p-3">
             <div class="row">
                 <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -123,7 +159,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>NCPR Files</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -138,7 +174,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -146,7 +182,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Open Files</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $open_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -162,7 +198,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -170,7 +206,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Closed NCPR</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $closed_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -186,7 +222,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -194,7 +230,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Urgent NCPR</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $urgent_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -395,6 +431,7 @@ $user_role = $_SESSION['role'];
                                     } else {
                                         record.overdueLevel = null;
                                     }
+                                    if (record.overdueLevel !== null) overdueNCPRs.push(record.ncpr_num);
 
                                     // ✅ Check if Urgent (record.urgent === "on")
                                     if (record.urgent === "on") {
@@ -707,6 +744,42 @@ $user_role = $_SESSION['role'];
                                 let found = response.intervention_inputs.find(obj => obj.input_name === input);
                                 if (found) {
                                     $(`[name="${input}"]`).val(found.inputted_data || "");
+                                }
+                            });
+                        }
+
+                        //filled the approvals
+                        // Loop through the approvers and update the elements accordingly
+                        if (response.approvers && response.approvers.length > 0) {
+                            response.approvers.forEach(function(approver) {
+                                if (approver.approver_role) {
+                                    switch (approver.approver_role) {
+                                        case "QA ENGINEER":
+                                            $("#approvd_by_engineer").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "QA MANAGER":
+                                            $("#approvd_by_supv_mgr").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "QA SUPERVISOR":
+                                            $("#approvd_by_supv_mgr").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                        case "SHELDAHL REPRESENTATIVE":
+                                            $("#approvd_by_SheldahlRep").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            break;
+                                            // Add more cases for other roles as needed
+                                        default:
+                                            // Handle default case if needed (optional)
+                                            console.log("Unknown role:", approver.approver_role);
+                                            break;
+                                    }
                                 }
                             });
                         }

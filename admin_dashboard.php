@@ -1,8 +1,7 @@
 <?php
-require "conn.php";
 require "config.php";
 $name = $_SESSION["user"];
-
+require "conn.php";
 $user_role = $_SESSION['role'];
 
 $ncpr_count = 0;
@@ -116,7 +115,7 @@ if ($row = $result->fetch_assoc()) {
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo $name ?></a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -190,7 +189,7 @@ if ($row = $result->fetch_assoc()) {
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>NCPR Files</h5>
-                                                <p class="mb-0 fw-bold"><?= $open_ncpr_count ?></p>
+                                                <p class="mb-0 fw-bold"><?= $ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -229,7 +228,7 @@ if ($row = $result->fetch_assoc()) {
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="productkey.php" class="text-decoration-none">
+                    <a href="pncprlist.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -253,7 +252,7 @@ if ($row = $result->fetch_assoc()) {
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="status.php" class="text-decoration-none">
+                    <a href="ncprlist.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -360,7 +359,19 @@ if ($row = $result->fetch_assoc()) {
     border-radius: 5px;
     font-weight: bold;">
     </div>
-
+    <div id="warning-box" style="
+        position: fixed;
+        top: 60px; /* Positioned below the notification box */
+        right: 10px;
+        background: orange;
+        color: white;
+        padding: 15px;
+        display: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);">
+    </div>
 
     <script src="assets/vendor/bootstrap/js/jquery.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -435,10 +446,10 @@ if ($row = $result->fetch_assoc()) {
 
                                 // Push to appropriate arrays
                                 if (record.isUrgent) urgentNCPRs.push(record.ncpr_num);
-                                if (record.isOverdue) overdueNCPRs.push(record.ncpr_num);
+                                if (record.overdueLevel !== null) overdueNCPRs.push(record.ncpr_num);
 
                                 // Check if unseen
-                                if (!notifiedNCPRs.includes(record.ncpr_num)) {
+                                if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(record.ncpr_num)) {
                                     unseenNCPRs.push(record.ncpr_num);
                                     notifiedNCPRs.push(record.ncpr_num);
                                 }
@@ -447,12 +458,12 @@ if ($row = $result->fetch_assoc()) {
 
                             // ✅ Show overdue warning if there are overdue NCPRs
                             if (overdueNCPRs.length > 0) {
-                                showWarningNotification(overdueNCPRs, username);
+                                showWarningNotification(overdueNCPRs);
                             }
 
                             // ✅ Show urgent warning if there are urgent NCPRs
                             if (urgentNCPRs.length > 0) {
-                                showWarningNotification(urgentNCPRs, "Urgent");
+                                showWarningNotification(urgentNCPRs);
                             }
 
                             // ✅ Show notification for new unseen NCPRs

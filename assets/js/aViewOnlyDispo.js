@@ -18,7 +18,7 @@ $(document).ready(function () {
           Swal.fire({
             icon: "info", // Soft message icon
             title: "No Records Found",
-            text: "There are no matching records. Please check your input and try again.",
+            text: "note: not yet Disposition.",
             confirmButtonColor: "#3085d6",
           }).then(() => {
             $("#dispoModal").modal("hide"); // Close modal after user clicks "OK"
@@ -119,13 +119,65 @@ $(document).ready(function () {
           });
 
           // Populate text fields
-          $("#yield_off").text(response.yield_off || "");
-          $("#da_no").text(response.da_no || "");
-          $("#rework_da_no").text(response.rework_da_no || "");
+          $("#yield_off").text(response.yield_off || " ");
+          $("#da_no").text(response.da_no || " ");
+          $("#rework_da_no").text(response.rework_da_no || " ");
           $("#wis_no").text(response.wis_no || "");
-          $("#scrap_amount").text(response.scrap_amount || "");
-          $("#shipment_date").text(response.shipment_date || "");
-          $("#document_alert").text(response.document_alert || "");
+          $("#scrap_amount").text(response.scrap_amount || " ");
+          $("#shipment_date").text(response.shipment_date || " ");
+          $("#document_alert").text(response.document_alert || " ");
+
+          if (
+            Array.isArray(response.intervention_checkboxes) &&
+            response.intervention_checkboxes.length > 0
+          ) {
+            let intervention_cb = [
+              "actions_taken",
+              "process_dispo",
+              "resumption_reason",
+              "instructions_detail",
+              "documents_revision",
+            ]; // Add more names here if needed
+
+            $('input[name="further_eval"]').prop(
+              "checked",
+              response.intervention_checkboxes.some(
+                (cb) => cb.checkbox_name === "F1"
+              )
+            );
+            intervention_cb.forEach(function (checkbox) {
+              $('input[name="' + checkbox + '[]"]').each(function () {
+                let checkboxValue = $(this).val();
+                let isChecked = response.intervention_checkboxes.some(
+                  (cb) => cb.checkbox_name === checkboxValue
+                );
+                $(this).prop("checked", isChecked);
+              });
+            });
+          }
+
+          if (
+            Array.isArray(response.intervention_inputs) &&
+            response.intervention_inputs.length > 0
+          ) {
+            let intervention_inp = [
+              "affected_process",
+              "other_resumption",
+              "process_instruction",
+              "document_alert_s",
+              "other_specify_s",
+              "released_by",
+            ];
+
+            intervention_inp.forEach(function (input) {
+              let found = response.intervention_inputs.find(
+                (obj) => obj.input_name === input
+              );
+              if (found) {
+                $("#" + input).text(found.inputted_data || "");
+              }
+            });
+          }
 
           // Loop through the approvers and update the elements accordingly
           if (response.approvers && response.approvers.length > 0) {
@@ -178,6 +230,42 @@ $(document).ready(function () {
 
         alert(`Failed to fetch disposition data.`);
       },
+    });
+  });
+
+  // Select the modal element
+  let dispoModal = document.getElementById("dispoModal");
+
+  // Listen for the modal close event
+  dispoModal.addEventListener("hidden.bs.modal", function () {
+    // Select all checkboxes and radio buttons inside the modal
+    let inputs = dispoModal.querySelectorAll(
+      "input[type='checkbox'], input[type='radio']"
+    );
+
+    // Loop through each input and uncheck it
+    inputs.forEach((input) => {
+      input.checked = false;
+    });
+
+    // Clear the text content of the specific <span> elements
+    let clear_inp = [
+      "affected_process",
+      "other_resumption",
+      "process_instruction",
+      "document_alert_s",
+      "other_specify_s",
+      "released_by",
+      "approvd_by_engineer",
+      "approvd_by_supv_mgr",
+      "approvd_by_SheldahlRep",
+    ];
+
+    clear_inp.forEach((id) => {
+      let spanElement = dispoModal.querySelector(`#${id}`);
+      if (spanElement) {
+        spanElement.textContent = ""; // Clear the content of the <span>
+      }
     });
   });
 });

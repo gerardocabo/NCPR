@@ -301,13 +301,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                 <div style="display: inline-flex; align-items: center; gap: 10px;">
                     <span style="font-size: 12px;">7. File Shutdown Record</span>
 
-                    <label style="font-size: 12px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"
+                    <label class="locked_checkbox" style="font-size: 12px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"
                         <?php echo $checkbox_values['seven'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
-                    <label style="font-size: 12px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"
+                    <label class="locked_checkbox" style="font-size: 12px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"
                         <?php echo $checkbox_values['seven'] == 'no' ? 'checked' : ''; ?>> No
                     </label>
                     <span style="font-size: 12px;">WHO:</span>
@@ -336,14 +336,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                 <div style="display: inline-flex; align-items: center; gap: 100px;" class="mb-3">
                     <span style="font-size: 15px;">Product Recall</span>
 
-                    <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-recall-yes" style="margin-right: 5px;" 
+                    <label class="locked_checkbox" style="font-size: 15px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-recall-yes" style="margin-right: 5px;" 
                         <?php echo $checkbox_values['recall'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
-                    <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-recall-no" style="margin-right: 5px;"
-                        <?php echo $checkbox_values['recall'] == 'yes' ? 'checked' : ''; ?>> No
+                    <label class="locked_checkbox" style="font-size: 15px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-recall-no" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['recall'] == 'no' ? 'checked' : ''; ?>> No
                     </label>
                 </div>  
                 <div style="display: inline-flex; align-items: center; gap: 50px;" class="mb-3">
@@ -357,13 +357,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
 
                     <span style="font-size: 15px;">Cancel Shipment</span>
 
-                    <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-shipment-yes" style="margin-right: 5px;"
+                    <label class="locked_checkbox" style="font-size: 15px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-shipment-yes" style="margin-right: 5px;"
                         <?php echo $checkbox_values['shipment'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
-                    <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-shipment-no" style="margin-right: 5px;"
+                    <label class="locked_checkbox" style="font-size: 15px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-shipment-no" style="margin-right: 5px;"
                         <?php echo $checkbox_values['shipment'] == 'no' ? 'checked' : ''; ?>> No
                     </label>
                 </div>
@@ -373,7 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
                 <div style="display: inline-flex; align-items: center; gap: 50px;" class="mt-3">
                     <div style="display: block;">
                         <div style="display: inline-flex; align-items: center;">
-                            <input type="checkbox" class="locked_checkbox form-check-input" id="view-wip" style="margin-right: 5px;"
+                            <input type="checkbox" class="locked_ceckbox form-check-input" id="view-wip" style="margin-right: 5px;"
                             <?php echo $checkbox_values['wip'] == 'yes' ? 'checked' : ''; ?>>
                             <span id="view-wip" style="font-size: 15px;">WIP</span>
                         </div>
@@ -381,14 +381,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['ncpr_num'])) {
 
                     <span style="font-size: 15px;">Stop Process</span>
 
-                    <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-stop_proc-yes" style="margin-right: 5px;"
+                    <label class="locked_checkbox" style="font-size: 15px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-stop_proc-yes" style="margin-right: 5px;"
                         <?php echo $checkbox_values['stop_proc'] == 'yes' ? 'checked' : ''; ?>> Yes
                     </label>
 
-                    <label style="font-size: 15px; display: flex; align-items: center;">
-                        <input type="checkbox" class="locked_checkbox form-check-input" id="view-stop_proc-no" style="margin-right: 5px;"
-                        <?php echo $checkbox_values['stop_proc'] == 'yes' ? 'checked' : ''; ?>> No
+                    <label class="locked_checkbox" style="font-size: 15px; display: flex; align-items: center;">
+                        <input type="checkbox" class="form-check-input" id="view-stop_proc-no" style="margin-right: 5px;"
+                        <?php echo $checkbox_values['stop_proc'] == 'no' ? 'checked' : ''; ?>> No
                     </label>
                 </div>
                 <div style="display: block;">

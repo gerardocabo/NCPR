@@ -248,19 +248,19 @@
                 <strong>Documents needing revision:</strong><br>
                 <div class="d-flex flex-wrap gap-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR1" id="doc_na">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR1" id="doc_na">
                         <label class="form-check-label" for="doc_na" style="font-size: 12px;">N/A</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR2" id="doc_wis">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR2" id="doc_wis">
                         <label class="form-check-label" for="doc_wis" style="font-size: 12px;">WIS</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR3" id="doc_dj">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR3" id="doc_dj">
                         <label class="form-check-label" for="doc_dj" style="font-size: 12px;">DJ</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR4" id="doc_proc">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR4" id="doc_proc">
                         <label class="form-check-label" for="doc_proc" style="font-size: 12px;">PROC</label>
                     </div>
                     <div class="form-check">
@@ -268,7 +268,7 @@
                         <label class="form-check-label" for="doc_cp" style="font-size: 12px;">CP</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR6" id="doc_pfmea">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR6" id="doc_pfmea">
                         <label class="form-check-label" for="doc_pfmea" style="font-size: 12px;">PFMEA</label>
                     </div>
                 </div>

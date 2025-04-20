@@ -148,7 +148,7 @@ require "config.php";
                                     <td hidden><?php echo $row['dispo_id']; ?></td>
                                     <td><?php echo $row['ncpr_num']; ?></td>
                                     <td><?php echo $row['initiator']; ?></td>
-                                    <td><?php echo $row['date']; ?></td>
+                                    <td class="text-center"><?php echo $row['date']; ?></td>
                                     <td><?php echo $row['part_number']; ?></td>
                                     <td hidden><?php echo $row['part_name']; ?></td>
                                     <td>
@@ -287,7 +287,7 @@ require "config.php";
                                 <span>Check the checkbox if the held parts is a potential OTD Miss Shipment.</span>
                                 <!-- Large Checkbox -->
                                 <div class="mt-2">
-                                    <input type="checkbox" id="view-urgent-checkbox" name="urgent" class="form-check-input" style="transform: scale(1.8);">
+                                    <input type="checkbox" id="view-urgent-checkbox" name="urgent" class="form-check-input locked" style="transform: scale(1.8);">
                                     <label for="view-urgent-checkbox" class="ms-2 fw-bold">Mark as Urgent</label>
                                 </div>
                             </div>
@@ -316,11 +316,11 @@ require "config.php";
                         </div>
                         <div class="col-md-3 border p-2">
                             <div class="d-flex">
-                                <p style="font-size: 10px;" class="me-5">
+                                <p style="font-size: 12px;" class="me-5">
                                     <strong>AWPI:</strong>
                                     <span id="view-awpi" class="border-bottom border-dark d-inline-block text-center" style="min-width: 50px;"></span>
                                 </p>
-                                <p style="font-size: 10px;">
+                                <p style="font-size: 12px;">
                                     <strong>DC:</strong>
                                     <span id="view-dc" class="border-bottom border-dark d-inline-block text-center" style="min-width: 50px;"></span>
                                 </p>
@@ -329,24 +329,24 @@ require "config.php";
                             <div class="d-flex">
                                 <p style="font-size: 12px;"><strong>Deviation?</strong></p>
                                 <div class="form-check form-check-inline ms-5">
-                                    <input class="form-check-input form-check-input-sm" type="checkbox" id="deviation-yes">
-                                    <label class="form-check-label" for="deviation-yes" style="font-size: 10px;">Yes</label>
+                                    <input class="form-check-input form-check-input-sm locked" type="checkbox" id="deviation-yes">
+                                    <label class="form-check-label locked" for="deviation-yes" style="font-size: 10px;">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input form-check-input-sm" type="checkbox" id="deviation-no">
-                                    <label class="form-check-label" for="deviation-no" style="font-size: 10px;">No</label>
+                                    <input class="form-check-input form-check-input-sm locked" type="checkbox" id="deviation-no">
+                                    <label class="form-check-label locked" for="deviation-no" style="font-size: 10px;">No</label>
                                 </div>
                             </div>
 
                             <div class="d-flex align-items-center">
                                 <p class="m-0" style="font-size: 12px;"><strong>Issue Repeating?</strong></p>
                                 <div class="form-check form-check-inline" style="margin-left: 12px;">
-                                    <input class="form-check-input form-check-input-sm" type="checkbox" id="repeating-yes">
-                                    <label class="form-check-label" for="repeating-yes" style="font-size: 10px;">Yes</label>
+                                    <input class="form-check-input form-check-input-sm locked" type="checkbox" id="repeating-yes">
+                                    <label class="form-check-label locked" for="repeating-yes" style="font-size: 10px;">Yes</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input form-check-input-sm" type="checkbox" id="repeating-no">
-                                    <label class="form-check-label" for="repeating-no" style="font-size: 10px;">No</label>
+                                    <input class="form-check-input form-check-input-sm locked" type="checkbox" id="repeating-no">
+                                    <label class="form-check-label locked" for="repeating-no" style="font-size: 10px;">No</label>
                                 </div>
                             </div>
                             <div style="display: d-block; align-items: center;">
@@ -371,19 +371,19 @@ require "config.php";
                             <span style="font-size: 12px" class="fw-bold">Immediate containment action/s or countermeasure/s taken (tick as many as appropriate):</span>
                             <div style="display: block; margin-bottom: 5px;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-one" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-one" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span style="font-size: 12px;">1. Segregate affected part/s - write custodian of the segregated parts</span>
                                 </div>
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-one-one" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-one-one" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span style="font-size: 12px;"><strong>1.1. At Hotpress:</strong>Put on hold inventory of affected lay-up materials together with the parts</span>
                                 </div>
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-two" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-two" style="width: 12px; height: 12px; margin-right: 5px;">
 
                                     <span style="font-size: 12px;" class="me-2">2. Yield off/ 100% inspection. <strong>INSPECTION RESULTS:</strong></span>
                                     <span id="view-two-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 100px;"></span>
@@ -391,38 +391,38 @@ require "config.php";
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-three" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-three" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span style="font-size: 12px;" class="me-2">3. Call the attention of QAE/PE/EE/TECH/CHIEF:</span>
                                     <span id="view-three-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 200px;"></span>
                                 </div>
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-four" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-four" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span id="view-four" style="font-size: 12px;" class="me-2">4. Attach On-hold Tag and put in On-Hold cage/area</span>
                                 </div>
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-five" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-five" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span id="view-five" style="font-size: 12px;">5. Check MCS stock for similar Lot Number/AWPI/DC and request to file NCPR</span>
                                 </div>
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-six" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-six" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span id="view-six" style="font-size: 12px;">6. Attach copy of OCAP if available, and/or other log forms as part of the containment action</span>
                                 </div>
                             </div>
                             <div style="display: inline-flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 12px;">7. File Shutdown Record</span>
 
-                                <label style="font-size: 12px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"> Yes
+                                <label class="locked" style="font-size: 12px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"> Yes
                                 </label>
 
-                                <label style="font-size: 12px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"> No
+                                <label class="locked" style="font-size: 12px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"> No
                                 </label>
                                 <span style="font-size: 12px;">WHO:</span>
                                 <span id="view-seven-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 80px;"></span>
@@ -431,14 +431,14 @@ require "config.php";
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-eight" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-eight" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span style="font-size: 12px;" class="me-2">8. Others (please specify):</span>
                                     <span id="view-eight-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 300px;"></span>
                                 </div>
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-nine" style="width: 12px; height: 12px; margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-nine" style="width: 12px; height: 12px; margin-right: 5px;">
                                     <span style="font-size: 12px;" class="me-2">9. Find affected WIP, FG & raw materials - specify DJ/s and LN/s</span>
                                     <span id="view-nine-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 150px;"></span>
                                 </div>
@@ -448,30 +448,30 @@ require "config.php";
                             <div style="display: inline-flex; align-items: center; gap: 100px;" class="mb-3">
                                 <span style="font-size: 15px;">Product Recall</span>
 
-                                <label style="font-size: 15px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-recall-yes" style="margin-right: 5px;"> Yes
+                                <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-recall-yes" style="margin-right: 5px;"> Yes
                                 </label>
 
-                                <label style="font-size: 15px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-recall-no" style="margin-right: 5px;"> No
+                                <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-recall-no" style="margin-right: 5px;"> No
                                 </label>
                             </div>
                             <div style="display: inline-flex; align-items: center; gap: 50px;" class="mb-3">
                                 <div style="display: block;">
                                     <div style="display: inline-flex; align-items: center;">
-                                        <input type="checkbox" class="form-check-input" id="view-fgparts" style="margin-right: 5px;">
+                                        <input type="checkbox" class="form-check-input locked" id="view-fgparts" style="margin-right: 5px;">
                                         <span id="view-fgparts" style="font-size: 15px;">FG PARTS</span>
                                     </div>
                                 </div>
 
                                 <span style="font-size: 15px;">Cancel Shipment</span>
 
-                                <label style="font-size: 15px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-shipment-yes" style="margin-right: 5px;"> Yes
+                                <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-shipment-yes" style="margin-right: 5px;"> Yes
                                 </label>
 
-                                <label style="font-size: 15px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-shipment-no" style="margin-right: 5px;"> No
+                                <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-shipment-no" style="margin-right: 5px;"> No
                                 </label>
                             </div>
 
@@ -487,12 +487,12 @@ require "config.php";
 
                                 <span style="font-size: 15px;">Stop Process</span>
 
-                                <label style="font-size: 15px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-stop_proc-yes" style="margin-right: 5px;"> Yes
+                                <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-stop_proc-yes" style="margin-right: 5px;"> Yes
                                 </label>
 
-                                <label style="font-size: 15px; display: flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-stop_proc-no" style="margin-right: 5px;"> No
+                                <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-stop_proc-no" style="margin-right: 5px;"> No
                                 </label>
                             </div>
                             <div style="display: block;">
@@ -503,7 +503,7 @@ require "config.php";
                             </div>
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-mcs" style="margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-mcs" style="margin-right: 5px;">
                                     <div style="display: d-block; align-items: center;">
                                         <span id="view-mcs" style="font-size: 15px;">MCS</span>
                                         <span id="view-mcs_details" class="border-bottom border-dark d-inline-block text-center" style="min-width: 300px; font-size: 15px"></span>
@@ -513,15 +513,12 @@ require "config.php";
 
                             <div style="display: block;">
                                 <div style="display: inline-flex; align-items: center;">
-                                    <input type="checkbox" class="form-check-input" id="view-customer_notif" style="margin-right: 5px;">
+                                    <input type="checkbox" class="form-check-input locked" id="view-customer_notif" style="margin-right: 5px;">
                                     <span id="view-customer_notif" style="font-size: 15px;">Customer notification if non-conforming products have been shipped.</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
                     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
                     <div id="file-list" class="d-block flex-wrap">
                         <!-- Files will be dynamically inserted here -->
@@ -1363,7 +1360,6 @@ require "config.php";
                 });
             });
         });
-
         // Function to set checkbox based on response value
         function setCheckboxValue(selector, value) {
             if (value === "yes") {
@@ -1576,7 +1572,6 @@ require "config.php";
                 }
             });
         });
-
         $(document).on("click", ".remove-file", function(e) {
             e.preventDefault();
 
@@ -1593,8 +1588,6 @@ require "config.php";
 
             parentDiv.remove();
         });
-
-
         $("#editForm").submit(function(e) {
             e.preventDefault();
             var formData = new FormData(this);
@@ -1652,22 +1645,22 @@ require "config.php";
             var lotSublotValue = firstRow ? firstRow.querySelector('[name="lot_sublot_qty[]"]').value : "";
 
             newRow.innerHTML = `
-        <td><input type="text" class="form-control" name="ntdj_num[]" value="${ntdjValue}"></td>
-        <td><input type="text" class="form-control" name="mns_num[]" value="${mnsValue}"></td>
-        <td><input type="number" class="form-control" name="lot_sublot_qty[]" value="${lotSublotValue}" required></td>
-        <td class="d-flex">
-            <input type="number" class="form-control qty-affected" name="qty_affected[]" required> 
-            <input type="text" class="form-control" name="qty_affected_text[]" placeholder="Enter text">
-        </td>
-        <td>
-            <div class="input-group">
-                <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" readonly required>
-                <span class="input-group-text">%</span>
-            </div>
-        </td>
-        <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">Remove</button>
-</td>
-    `;
+                    <td><input type="text" class="form-control" name="ntdj_num[]" value="${ntdjValue}"></td>
+                    <td><input type="text" class="form-control" name="mns_num[]" value="${mnsValue}"></td>
+                    <td><input type="number" class="form-control" name="lot_sublot_qty[]" value="${lotSublotValue}" required></td>
+                    <td class="d-flex">
+                        <input type="number" class="form-control qty-affected" name="qty_affected[]" required> 
+                        <input type="text" class="form-control" name="qty_affected_text[]" placeholder="Enter text">
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" readonly required>
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </td>
+                    <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">Remove</button>
+                    </td>
+                    `;
 
             table.appendChild(newRow);
             attachEventListeners(newRow);
@@ -1724,7 +1717,6 @@ require "config.php";
             attachEventListeners(row);
         });
     </script>
-
     <!-- DataTable Initialization -->
     <script>
         $(document).ready(function() {
@@ -1778,8 +1770,6 @@ require "config.php";
             });
         });
     </script>
-
-
     <script>
         const hamBurger = document.querySelector(".toggle-btn");
 
@@ -1793,19 +1783,7 @@ require "config.php";
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-            // Select the modal element
-            let dispoModal = document.getElementById("dispoModal");
-
-            // Listen for the modal close event
-            dispoModal.addEventListener("hidden.bs.modal", function() {
-                // Select all checkboxes and radio buttons inside the modal
-                let inputs = dispoModal.querySelectorAll("input[type='checkbox'], input[type='radio']");
-
-                // Loop through each input and uncheck it
-                inputs.forEach(input => {
-                    input.checked = false;
-                });
-            });
+            
         });
     </script>
 </body>

@@ -212,7 +212,7 @@
                     <br><br>
                     <span>Affected process/es:</span>
                     <input type="text" name="affected_process" class="border-0 border-bottom w-100"><br><br>
-                    <input class="locked" type="checkbox" name="further_eval" value="F1">
+                    <input class="locked" type="checkbox" name="process_dispo[]" value="F1">
                     <span>For further Eng’g Evaluation</span>
                 </td>
 

@@ -24,9 +24,6 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
-    <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/sidebar.css">
 </head>
 <style>
@@ -51,7 +48,7 @@ $name = $_SESSION["user"];
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">LOGO</a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -100,8 +97,8 @@ $name = $_SESSION["user"];
             <form id="ncprForm" method="POST" enctype="multipart/form-data">
                 <div class="card border-0">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
 
                     <div class="card border p-2 mb-3 text-center">

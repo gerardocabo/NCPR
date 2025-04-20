@@ -12,7 +12,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-$checkbox_groups2 = ['action_taken', 'process_dispo', 'further_eval', 'resumption', 'instru_details', 'docu_rev'];
+$checkbox_groups2 = ['action_taken', 'process_dispo', 'resumption', 'instru_details', 'docu_rev'];
 
 $sql = "INSERT INTO dispo_table_intervention (ncpr_num, checkbox_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
@@ -20,7 +20,6 @@ $stmt = $conn->prepare($sql);
 if (!$stmt) {
     die("Prepare failed: " . $conn->error);
 }
-
 
 foreach ($checkbox_groups2 as $group_2) {
     if (isset($_POST[$group_2]) && is_array($_POST[$group_2])) {

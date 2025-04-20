@@ -212,7 +212,7 @@
                     <br><br>
                     <span>Affected process/es:</span>
                     <input type="text" name="affected_process" class="locked border-0 border-bottom w-100"><br><br>
-                    <input class="locked" type="checkbox" name="further_eval" value="F1">
+                    <input class="locked" type="checkbox" name="process_dispo[]" value="F1">
                     <span>For further Eng’g Evaluation</span>
                 </td>
 
@@ -291,16 +291,24 @@
             <tr>
                 <td>
                     <strong>QA Engineer / NT Representative:</strong><br>
-                    <span id="engineer_name"></span>
                     (Signature & Date)
+                    <div class="signature-line">
+                        <strong><span id="approvd_by_engineer"></span></strong>
+                    </div>
                 </td>
                 <td>
                     <strong>QA Manager or his/her appointee:</strong><br>
                     (Signature & Date)
+                    <div class="signature-line">
+                        <strong><span id="approvd_by_supv_mgr"></span></strong>
+                    </div>
                 </td>
                 <td>
                     <strong>Sheildahl / NT Representative:</strong><br>
                     (Signature & Date)
+                    <div class="signature-line">
+                        <strong><span id="approvd_by_SheldahlRep"></span></strong>
+                    </div>
                 </td>
             </tr>
 

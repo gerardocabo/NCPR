@@ -31,6 +31,11 @@ $name = $_SESSION["user"];
     <link rel="stylesheet" href="assets/css/sidebar.css">
 
     <style>
+        .locked {
+            pointer-events: none;
+            /* Prevent clicking */
+        }
+
         .signature-line {
             display: flex;
             justify-content: center;
@@ -130,20 +135,40 @@ $name = $_SESSION["user"];
                                     <td><?php echo $row['initiator']; ?></td>
                                     <td class="text-center"><?php echo $row['date']; ?></td>
                                     <!-- <td><?php echo $row['part_number']; ?></td>
-                                <td><?php echo $row['part_name']; ?></td> -->
-                                    <td><?php echo $row['urgent'] ? 'Yes' : 'No'; ?></td>
-                                    <td><?php echo $row['status']; ?></td>
+                                    <td><?php echo $row['part_name']; ?></td> -->
+                                    <td><?php if ($row['urgent'] === 'on') {
+                                            echo '<i class="fas fa-exclamation-circle text-danger" title="Urgent"></i>';
+                                        } else {
+                                            echo '<i class="fas fa-minus-circle text-muted" title="Not Urgent"></i>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td><?php
+                                        $status = $row['status'];
+                                        $badgeClass = '';
+
+                                        if ($status === 'open') {
+                                            $badgeClass = 'badge bg-success';
+                                        } elseif ($status === 'Close') {
+                                            $badgeClass = 'badge bg-danger';
+                                        } else {
+                                            $badgeClass = 'badge bg-danger'; // default/unknown status
+                                        }
+
+                                        echo "<span class='$badgeClass'>$status</span>";
+                                        ?>
+                                    </td>
                                     <td>
-                                        <button class="btn btn-info btn-sm view-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                            <i class="fas fa-eye"></i> NCPR
+                                        <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                            NCPR Form
                                         </button>
                                         <?php if (is_null($row['dispo_id']) && ($row['status'] === "open")): ?>
-                                            <button class="btn btn-warning btn-sm edit-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                                <i class="fas fa-eye"></i> EDIT
+                                            <button class="btn btn-warning btn-sm edit-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                EDIT
                                             </button>
                                         <?php elseif (($row['dispo_id']) && ($row['status'] === "Close")): ?>
-                                            <button class="btn btn-info btn-sm dispo-btn" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                                <i class="fas fa-eye"></i> DISPO
+                                            <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                                DISPOSITION
                                             </button>
                                         <?php endif; ?>
                                     </td>
@@ -239,7 +264,7 @@ $name = $_SESSION["user"];
                                         <span>Check the checkbox if the held parts is a potential OTD Miss Shipment.</span>
                                         <!-- Large Checkbox -->
                                         <div class="mt-2">
-                                            <input type="checkbox" id="view-urgent-checkbox" name="urgent" class="form-check-input" style="transform: scale(1.8);">
+                                            <input type="checkbox" id="view-urgent-checkbox" name="urgent" class="locked form-check-input" style="transform: scale(1.8);">
                                             <label for="view-urgent-checkbox" class="ms-2 fw-bold">Mark as Urgent</label>
                                         </div>
                                     </div>
@@ -281,11 +306,11 @@ $name = $_SESSION["user"];
                                     <div class="d-flex">
                                         <p style="font-size: 12px;"><strong>Deviation?</strong></p>
                                         <div class="form-check form-check-inline ms-5">
-                                            <input class="form-check-input form-check-input-sm" type="checkbox" id="deviation-yes">
+                                            <input class="locked form-check-input form-check-input-sm" type="checkbox" id="deviation-yes">
                                             <label class="form-check-label" for="deviation-yes" style="font-size: 10px;">Yes</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input form-check-input-sm" type="checkbox" id="deviation-no">
+                                            <input class="locked form-check-input form-check-input-sm" type="checkbox" id="deviation-no">
                                             <label class="form-check-label" for="deviation-no" style="font-size: 10px;">No</label>
                                         </div>
                                     </div>
@@ -293,11 +318,11 @@ $name = $_SESSION["user"];
                                     <div class="d-flex align-items-center">
                                         <p class="m-0" style="font-size: 12px;"><strong>Issue Repeating?</strong></p>
                                         <div class="form-check form-check-inline" style="margin-left: 12px;">
-                                            <input class="form-check-input form-check-input-sm" type="checkbox" id="repeating-yes">
+                                            <input class="locked form-check-input form-check-input-sm" type="checkbox" id="repeating-yes">
                                             <label class="form-check-label" for="repeating-yes" style="font-size: 10px;">Yes</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input form-check-input-sm" type="checkbox" id="repeating-no">
+                                            <input class="locked form-check-input form-check-input-sm" type="checkbox" id="repeating-no">
                                             <label class="form-check-label" for="repeating-no" style="font-size: 10px;">No</label>
                                         </div>
                                     </div>
@@ -323,19 +348,19 @@ $name = $_SESSION["user"];
                                     <span style="font-size: 12px" class="fw-bold">Immediate containment action/s or countermeasure/s taken (tick as many as appropriate):</span>
                                     <div style="display: block; margin-bottom: 5px;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-one" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-one" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span style="font-size: 12px;">1. Segregate affected part/s - write custodian of the segregated parts</span>
                                         </div>
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-one-one" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-one-one" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span style="font-size: 12px;"><strong>1.1. At Hotpress:</strong>Put on hold inventory of affected lay-up materials together with the parts</span>
                                         </div>
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-two" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-two" style="width: 12px; height: 12px; margin-right: 5px;">
 
                                             <span style="font-size: 12px;" class="me-2">2. Yield off/ 100% inspection. <strong>INSPECTION RESULTS:</strong></span>
                                             <span id="view-two-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 100px;"></span>
@@ -343,14 +368,14 @@ $name = $_SESSION["user"];
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-three" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-three" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span style="font-size: 12px;" class="me-2">3. Call the attention of QAE/PE/EE/TECH/CHIEF:</span>
                                             <span id="view-three-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 200px;"></span>
                                         </div>
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-four" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-four" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span id="view-four" style="font-size: 12px;" class="me-2">4. Attach On-hold Tag and put in On-Hold cage/area</span>
                                         </div>
                                     </div>
@@ -362,18 +387,18 @@ $name = $_SESSION["user"];
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-six" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-six" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span id="view-six" style="font-size: 12px;">6. Attach copy of OCAP if available, and/or other log forms as part of the containment action</span>
                                         </div>
                                     </div>
                                     <div style="display: inline-flex; align-items: center; gap: 10px;">
                                         <span style="font-size: 12px;">7. File Shutdown Record</span>
 
-                                        <label style="font-size: 12px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 12px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-seven-yes" style="width: 12px; height: 12px; margin-right: 5px;"> Yes
                                         </label>
 
-                                        <label style="font-size: 12px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 12px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-seven-no" style="width: 12px; height: 12px; margin-right: 5px;"> No
                                         </label>
                                         <span style="font-size: 12px;">WHO:</span>
@@ -383,14 +408,14 @@ $name = $_SESSION["user"];
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-eight" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-eight" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span style="font-size: 12px;" class="me-2">8. Others (please specify):</span>
                                             <span id="view-eight-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 300px;"></span>
                                         </div>
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-nine" style="width: 12px; height: 12px; margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-nine" style="width: 12px; height: 12px; margin-right: 5px;">
                                             <span style="font-size: 12px;" class="me-2">9. Find affected WIP, FG & raw materials - specify DJ/s and LN/s</span>
                                             <span id="view-nine-one" style="font-size: 12px; display: inline-block; border-bottom: 1px solid black; min-width: 150px;"></span>
                                         </div>
@@ -400,29 +425,29 @@ $name = $_SESSION["user"];
                                     <div style="display: inline-flex; align-items: center; gap: 100px;" class="mb-3">
                                         <span style="font-size: 15px;">Product Recall</span>
 
-                                        <label style="font-size: 15px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-recall-yes" style="margin-right: 5px;"> Yes
                                         </label>
 
-                                        <label style="font-size: 15px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-recall-no" style="margin-right: 5px;"> No
                                         </label>
                                     </div>
                                     <div style="display: inline-flex; align-items: center; gap: 50px;" class="mb-3">
                                         <div style="display: block;">
                                             <div style="display: inline-flex; align-items: center;">
-                                                <input type="checkbox" class="form-check-input" id="view-fgparts" style="margin-right: 5px;">
+                                                <input type="checkbox" class="locked form-check-input" id="view-fgparts" style="margin-right: 5px;">
                                                 <span id="view-fgparts" style="font-size: 15px;">FG PARTS</span>
                                             </div>
                                         </div>
 
                                         <span style="font-size: 15px;">Cancel Shipment</span>
 
-                                        <label style="font-size: 15px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-shipment-yes" style="margin-right: 5px;"> Yes
                                         </label>
 
-                                        <label style="font-size: 15px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-shipment-no" style="margin-right: 5px;"> No
                                         </label>
                                     </div>
@@ -432,18 +457,18 @@ $name = $_SESSION["user"];
                                     <div style="display: inline-flex; align-items: center; gap: 50px;" class="mt-3">
                                         <div style="display: block;">
                                             <div style="display: inline-flex; align-items: center;">
-                                                <input type="checkbox" class="form-check-input" id="view-wip" style="margin-right: 5px;">
+                                                <input type="checkbox" class="locked form-check-input" id="view-wip" style="margin-right: 5px;">
                                                 <span id="view-wip" style="font-size: 15px;">WIP</span>
                                             </div>
                                         </div>
 
                                         <span style="font-size: 15px;">Stop Process</span>
 
-                                        <label style="font-size: 15px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-stop_proc-yes" style="margin-right: 5px;"> Yes
                                         </label>
 
-                                        <label style="font-size: 15px; display: flex; align-items: center;">
+                                        <label class="locked" style="font-size: 15px; display: flex; align-items: center;">
                                             <input type="checkbox" class="form-check-input" id="view-stop_proc-no" style="margin-right: 5px;"> No
                                         </label>
                                     </div>
@@ -455,7 +480,7 @@ $name = $_SESSION["user"];
                                     </div>
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-mcs" style="margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-mcs" style="margin-right: 5px;">
                                             <div style="display: d-block; align-items: center;">
                                                 <span id="view-mcs" style="font-size: 15px;">MCS</span>
                                                 <span id="view-mcs_details" class="border-bottom border-dark d-inline-block text-center" style="min-width: 300px; font-size: 15px"></span>
@@ -465,7 +490,7 @@ $name = $_SESSION["user"];
 
                                     <div style="display: block;">
                                         <div style="display: inline-flex; align-items: center;">
-                                            <input type="checkbox" class="form-check-input" id="view-customer_notif" style="margin-right: 5px;">
+                                            <input type="checkbox" class="locked form-check-input" id="view-customer_notif" style="margin-right: 5px;">
                                             <span id="view-customer_notif" style="font-size: 15px;">Customer notification if non-conforming products have been shipped.</span>
                                         </div>
                                     </div>
@@ -1483,7 +1508,7 @@ $name = $_SESSION["user"];
                     </div>
                 </td>
             </tr>
-        `);
+            `);
 
                             materialTable.append(newRow);
                             attachEventListeners(newRow[0]); // Attach event listeners for calculation
@@ -1519,7 +1544,7 @@ $name = $_SESSION["user"];
                     <i class="fa fa-trash"></i> Remove
                 </button>
             </div>
-        `);
+            `);
 
                             filesContainer.append(fileItem);
                         });
@@ -1549,7 +1574,6 @@ $name = $_SESSION["user"];
 
             parentDiv.remove();
         });
-
 
         $("#editForm").submit(function(e) {
             e.preventDefault();
@@ -1608,22 +1632,22 @@ $name = $_SESSION["user"];
             var lotSublotValue = firstRow ? firstRow.querySelector('[name="lot_sublot_qty[]"]').value : "";
 
             newRow.innerHTML = `
-        <td><input type="text" class="form-control" name="ntdj_num[]" value="${ntdjValue}"></td>
-        <td><input type="text" class="form-control" name="mns_num[]" value="${mnsValue}"></td>
-        <td><input type="number" class="form-control" name="lot_sublot_qty[]" value="${lotSublotValue}" required></td>
-        <td class="d-flex">
-            <input type="number" class="form-control qty-affected" name="qty_affected[]" required> 
-            <input type="text" class="form-control" name="qty_affected_text[]" placeholder="Enter text">
-        </td>
-        <td>
-            <div class="input-group">
-                <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" readonly required>
-                <span class="input-group-text">%</span>
-            </div>
-        </td>
-        <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">Remove</button>
-</td>
-    `;
+                <td><input type="text" class="form-control" name="ntdj_num[]" value="${ntdjValue}"></td>
+                <td><input type="text" class="form-control" name="mns_num[]" value="${mnsValue}"></td>
+                <td><input type="number" class="form-control" name="lot_sublot_qty[]" value="${lotSublotValue}" required></td>
+                <td class="d-flex">
+                    <input type="number" class="form-control qty-affected" name="qty_affected[]" required> 
+                    <input type="text" class="form-control" name="qty_affected_text[]" placeholder="Enter text">
+                </td>
+                <td>
+                    <div class="input-group">
+                        <input type="number" step="0.01" class="form-control defect-rate" name="defect_rate[]" readonly required>
+                        <span class="input-group-text">%</span>
+                    </div>
+                </td>
+                <button type="button" class="btn btn-danger btn-sm ms-2 remove-row">Remove</button>
+                </td>
+                `;
 
             table.appendChild(newRow);
             attachEventListeners(newRow);

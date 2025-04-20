@@ -1,6 +1,29 @@
 <?php
 require "config.php";
 $user_role = $_SESSION['role'];
+require "conn.php";
+$user_role = $_SESSION['role'];
+
+$ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table");
+if ($row = $result->fetch_assoc()) {
+    $ncpr_count = $row['total'];
+}
+$open_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE status = 'open'");
+if ($row = $result->fetch_assoc()) {
+    $open_ncpr_count = $row['total'];
+}
+$closed_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE status = 'Close'");
+if ($row = $result->fetch_assoc()) {
+    $closed_ncpr_count = $row['total'];
+}
+$urgent_ncpr_count = 0;
+$result = $conn->query("SELECT COUNT(*) AS total FROM ncpr_table WHERE urgent = 'on' AND status = 'open'");
+if ($row = $result->fetch_assoc()) {
+    $urgent_ncpr_count = $row['total'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,7 +103,7 @@ $user_role = $_SESSION['role'];
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo htmlspecialchars($user_role) ?></a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -134,7 +157,7 @@ $user_role = $_SESSION['role'];
         <div class="main p-3">
             <div class="row">
                 <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -142,7 +165,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>NCPR Files</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -157,7 +180,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="ncprlist.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -165,7 +188,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Open Files</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $open_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -181,7 +204,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="productkey.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -189,7 +212,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Closed NCPR</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $closed_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -205,7 +228,7 @@ $user_role = $_SESSION['role'];
                     </a>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <a href="status.php" class="text-decoration-none">
+                    <a href="ncprlist_engineer.php" class="text-decoration-none">
                         <div class="card text-white mb-3 shadow-sm border-0 hover-shadow">
                             <div class="card border-0 shadow-sm flex-fill hover-shadow">
                                 <div class="card-body p-0 d-flex flex-fill">
@@ -213,7 +236,7 @@ $user_role = $_SESSION['role'];
                                         <div class="col-6">
                                             <div class="p-3 m-1">
                                                 <h5>Urgent NCPR</h5>
-                                                <p class="mb-0">#</p>
+                                                <p class="mb-0 fw-bold"><?= $urgent_ncpr_count ?></p>
                                             </div>
                                         </div>
                                         <div class="col-6 d-flex justify-content-end">
@@ -379,12 +402,12 @@ $user_role = $_SESSION['role'];
                                     let diffHours = (currentTime - createdAt) / (1000 * 60 * 60); // Convert milliseconds to hours
 
                                     // ✅ Check if Overdue (Older than 24 hours)
-                                    if (diffHours > 24) {
+                                    /*if (diffHours > 24) {
                                         overdueNCPRs.push(record.ncpr_num);
                                         record.isOverdue = true;
                                     } else {
                                         record.isOverdue = false;
-                                    }
+                                    }*/
 
                                     // ✅ Check if Urgent (record.urgent === "on")
                                     if (record.urgent === "on") {
@@ -394,21 +417,11 @@ $user_role = $_SESSION['role'];
                                         record.isUrgent = false;
                                     }
 
-                                    if (!notifiedNCPRs.includes(record.ncpr_num)) {
+                                    if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(record.ncpr_num)) {
                                         unseenNCPRs.push(record.ncpr_num);
                                         notifiedNCPRs.push(record.ncpr_num);
                                     }
                                 });
-
-                                // ✅ Show overdue warning if there are overdue NCPRs
-                                /*if (overdueNCPRs.length > 0) {
-                                    showWarningNotification(overdueNCPRs, "Overdue");
-                                }*/
-
-                                // ✅ Show urgent warning if there are urgent NCPRs
-                                /*if (urgentNCPRs.length > 0) {
-                                    showWarningNotification(urgentNCPRs, "Urgent");
-                                }*/
 
                                 // ✅ Show notification for new unseen NCPRs
                                 if (unseenNCPRs.length > 0) {
@@ -417,8 +430,8 @@ $user_role = $_SESSION['role'];
 
                                 sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
 
-                                if (newRecords.length > 0) {
-                                    let latestId = Math.max(...newRecords.map(item => parseInt(item.id)));
+                                if (unseenNCPRs.length > 0) {
+                                    let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
                                     sessionStorage.setItem("lastSeenId_" + username, latestId);
                                     updateLastSeenId(latestId);
                                 }
@@ -463,10 +476,10 @@ $user_role = $_SESSION['role'];
                             "data": "id",
                             "render": function(data, type, row) {
                                 let urgentIndicator = row.isUrgent ? `<div class="urgent-indicator">URGENT</div>` : ""; // ✅ Conditional indicator
-                                let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold text-light text-center" data-id="${row.ncpr_num}">
+                                let viewButton = `<button class="btn btn-primary btn-sm view-btn fw-bold text-center" data-id="${row.ncpr_num}">
                             View
                           </button>`;
-                                let dispoButton = `<button class="btn btn-success btn-sm dispo-btn fw-btn text-light text-center" 
+                                let dispoButton = `<button class="btn btn-primary btn-sm dispo-btn fw-bold text-center" 
                                data-id="${row.ncpr_num}" 
                                data-bs-toggle="modal" 
                                data-bs-target="#dispoModal">
@@ -530,7 +543,6 @@ $user_role = $_SESSION['role'];
                     // Display the notification
                     notificationBox.html(message).fadeIn().delay(5000).fadeOut();
                 }
-
 
             })();
         });

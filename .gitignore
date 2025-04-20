@@ -20,7 +20,7 @@ setting.php
 #adashboardVS.php
 #adashboardVSfetch.php
 #apatternVS.php
-#vulnerability_scan.log
+vulnerability_scan.log
 
 #critical/sensitive data
 setting.php
