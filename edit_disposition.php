@@ -61,8 +61,14 @@
                 </div>
             </td>
             <td>
-                <input class="locked" type="radio" name="potential_failure" value="Yes" class="mb-5"> Yes<br>
-                <input class="locked" type="radio" name="potential_failure" value="NO"> No<br>
+                <div class="form-check">
+                    <input class="form-check-input locked" type="radio" name="potential_failure" value="YES" id="potential_yes">
+                    <label class="form-check-label" for="potential_yes">YES</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input locked" type="radio" name="potential_failure" value="NO" id="potential_no">
+                    <label class="form-check-label" for="potential_no">NO</label>
+                </div>
             </td>
             <td>
                 <div class="d-flex align-items-center mb-2">
@@ -123,8 +129,8 @@
                         <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                     </div>
                     <div class="form-floating w-100 mt-2">
-                        <textarea id="impact_analysis" name="impact_analysis" class="form-control" placeholder="Enter impact analysis here..." rows="2"></textarea>
-                        <label for="impact_analysis">Notes:</label>
+                        <textarea id="notes" name="notes" class="form-control" placeholder="Enter impact analysis here..." rows="2"></textarea>
+                        <label for="notes">Notes:</label>
                     </div>
                 </td>
 
@@ -324,8 +330,8 @@
                 <!-- PE or EE Head Section -->
                 <td>
                     <div class="form-floating">
-                        <input type="text" name="pe_ee_head_signature" class="form-control" id="pe_ee_head_signature" placeholder="PE or EE Head">
-                        <label for="pe_ee_head_signature"><strong>PE or EE Head or his/her appointee:</strong></label>
+                        <input type="text" name="head_signature" class="form-control" id="pe_ee_head_signature" placeholder="PE or EE Head">
+                        <label for="head_signature"><strong>PE or EE Head or his/her appointee:</strong></label>
                     </div>
                 </td>
 
@@ -343,44 +349,19 @@
             <tr>
                 <td colspan="3">
                     <strong>Attach Supporting Documents:</strong><br>
+                    <small class="text-muted d-block mt-1">You can upload multiple files (JPEG, PDF, Excel, Word, PowerPoint, etc.).</small>
                     <div id="fileUploadContainer">
-                        <div class="file-input-group d-flex align-items-center">
-                            <input type="file" name="attachments[]" class="form-control mb-2">
-                        </div>
+                        <!-- File input that will allow the user to select files -->
+                        <button type="button" class="btn btn-primary mb-2" onclick="document.getElementById('editfileInput').click()">Add File</button>
+                        <input type="file" id="editfileInput" name="attachments[]" class="d-none" onchange="handleFileSelection(this, 'editfileList')" multiple>
+
+                        <!-- Display list of selected files here -->
+                        <div id="editfileList"></div>
                     </div>
-                    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="addFileInput()">Add More Files</button>
-                    <small class="text-muted d-block mt-1">You can upload multiple files (Excel, PDF, Images, etc.).</small>
                 </td>
             </tr>
         </table>
-
-        <script>
-            function addFileInput() {
-                let container = document.getElementById('fileUploadContainer');
-
-                let div = document.createElement('div');
-                div.className = "file-input-group d-flex align-items-center";
-
-                let input = document.createElement('input');
-                input.type = 'file';
-                input.name = 'attachments[]';
-                input.className = 'form-control mb-2';
-
-                let removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'btn btn-danger ms-2';
-                removeBtn.innerHTML = 'Delete';
-                removeBtn.onclick = function() {
-                    removeFileInput(this);
-                };
-
-                div.appendChild(input);
-                div.appendChild(removeBtn);
-                container.appendChild(div);
-            }
-
-            function removeFileInput(button) {
-                button.parentElement.remove();
-            }
-        </script>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-warning btn-lg w-50">Submit</button>
+        </div>
 </form>

@@ -25,3 +25,6 @@ vulnerability_scan.log
 
 #critical/sensitive data
 setting.php
+
+acleanCoding.php
+acdebugging_lines_log.txt

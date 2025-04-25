@@ -41,15 +41,15 @@ try {
                 d.repair_DA,
                 d.scrap_amount,
                 d.shipment_date,
-                d.created_at,
-                d.updated_at,
+                f.file_name, f.file_path,
 
                 -- Grouped fields
                 GROUP_CONCAT(DISTINCT CONCAT(r.field_name, ':', r.field_value) SEPARATOR ' | ') AS radio_fields,
                 GROUP_CONCAT(DISTINCT p.checkbox_name SEPARATOR ', ') AS checkboxes,
                 GROUP_CONCAT(DISTINCT p2.key SEPARATOR ', ') AS intervention_checkboxes,
                 GROUP_CONCAT(DISTINCT CONCAT(dti.input_name, ':', dti.inputted_data) SEPARATOR ', ') AS intervention_inputs,
-                GROUP_CONCAT(DISTINCT CONCAT(a.approver_id, '::', a.approver_role, '::', k.fname, '::', k.lname) SEPARATOR '||') AS approver_data
+                GROUP_CONCAT(DISTINCT CONCAT(a.approver_id, '::', a.approver_role, '::', k.fname, '::', k.lname) SEPARATOR '||') AS approver_data,
+                GROUP_CONCAT(DISTINCT CONCAT(f.file_name, ':', f.file_path) SEPARATOR ', ') AS files
 
             FROM disposition_tbl d
             LEFT JOIN dispo_radio_values r ON d.ncpr_num = r.ncpr_num
@@ -61,6 +61,7 @@ try {
             LEFT JOIN dispo_approval a ON d.ncpr_num = a.ncpr_num
             LEFT JOIN users u ON a.approver_id = u.id
             LEFT JOIN key_person k ON u.person_id = k.id
+            LEFT JOIN uploaded_filedispo f ON f.ncpr_num = d.ncpr_num
             WHERE d.ncpr_num = :ncpr_num
             GROUP BY d.ncpr_num
         ";
@@ -87,7 +88,7 @@ try {
         'scar_no' => $row['scar_no'],
         'document_alert' => $row['document_alert'],
         'contact_person' => $row['contact_person'],
-        'notes' => $row['notes'],
+        'impact_analysis' => $row['notes'],
         'other_specify' => $row['other_specify'],
         'yield_off' => $row['yield_off'],
         'da_no' => $row['da_no'],
@@ -96,8 +97,8 @@ try {
         'repair_DA' => $row['repair_DA'],
         'scrap_amount' => $row['scrap_amount'],
         'shipment_date' => $row['shipment_date'],
-        'created_at' => $row['created_at'],
-        'updated_at' => $row['updated_at'],
+        //'created_at' => $row['created_at'],
+        //'updated_at' => $row['updated_at'],
 
         // Radio fields
         'corrective_action' => null,
@@ -110,7 +111,8 @@ try {
         'checkboxes' => [],
         'intervention_checkboxes' => [],
         'intervention_inputs' => [],
-        'approvers' => []
+        'approvers' => [],
+        'files_attach' => []
     ];
 
     // Parse grouped radio_fields (if your SQL used the format: "field_name:field_value")
@@ -179,6 +181,21 @@ try {
                 'fname' => $fname,
                 'lname' => $lname
             ];
+        }
+    }
+
+    $disposition['files_attach'] = [];
+
+    if (!empty($row['files'])) {
+        $files = array_map('trim', explode(',', $row['files']));
+        foreach ($files as $file) {
+            if (strpos($file, ':') !== false) {
+                list($fileName, $filePath) = explode(':', $file, 2);
+                $disposition['files_attach'][] = [
+                    'name' => $fileName,
+                    'path' => $filePath 
+                ];
+            }
         }
     }
 

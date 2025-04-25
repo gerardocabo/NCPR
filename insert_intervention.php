@@ -40,7 +40,7 @@ foreach ($checkbox_groups2 as $group_2) {
 
 $stmt->close();
 
-$inputs = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by'];
+$inputs = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by', 'acknowledgment_signature', 'head_signature', 'prod_manager_signature'];
 
 $inputteds = "INSERT INTO disposition_tbl_intervention (ncpr_num, input_name, inputted_data) VALUES (?, ?, ?)";
 $stmt_inputteds = $conn->prepare($inputteds);

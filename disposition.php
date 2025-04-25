@@ -61,16 +61,16 @@
                 </div>
             </td>
             <td>
-                <input class="locked" type="radio" name="potential_failure" value="Yes" class="mb-5"> Yes<br>
-                <input class="locked" type="radio" name="potential_failure" value="No"> No<br>
+                <input class="locked form-check-input" type="radio" name="potential_failure" value="Yes" class="mb-5"> Yes<br>
+                <input class="locked form-check-input" type="radio" name="potential_failure" value="No"> No<br>
             </td>
             <td>
                 <div class="d-flex align-items-center mb-2">
                     <input class="locked" type="checkbox" name="car" value="CAR"> CAR, CAR No:
                     <input type="text" name="car_no" class="border-0 border-bottom w-20 ms-2">
                     <span class="me-2">8D Report:</span>
-                    <input class="locked" type="radio" name="bd_report" value="YES" class="me-1"> YES
-                    <input class="locked" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
+                    <input class="locked form-check-input" type="radio" name="bd_report" value="YES" class="me-1"> YES
+                    <input class="locked form-check-input" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
                 </div>
                 <div class="d-flex align-items-center mt-5">
                     <input class="locked" type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
@@ -91,8 +91,8 @@
                 <input class="locked" type="checkbox" name="dispo_from[]" value="NTPI"> NTPI
 
                 <strong>MRB:</strong>
-                <input class="locked" type="radio" name="mrb" value="YES"> YES
-                <input class="locked" type="radio" name="mrb" value="NO"> NO
+                <input class="locked form-check-input" type="radio" name="mrb" value="YES"> YES
+                <input class="locked form-check-input" type="radio" name="mrb" value="NO"> NO
 
             </td>
             <td>
@@ -104,8 +104,8 @@
                 <!-- Second Section with Spacing and Inline Layout -->
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     <strong>Need Customer Approval?</strong>
-                    <input class="locked" type="radio" name="customer_approval" value="YES"> YES
-                    <input class="locked" type="radio" name="customer_approval" value="NO"> NO
+                    <input class="locked form-check-input" type="radio" name="customer_approval" value="YES"> YES
+                    <input class="locked form-check-input" type="radio" name="customer_approval" value="NO"> NO
                     <span>Document Alert No:</span>
                     <input type="text" name="document_alert" class="border-0 border-bottom w-25">
                 </div>
@@ -123,8 +123,8 @@
                         <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                     </div>
                     <div class="form-floating w-100 mt-2">
-                        <textarea id="impact_analysis" name="impact_analysis" class="form-control" placeholder="Enter impact analysis here..." rows="2"></textarea>
-                        <label for="impact_analysis">Notes:</label>
+                        <textarea id="notes" name="notes" class="form-control" placeholder="Enter impact analysis here..." rows="2"></textarea>
+                        <label for="notes">Notes:</label>
                     </div>
                 </td>
 
@@ -184,7 +184,7 @@
                     </div>
                     <div class="d-flex align-items-center mt-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date:</span>
-                        <input type="text" name="shipment_date" class="border-0 border-bottom w-25 ms-2">
+                        <input type="date" name="shipment_date" class="border-0 border-bottom w-25 ms-2">
                     </div>
                 </td>
             </tr>
@@ -236,12 +236,12 @@
 
                 <td style="width: 33%; vertical-align: top;">
                     <strong>Instructions in detail, see reference doc:</strong><br>
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1"/> Document Alert #:
-                    <input type="text" name="document_alert_s" class="border-0 border-bottom w-75"/><br>
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1" /> Document Alert #:
+                    <input type="text" name="document_alert_s" class="border-0 border-bottom w-75" /><br>
 
-                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2"/>
+                    <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2" />
                     <span>Other (pls specify)</span>
-                    <input type="text" name="other_specify_s" class="border-0 border-bottom w-75"/>
+                    <input type="text" name="other_specify_s" class="border-0 border-bottom w-75" />
                     <br><br>
 
                     <strong>Documents needing revision:</strong><br>
@@ -293,12 +293,15 @@
                     <strong>QA Engineer / NT Representative:</strong><br>
                     (Signature & Date)
                     <?php if ($user_role === 'QA ENGINEER'): ?>
-                        <button type="button" class="btn btn-success approval-action" data-action="approve" data-role="QA Engineer">
-                            Approve
-                        </button>
-                        <button type="button" class="btn btn-danger approval-action" data-action="cancel" data-role="QA Engineer">
-                            Cancel
-                        </button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Action
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Engineer">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Engineer">Cancel</a></li>
+                            </ul>
+                        </div>
                     <?php endif; ?>
                 </td>
                 <td>
@@ -365,64 +368,105 @@
             <tr>
                 <td colspan="3">
                     <strong>Attach Supporting Documents:</strong><br>
-                    <div id="fileUploadContainer">
-                        <div class="file-input-group d-flex align-items-center">
-                            <input type="file" name="attachments[]" class="form-control mb-2" onchange="validateFile(this)">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-sm mt-2" onclick="addFileInput()">Add More Files</button>
                     <small class="text-muted d-block mt-1">You can upload multiple files (JPEG, PDF, Excel, Word, PowerPoint, etc.).</small>
+                    <div id="fileUploadContainer">
+                        <!-- File input that will allow the user to select files -->
+                        <button type="button" class="btn btn-primary mb-2" onclick="document.getElementById('fileInput').click()">Add File</button>
+                        <input type="file" id="fileInput" name="attachments[]" class="d-none" onchange="handleFileSelection(this, 'fileList')" multiple>
+
+                        <!-- Display list of selected files here -->
+                        <div id="fileList"></div>
+                    </div>
                 </td>
             </tr>
         </table>
 
         <script>
-            function addFileInput() {
-                let container = document.getElementById('fileUploadContainer');
+            // Global variable to hold all selected files
+            let allFiles = [];
+            let remFiles = [];
 
-                let div = document.createElement('div');
-                div.className = "file-input-group d-flex align-items-center";
-
-                let input = document.createElement('input');
-                input.type = 'file';
-                input.name = 'attachments[]';
-                input.className = 'form-control mb-2';
-                input.setAttribute('onchange', 'validateFile(this)');
-
-                let removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'btn btn-danger ms-2';
-                removeBtn.innerHTML = 'Delete';
-                removeBtn.onclick = function() {
-                    removeFileInput(this);
-                };
-
-                div.appendChild(input);
-                div.appendChild(removeBtn);
-                container.appendChild(div);
-            }
-
-            function removeFileInput(button) {
-                button.parentElement.remove();
-            }
-
+            // Function to validate the file type
             function validateFile(input) {
                 const allowedTypes = [
-                    'application/pdf', // PDF
-                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // Excel (xlsx)
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // Word (docx)
-                    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PowerPoint (pptx)
-                    'image/jpeg', // JPEG images (jpg, jpeg)
-                    'image/jpg' // JPG images
+                    'application/pdf',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'image/jpeg',
+                    'image/jpg'
                 ];
 
-                const file = input.files[0];
-
-                if (file && !allowedTypes.includes(file.type)) {
-                    alert('Invalid file type! Please upload a JPEG image or a valid Office file (PDF, Word, Excel, PowerPoint).');
-                    input.value = ''; // Clear the selected file
+                const files = Array.from(input.files);
+                for (let file of files) {
+                    if (!allowedTypes.includes(file.type)) {
+                        alert(`Invalid file type for ${file.name}! Please upload a JPEG image or a valid Office file (PDF, Word, Excel, PowerPoint).`);
+                        input.value = ''; // Clear the selected files
+                        return false;
+                    }
                 }
+                return true;
+            }
+
+            function handleFileSelection(input, divName) {
+                if (!validateFile(input)) return;
+
+                const files = Array.from(input.files);
+                const $fileListContainer = $("#" + divName);
+
+                // Add new files to the global allFiles array
+                allFiles = [...allFiles, ...files];
+
+                // Clear the container to re-render the full list
+                $fileListContainer.empty();
+
+                // Display each file
+                allFiles.forEach((file, index) => {
+                    const $fileBox = $("<div>").addClass("mb-3 p-2 border rounded d-flex justify-content-between align-items-center");
+
+                    const $fileName = $("<span>").addClass("file-name").text(file.name);
+
+                    const $deleteButton = $("<button>")
+                        .addClass("btn btn-danger btn-sm")
+                        .text("Remove")
+                        .on("click", function(e) {
+                            e.preventDefault();
+                            removeFile(this, file.name);
+                        });
+
+                    $fileBox.append($fileName).append($deleteButton);
+                    $fileListContainer.append($fileBox);
+                });
+
+                // Reset the file input to allow the same file to be selected again if needed
+                input.value = '';
+            }
+
+            function removeFile(button, fileName) {
+                const $fileBox = button.parentElement;
+                const $parentContainer = $fileBox.parentElement;
+
+                // Remove from DOM
+                $fileBox.remove();
+
+                // Find the file object from allFiles
+                const fileObj = allFiles.find(file => file.name === fileName);
+
+                // Update the allFiles array
+                allFiles = allFiles.filter(file => file.name !== fileName);
+
+                // Check if the file was removed from the #editfileList container
+                if ($parentContainer.id === "editfileList" && fileObj) {
+                    const keys = Object.keys(fileObj).sort();
+                    const hasOnlyNameAndPath = keys.length === 2 && keys.includes('name') && keys.includes('path');
+
+                    if (hasOnlyNameAndPath) {
+                        remFiles.push(fileName);
+                    }
+                }
+
+                console.log("Updated allFiles:", allFiles);
+                console.log("Removed files (remFiles):", remFiles);
             }
         </script>
-
 </form>

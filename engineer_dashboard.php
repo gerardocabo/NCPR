@@ -334,14 +334,13 @@ if ($row = $result->fetch_assoc()) {
                     <?php include "edit_disposition.php"; ?>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-warning">Submit</button>
+
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="username" data-user="<?php echo $_SESSION['user']; ?>" style="display: none;"></div>
     <div id="notification-box" style="
         position: fixed;
         top: 10px;
@@ -381,6 +380,7 @@ if ($row = $result->fetch_assoc()) {
                 var lastSeenId = parseInt(sessionStorage.getItem("lastSeenId_" + username)) || 0; // Retrieve last seen ID
                 var notifiedNCPRs = JSON.parse(sessionStorage.getItem("notifiedNCPRs_" + username) || "[]"); // Retrieve notified NCPRs
                 var firstLoad = true;
+                let lastNcprNum = null;
 
                 var table = $('#ncprTable').DataTable({
                     dom: 'Bfrtip',
@@ -573,6 +573,18 @@ if ($row = $result->fetch_assoc()) {
                     var button = $(event.relatedTarget); // Button that triggered the modal
                     var ncprNum = button.data('id'); // Extract data-id
 
+                    // If it's a different NCPR, reset form and file list
+                    if (lastNcprNum !== ncprNum) {
+                        lastNcprNum = ncprNum;
+
+                        // Reset your form heres
+                        $('#dispoForm')[0].reset();
+
+                        // Clear file list
+                        allFiles = [];
+                        $('#fileList').empty(); // or editfilelist if in edit mode
+                    }
+
                     // Set the extracted value inside the modal
                     $('#modal-id').text(ncprNum); // Display in modal
                 });
@@ -665,8 +677,6 @@ if ($row = $result->fetch_assoc()) {
                     },
                     dataType: 'json',
                     success: function(response) {
-                        console.log("Encoded JSON response:", response);
-
                         targetForm.find('#modal-id').text(response.ncpr_num);
                         targetForm.find('#containment').text(response.containment); // Sets the text for textarea
                         targetForm.find('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
@@ -712,7 +722,7 @@ if ($row = $result->fetch_assoc()) {
                         });
 
                         // Populate text fields
-                        targetForm.find('#impact_analysis').val(response.notes || "");
+                        targetForm.find('#notes').val(response.impact_analysis || "");
                         targetForm.find('input[name="contact_person"').val(response.contact_person || "");
                         targetForm.find('input[name="other_specify"').val(response.other_specify || "");
                         targetForm.find('input[name="yield_off"').val(response.yield_off || "");
@@ -738,7 +748,10 @@ if ($row = $result->fetch_assoc()) {
                         }
 
                         if (Array.isArray(response.intervention_inputs) && response.intervention_inputs.length > 0) {
-                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by'];
+                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction',
+                                'document_alert_s', 'other_specify_s', 'released_by',
+                                'acknowledgment_signature', 'head_signature', 'prod_manager_signature'
+                            ];
 
                             intervention_inp.forEach(function(input) {
                                 let found = response.intervention_inputs.find(obj => obj.input_name === input);
@@ -777,11 +790,51 @@ if ($row = $result->fetch_assoc()) {
                                             // Add more cases for other roles as needed
                                         default:
                                             // Handle default case if needed (optional)
-                                            console.log("Unknown role:", approver.approver_role);
+                                            //console.log("Unknown role!", approver.approver_role);
                                             break;
                                     }
                                 }
                             });
+                        }
+
+                        // Field for file query
+                        const fileList = $("#editfileList");
+                        fileList.empty(); // Clear old stuff
+
+                        if (
+                            Array.isArray(response.files_attach) &&
+                            response.files_attach.length > 0
+                        ) {
+                            allFiles = response.files_attach;
+                            console.log(allFiles);
+                            response.files_attach.forEach((file) => {
+                                const fileBox = $("<div>").addClass("mb-3 p-2 border rounded d-flex justify-content-between align-items-center");
+
+                                // Display the file name
+                                const fileName = $("<span>")
+                                    .addClass("file-name")
+                                    .text(file.name);
+
+                                // Create the delete button
+                                const deleteButton = $("<button>")
+                                    .addClass("btn btn-danger btn-sm ms-2")
+                                    .text("Remove")
+                                    .on("click", function(e) {
+                                        e.preventDefault();
+                                        // Call delete function (you can implement the delete logic here)
+                                        alert(`File ${file.name} deleted.`);
+                                        // You can also make an AJAX request to remove the file from the server, if needed.
+                                        removeFile(this, file.name);
+                                    });
+
+                                // Append the file name and delete button to the fileBox
+                                fileBox.append(fileName).append(deleteButton);
+                                fileList.append(fileBox);
+                            });
+                        } else {
+                            fileList.append(
+                                $("<p>").addClass("text-muted").text("No file attachments found.")
+                            );
                         }
 
                         $('#editDispoModal').modal('show');
@@ -798,6 +851,141 @@ if ($row = $result->fetch_assoc()) {
                     }
                 });
             });
+
+            $('#editDispoForm').submit(function(e) {
+                e.preventDefault();
+
+                allFiles = allFiles.filter(file => {
+                    const keys = Object.keys(file).sort();
+                    return !(keys.length === 2 && keys.includes('name') && keys.includes('path'));
+                });
+                console.log(allFiles);
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You are about to update this NCPR?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, Update",
+                    cancelButtonText: "Cancel",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (allFiles.length > 0) {
+                            uploadFileAttachments();
+                        }
+                        editForm_udpate();
+                    }
+                });
+            });
+
+            function uploadFileAttachments() {
+                let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
+
+                // Use the global allFiles array to collect all selected files
+                var files = allFiles;
+
+                // If no files selected, simply exit the function
+                if (files.length === 0) {
+                    return; // Exit if no files
+                }
+
+                // Create a new FormData object for file attachments
+                var fileFormData = new FormData();
+
+                for (var i = 0; i < files.length; i++) {
+                    fileFormData.append("attachments[]", files[i]);
+                }
+
+                // Append the ncpr_num to the FormData so it is sent along with the files
+                fileFormData.append("ncpr_num", selectedId);
+
+                // Send the file attachments using AJAX
+                $.ajax({
+                    url: "insert_fileUpload.php", // Server-side script to handle file uploads
+                    type: "POST",
+                    data: fileFormData,
+                    processData: false, // Prevent jQuery from processing the data
+                    contentType: false, // Let the browser set the content type for file uploads
+                    success: function(response) {
+                        try {
+                            var parsedResponse = JSON.parse(response);
+                            if (parsedResponse.status !== "success") {
+                                alert("File upload failed. Please try again.");
+                            }
+                        } catch (e) {
+                            alert("File upload failed. Invalid server response.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire("Error", "File upload failed. Check console.", "error");
+                    },
+                });
+            }
+
+            function editForm_udpate() {
+                let selectedId = $("#modal-id").text(); // Grab modal ID
+                let formData = {};
+                let rawData = $(this).serializeArray(); // handles arrays properly
+
+                rawData.forEach(function(item) {
+                    if (formData[item.name]) {
+                        // Already exists? Convert to array or push
+                        if (Array.isArray(formData[item.name])) {
+                            formData[item.name].push(item.value);
+                        } else {
+                            formData[item.name] = [formData[item.name], item.value];
+                        }
+                    } else {
+                        formData[item.name] = item.value;
+                    }
+                });
+                formData['ncpr_num'] = selectedId;
+                formData['delete_file'] = remFiles;
+
+                console.log(formData);
+
+                // AJAX request
+                $.ajax({
+                    url: 'update_dispo.php',
+                    method: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success === true) {
+                            Swal.fire({
+                                title: "Success",
+                                text: "NCPR: " + selectedId + response.message,
+                                icon: "success",
+                                confirmButtonText: "OK",
+                            }).then(() => {
+                                // Hide the Swal modal
+                                $(".swal2-container").fadeOut(200, function() {
+                                    $(this).remove();
+                                });
+
+                                // Hide the Bootstrap modal
+                                $("#editDispoModal").modal("hide");
+                                if (typeof refreshNcprTable === "function") {
+                                    refreshNcprTable();
+                                }
+                            });
+                        } else {
+                            console.error("Error from server:", response.message);
+                            //this is for debugging
+                            //Swal.fire("Error", response.message, "error");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMsg = 'AJAX Error:\n';
+                        errorMsg += 'Status: ' + status + '\n';
+                        errorMsg += 'HTTP Code: ' + xhr.status + '\n';
+                        errorMsg += 'Response: ' + xhr.responseText;
+                        console.log(errorMsg);
+                    }
+                });
+            }
         });
     </script>
 
@@ -814,8 +1002,6 @@ if ($row = $result->fetch_assoc()) {
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-
-
         });
     </script>
 </body>

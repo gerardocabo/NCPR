@@ -87,8 +87,9 @@ $(document).ready(function () {
 
   function uploadFileAttachments() {
     let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
-    // Collect all file attachments and append them to FormData
-    var files = $("input[name='attachments[]']")[0].files;
+    
+    // Use the global allFiles array to collect all selected files
+    var files = allFiles;
 
     // If no files selected, simply exit the function
     if (files.length === 0) {
@@ -143,7 +144,7 @@ $(document).ready(function () {
     var carNo = $("input[name='car_no']").val(); // Get value of car_no input
     var scarNo = $("input[name='scar_no']").val().trim(); // Get value of car_no input
     var DA = $("input[name='document_alert']").val().trim(); // Get value of car_no input
-    var notes = $("input[name='impact_analysis']").val(); // Get value of car_no input
+    var notes = $("#notes").val(); // Get value of car_no input
     var contactperson = $("input[name='contact_person']").val().trim(); // Get value of car_no input
     var otherSpecify = $("input[name='other_specify']").val().trim(); // Get value of car_no input
     var yieldOff = $("input[name='yield_off']").val().trim(); // Get value of car_no input
@@ -192,7 +193,6 @@ $(document).ready(function () {
     });
 
     var interventionData = getIntervention();
-    console.log(interventionData);
 
     $.ajax({
       url: "approval.php",
@@ -241,11 +241,7 @@ $(document).ready(function () {
         console.log("Sending before the succes/error AJAX request...");
       },
       success: function (response) {
-        console.log("Raw response:", response);
-
         if (response.status === "success") {
-          console.log("Parsed JSON:", response);
-
           Swal.fire({
             title: "Success",
             text: response.message,
@@ -267,7 +263,8 @@ $(document).ready(function () {
           });
         } else {
           console.error("Error from server:", response.message);
-          Swal.fire("Error", response.message, "error");
+          //this is for debugging
+          //Swal.fire("Error", response.message, "error");
         }
       },
       error: function (xhr, status, error) {
@@ -300,11 +297,8 @@ $(document).ready(function () {
         ncpr_num: selectedId,
       },
       success: function (response) {
-        console.log("Response received:", response);
         // Handle success response
         if (response.status === "success") {
-          console.log("Parsed JSON:", response);
-
           Swal.fire({
             title: "Success",
             text: response.message,
@@ -335,7 +329,8 @@ $(document).ready(function () {
       },
       /*error: function (xhr, status, error) {
                 console.error("Error:", error);
-            }*/ error: function (xhr, status, error) {
+            }*/
+      error: function (xhr, status, error) {
         console.error("AJAX Error:", error, xhr.responseText);
         Swal.fire("Error", "AJAX request failed. Check console.", "error");
       },
@@ -396,8 +391,6 @@ $(document).ready(function () {
 
     var others = $("input[name='other_specify_s']").val();
     if (others) result.other_specify_s = others;
-
-    console.log(result);
 
     var docu_rev = $("input[name='documents_revision[]']:checked");
     if (docu_rev.length)

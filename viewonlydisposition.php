@@ -1,3 +1,13 @@
+<style>
+    .fortyle {
+        display: inline-block;
+        border-bottom: 1px solid #000;
+        padding-bottom: 2px;
+        min-width: 150px;
+        /* baseline length */
+    }
+</style>
+
 <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
 <div class="border mb-3 align-items-center p-2">
     <span class="d-block"><strong>This space is intended for QA verification, containment and investigation activities.</strong></span>
@@ -66,14 +76,14 @@
         <td>
             <div class="d-flex align-items-center mt-2">
                 <input class="locked" type="checkbox" name="car" value="CAR"> CAR, CAR No:
-                <span id="car_no" style="margin-right: auto; padding: 10px; text-decoration: underline;"></span><br>
+                <span id="car_no" class="fortyle"></span><br>
                 <span class="me-2">8D Report:</span>
                 <input class="locked form-check-input" type="radio" name="bd_report" value="YES" class="me-1"> YES
                 <input class="locked form-check-input" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
             </div>
             <div class="d-flex align-items-center mt-2">
                 <input class="locked" type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
-                <span id="scar_no" class="fortyle" style="padding: 10px; text-decoration: underline;"></span><br>
+                <span id="scar_no" class="fortyle"></span><br>
             </div>
         </td>
     </tr>
@@ -121,8 +131,8 @@
                     <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP FMEA"> Review of NCP FMEA
                     <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                 </div>
-                <label for="impact_analysis">Notes:</label>
-                <span id="impact_analysis" class="fortyle"></span>
+                <label for="notes">Notes:</label><br>
+                <span id="notes" class="fortyle"></span>
             </td>
 
             <!-- Right Section (Spanning Rows) -->
@@ -213,7 +223,7 @@
                 <input class="locked" type="checkbox" name="process_dispo[]" value="PD2"> Stop Production
                 <br><br>
                 <span>Affected process/es:</span>
-                <span id="affected_process" ></span><br><br>
+                <span id="affected_process" class="fortyle"></span><br><br>
                 <input class="locked" type="checkbox" name="further_eval" value="F1">
                 <span>For further Eng’g Evaluation</span>
             </td>
@@ -229,21 +239,21 @@
                 <input class="locked" type="checkbox" name="resumption_reason[]" value="R6">
                 <span>Others, pls specify</span>
                 <br>
-                <span id="other_resumption" ></span><br><br>
+                <span id="other_resumption" class="fortyle"></span><br><br>
 
                 <strong>Process Instruction in general:</strong>
                 <span>(for <span>DJs</span> other than the affected)</span><br>
-                <span id="process_instruction" ></span>
+                <span id="process_instruction" class="fortyle"></span>
             </td>
 
             <td style="width: 33%; vertical-align: top;">
                 <strong>Instructions in detail, see reference doc:</strong><br>
                 <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1"> Document Alert #:
-                <span id="document_alert_s" ></span><br>
+                <span id="document_alert_s" class="fortyle"></span><br>
 
                 <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2">
                 <span>Other (pls specify)</span>
-                <span id="other_specify_s" ></span>
+                <span id="other_specify_s" class="fortyle"></span>
                 <br><br>
 
                 <strong>Documents needing revision:</strong><br>
@@ -279,7 +289,7 @@
                 <strong>Process Released By:</strong><br>
 
                 <div class="text-center mt-3">
-                <strong><span id="released_by" ></span></strong><br>
+                    <strong><span id="released_by" class="fortyle"></span></strong><br>
                     <small>(Signature Above Printed Name/ Date)</small>
                 </div>
             </td>
@@ -342,6 +352,5 @@
         </tr>
     </table>
     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
-    <div id="file-list" class="d-block flex-wrap">
-    </div>
+    <div id="fileList" class="d-block flex-wrap"></div>
 </table>

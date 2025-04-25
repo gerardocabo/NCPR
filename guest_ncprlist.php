@@ -3,19 +3,6 @@
 require "config.php";
 include 'conn.php'; // Make sure you have a proper database connection here
 
-// Fetch data from ncpr_table
-$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id
-FROM ncpr_table
-ORDER BY 
-  dispo_id IS NOT NULL,             -- dispo_id IS NULL (false = 0) comes first
-  CASE 
-    WHEN status = 'open' THEN 0
-    WHEN status = 'close' THEN 1
-    ELSE 2
-  END,
-  id ASC;
-";
-$result = $conn->query($query);
 $name = $_SESSION["user"];
 ?>
 <!DOCTYPE html>
@@ -127,7 +114,18 @@ $name = $_SESSION["user"];
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php
+                            // Fetch data from ncpr_table
+                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id 
+                                    FROM ncpr_table
+                                    ORDER BY
+                                        CASE status
+                                            WHEN 'Open' THEN 1
+                                            ELSE 2
+                                        END,
+                                        ncpr_num DESC";
+                            $result = $conn->query($query);
+                            while ($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td hidden><?php echo $row['id']; ?></td>
                                     <td><?php echo $row['ncpr_num']; ?></td>
@@ -847,15 +845,15 @@ $name = $_SESSION["user"];
 
                             <script>
                                 // Ensure only one checkbox is selected at a time
-                                document.getElementById("deviation_yes").addEventListener("change", function() {
+                                document.getElementById("deviation-yes").addEventListener("change", function() {
                                     if (this.checked) {
-                                        document.getElementById("deviation_no").checked = false;
+                                        document.getElementById("deviation-no").checked = false;
                                     }
                                 });
 
-                                document.getElementById("deviation_no").addEventListener("change", function() {
+                                document.getElementById("deviation-no").addEventListener("change", function() {
                                     if (this.checked) {
-                                        document.getElementById("deviation_yes").checked = false;
+                                        document.getElementById("deviation-yes").checked = false;
                                     }
                                 });
                             </script>
@@ -1198,8 +1196,13 @@ $name = $_SESSION["user"];
                             $('#deviation-yes').prop('checked', false);
                             $('#deviation-no').prop('checked', true);
                         }
+
                         if (response.repeating === "Yes") {
                             $('#repeating-yes').prop('checked', true);
+                            $('#repeating-no').prop('checked', false);
+                        } else if (response.repeating === "No") {
+                            $('#repeating-yes').prop('checked', false);
+                            $('#repeating-no').prop('checked', true);
                         }
                         $('#view-cavity').text(response.cavity);
                         $('#view-machine').text(response.machine);

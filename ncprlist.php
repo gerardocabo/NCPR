@@ -1206,16 +1206,25 @@ require "config.php";
                         } else {
                             $('#view-urgent-checkbox').prop('checked', false); // Uncheck the checkbox
                         }
-                        if (response.repeating === "Yes") {
-                            $('#repeating-yes').prop('checked', true);
-                        }
 
                         $('#view-awpi').text(response.awpi);
                         $('#view-dc').text(response.dc);
                         if (response.deviation === "Yes") {
                             $('#deviation-yes').prop('checked', true);
                             $('#deviation-no').prop('checked', false);
+                        } else if (response.deviation === "No") {
+                            $('#deviation-yes').prop('checked', false);
+                            $('#deviation-no').prop('checked', true);
                         }
+
+                        if (response.repeating === "Yes") {
+                            $('#repeating-yes').prop('checked', true);
+                            $('#repeating-no').prop('checked', false);
+                        } else if (response.repeating === "No") {
+                            $('#repeating-yes').prop('checked', false);
+                            $('#repeating-no').prop('checked', true);
+                        }
+
                         $('#view-cavity').text(response.cavity);
                         $('#view-machine').text(response.machine);
                         $('#view-ref').text(response.ref);
@@ -1783,7 +1792,7 @@ require "config.php";
             var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-            
+
         });
     </script>
 </body>
