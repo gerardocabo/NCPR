@@ -14,4 +14,3 @@ if ($conn->connect_error) {
 
 // Return the MySQLi connection object
 return $conn;
-

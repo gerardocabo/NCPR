@@ -45,7 +45,7 @@ try {
         }
     } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
         // Fetch all user accounts
-        $stmt = $pdo->query("SELECT users.id, users.username, users_roles.role_name AS role FROM users JOIN users_roles ON users.role_id = users_roles.id");
+        $stmt = $pdo->query("SELECT users.id, users.username, users_roles.role_name AS role, users.status FROM users JOIN users_roles ON users.role_id = users_roles.id");
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($users);
     }

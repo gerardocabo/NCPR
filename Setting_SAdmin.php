@@ -1,16 +1,18 @@
 <?php
+
 require "connection.php"; // Include database connection
 require "config.php";
 
 try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch roles
-    $stmt = $pdo->query("SELECT id, username FROM users ORDER BY id ASC");
-    $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // ✅ Fetch id, username, role, and status from users
+    $stmt = $pdo->query("SELECT id, username, status FROM users ORDER BY id ASC");
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +46,7 @@ try {
                         <span>Dashboard</span>
                     </a>
                 </li>
-                
+
                 <li class="sidebar-item active">
                     <a href="Setting_SAdmin.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
@@ -246,38 +248,49 @@ try {
                             dataType: 'json',
                             success: function(response) {
                                 let rows = "";
+
                                 if (response.length > 0) {
                                     response.forEach(function(user) {
+                                        let buttonLabel = user.status === 'blocked' ? 'Unblock' : 'Block';
+
                                         rows += `<tr>
-                            <td>${user.id}</td>
-                            <td>${user.username}</td>
-                            <td>${user.role}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm change-password" 
-                                    data-userid="${user.id}" 
-                                    data-username="${user.username}">
-                                    Change Password
-                                </button>
-                                <button class="btn btn-secondary btn-sm block-user" 
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm change-password" 
                                 data-userid="${user.id}" 
                                 data-username="${user.username}">
-                                Block
+                                Change Password
                             </button>
+
+                            <button class="btn btn-secondary btn-sm block-user" 
+                                data-userid="${user.id}" 
+                                data-username="${user.username}" 
+                                data-status="${user.status}">
+                                ${buttonLabel}
+                            </button>
+
                             <button class="btn btn-danger btn-sm delete-user" 
                                 data-userid="${user.id}" 
                                 data-username="${user.username}">
                                 Delete
                             </button>
-                            </td>
-                        </tr>`;
+                        </td>
+                    </tr>`;
                                     });
                                 } else {
                                     rows = `<tr><td colspan="4" class="text-center">No accounts found.</td></tr>`;
                                 }
+
                                 $('#accountList').html(rows);
+                            },
+                            error: function() {
+                                Swal.fire("Error", "Failed to load account data.", "error");
                             }
                         });
                     });
+
 
                     // Remove lingering modal backdrop when 'View Accounts' modal is closed
                     $('#viewAccountsModal').on('hidden.bs.modal', function() {
@@ -312,17 +325,19 @@ try {
                         accountsModal.show();
                     });
 
-                    // Handle Block User button click
                     $(document).on('click', '.block-user', function() {
-                        let userId = $(this).data('userid');
-                        let username = $(this).data('username');
+                        let button = $(this);
+                        let userId = button.data('userid');
+                        let username = button.data('username');
+                        let currentStatus = button.text().trim().toLowerCase(); // 'block' or 'unblock'
+                        let actionWord = currentStatus === 'block' ? 'block' : 'unblock';
 
                         Swal.fire({
                             title: "Are you sure?",
-                            text: `Do you want to block ${username}?`,
+                            text: `Do you want to ${actionWord} ${username}?`,
                             icon: "warning",
                             showCancelButton: true,
-                            confirmButtonText: "Yes, Block",
+                            confirmButtonText: `Yes, ${actionWord}`,
                             cancelButtonText: "Cancel"
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -335,8 +350,19 @@ try {
                                     },
                                     dataType: "json",
                                     success: function(response) {
-                                        Swal.fire(response.status === "success" ? "Blocked!" : "Error", response.message, response.status);
-                                        $('#viewAccountsModal').modal('hide');
+                                        if (response.status === "success") {
+                                            Swal.fire(
+                                                response.newStatus === 'blocked' ? "Blocked!" : "Unblocked!",
+                                                response.message,
+                                                "success"
+                                            );
+
+                                            // Update button text and status
+                                            button.text(response.newStatus === 'blocked' ? 'Unblock' : 'Block');
+                                            button.data('status', response.newStatus);
+                                        } else {
+                                            Swal.fire("Error", response.message, "error");
+                                        }
                                     },
                                     error: function() {
                                         Swal.fire("Error", "Something went wrong! Please try again.", "error");
@@ -345,6 +371,7 @@ try {
                             }
                         });
                     });
+
 
                     // Handle Delete User button click
                     $(document).on('click', '.delete-user', function() {

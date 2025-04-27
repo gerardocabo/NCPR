@@ -506,7 +506,8 @@ if ($row = $result->fetch_assoc()) {
                             "visible": false
                         },
                         {
-                            "data": "date"
+                            "data": "date",
+                            "className": "text-center"
                         },
                         {
                             "data": "id",
