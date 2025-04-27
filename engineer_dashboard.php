@@ -579,6 +579,7 @@ if ($row = $result->fetch_assoc()) {
 
                         // Reset your form heres
                         $('#dispoForm')[0].reset();
+                        $(this).find("input[required], textarea[required]").removeClass("is-invalid");
 
                         // Clear file list
                         allFiles = [];
@@ -666,6 +667,7 @@ if ($row = $result->fetch_assoc()) {
             $('#ncprTable tbody').on('click', '.edit-btn', function() {
                 var ncprNum = $(this).data('id');
                 var targetForm = $('#editDispoForm'); // Specify the form ID
+                targetForm[0].reset();
 
                 $("#modal-id").text(ncprNum); // Display ID inside modal
 
@@ -855,11 +857,12 @@ if ($row = $result->fetch_assoc()) {
             $('#editDispoForm').submit(function(e) {
                 e.preventDefault();
 
+                let rawData = $(this).serializeArray(); // handles arrays properly
+
                 allFiles = allFiles.filter(file => {
                     const keys = Object.keys(file).sort();
                     return !(keys.length === 2 && keys.includes('name') && keys.includes('path'));
                 });
-                console.log(allFiles);
 
                 Swal.fire({
                     title: "Are you sure?",
@@ -872,10 +875,19 @@ if ($row = $result->fetch_assoc()) {
                     cancelButtonText: "Cancel",
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Processing...",
+                            html: "Please wait while data is being updating.",
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                        });
+
                         if (allFiles.length > 0) {
                             uploadFileAttachments();
                         }
-                        editForm_udpate();
+                        editForm_udpate(rawData);
                     }
                 });
             });
@@ -924,10 +936,9 @@ if ($row = $result->fetch_assoc()) {
                 });
             }
 
-            function editForm_udpate() {
+            function editForm_udpate(rawData) {
                 let selectedId = $("#modal-id").text(); // Grab modal ID
                 let formData = {};
-                let rawData = $(this).serializeArray(); // handles arrays properly
 
                 rawData.forEach(function(item) {
                     if (formData[item.name]) {

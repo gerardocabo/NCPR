@@ -27,8 +27,8 @@
                         <label class="form-check-label" for="corrective_no">NO</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input locked" type="radio" name="corrective_action" value="NA" id="corrective_na">
-                        <label class="form-check-label" for="corrective_na">NA</label>
+                        <input class="form-check-input locked" type="radio" name="corrective_action" value="N/A" id="corrective_na">
+                        <label class="form-check-label" for="corrective_na">N/A</label>
                     </div>
                 </div>
             </td>

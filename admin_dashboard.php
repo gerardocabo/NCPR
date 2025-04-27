@@ -451,7 +451,6 @@ if ($row = $result->fetch_assoc()) {
                                 // Check if unseen
                                 if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(record.ncpr_num)) {
                                     unseenNCPRs.push(record.ncpr_num);
-                                    notifiedNCPRs.push(record.ncpr_num);
                                 }
                             });
 
@@ -462,21 +461,23 @@ if ($row = $result->fetch_assoc()) {
                             }
 
                             // ✅ Show urgent warning if there are urgent NCPRs
-                            if (urgentNCPRs.length > 0) {
+                            /*if (urgentNCPRs.length > 0) {
                                 showWarningNotification(urgentNCPRs);
-                            }
+                            }*/
 
                             // ✅ Show notification for new unseen NCPRs
                             if (unseenNCPRs.length > 0) {
                                 showNotification(unseenNCPRs, username);
+                                notifiedNCPRs.push(...unseenNCPRs); // Mark all as notified
+                                sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
                             }
 
-                            sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
-
-                            console.log("Last Seen ID:", lastSeenId);
-                            console.log("Unseen NCPRs Notified:", unseenNCPRs);
-                            console.log("Overdue NCPRs:", overdueNCPRs);
-                            console.log("Urgent NCPRs:", urgentNCPRs);
+                            // Update last seen ID in sessionStorage and database
+                            if (unseenNCPRs.length > 0) {
+                                let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
+                                sessionStorage.setItem("lastSeenId_" + username, latestId);
+                                updateLastSeenId(latestId);
+                            }
                         }
 
                         firstLoad = false;

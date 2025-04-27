@@ -26,12 +26,6 @@ if (isset($_SESSION['page'])) {
         /* Prevent clicking */
     }
 
-    .fortyle {
-        margin-right: auto;
-        padding: 0 10;
-        text-decoration: underline;
-    }
-
     .signature-line {
         display: flex;
         justify-content: center;

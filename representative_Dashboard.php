@@ -19,12 +19,6 @@ $user_role = $_SESSION['role'];
             /* Prevent clicking */
         }
 
-        .fortyle {
-            margin-right: auto;
-            padding: 0 10;
-            text-decoration: underline;
-        }
-
         .action-container {
             position: relative;
             /* Ensure floating indicator stays positioned correctly */
@@ -399,28 +393,18 @@ $user_role = $_SESSION['role'];
                                         record.isUrgent = false;
                                     }
 
-                                    if (!notifiedNCPRs.includes(record.ncpr_num)) {
+                                    if (parseInt(record.id) > lastSeenId && !notifiedNCPRs.includes(record.ncpr_num)) {
                                         unseenNCPRs.push(record.ncpr_num);
                                         notifiedNCPRs.push(record.ncpr_num);
                                     }
                                 });
 
-                                // ✅ Show overdue warning if there are overdue NCPRs
-                                /*if (overdueNCPRs.length > 0) {
-                                    showWarningNotification(overdueNCPRs, "Overdue");
-                                }*/
-
-                                // ✅ Show urgent warning if there are urgent NCPRs
-                                /*if (urgentNCPRs.length > 0) {
-                                    showNotification(urgentNCPRs, "Urgent");
-                                }*/
-
-                                // ✅ Show notification for new unseen NCPRs
+                                // Show notification for unseen NCPRs
                                 if (unseenNCPRs.length > 0) {
                                     showNotification(unseenNCPRs, username);
+                                    notifiedNCPRs.push(...unseenNCPRs); // Mark all as notified
+                                    sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
                                 }
-
-                                sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
 
                                 // Update last seen ID in sessionStorage and database
                                 if (unseenNCPRs.length > 0) {
@@ -661,14 +645,33 @@ $user_role = $_SESSION['role'];
                         }
 
                         if (Array.isArray(response.intervention_inputs) && response.intervention_inputs.length > 0) {
-                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by'];
+                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction',
+                                'document_alert_s', 'other_specify_s', 'released_by',
+                                'acknowledgment_signature', 'head_signature', 'prod_manager_signature'
+                            ];
 
+                            intervention_inp.forEach(function(input) {
+                                let found = response.intervention_inputs.find(obj => obj.input_name === input);
+
+                                if (found) {
+                                    let $el = $('#' + input);
+
+                                    if ($el.length && ($el.is('div') || $el.is('span'))) {
+                                        $el.text(found.inputted_data || "");
+                                    } else {
+                                        $(`[name="${input}"]`).val(found.inputted_data || "");
+                                    }
+                                }
+                            });
+
+                            // use this if it change into not input tag or view only .
+                            /* 
                             intervention_inp.forEach(function(input) {
                                 let found = response.intervention_inputs.find(obj => obj.input_name === input);
                                 if (found) {
                                     $('#' + input).text(found.inputted_data || "");
                                 }
-                            });
+                            });*/
                         }
 
                         //filled the approval names
@@ -706,8 +709,64 @@ $user_role = $_SESSION['role'];
                                 }
                             });
                         }
-                        // Disable all form elements to prevent modification
-                        //$('.lock, .locked').prop('disabled', true);
+
+                        //field for file query
+                        const fileList = $("#fileList");
+                        fileList.empty(); // Clear old stuff
+
+                        if (
+                            Array.isArray(response.files_attach) &&
+                            response.files_attach.length > 0
+                        ) {
+                            response.files_attach.forEach((file) => {
+                                const fileBox = $("<div>").addClass("mb-3 p-2 border rounded");
+
+                                const button = $("<button>")
+                                    .addClass("btn btn-primary btn-sm")
+                                    .text(file.name)
+                                    .on("click", function(e) {
+                                        e.preventDefault();
+
+                                        const fileUrl = file.path;
+
+                                        // Try to fetch headers and check size
+                                        fetch(fileUrl, {
+                                                method: "HEAD"
+                                            })
+                                            .then((res) => {
+                                                const size = parseInt(
+                                                    res.headers.get("Content-Length"),
+                                                    10
+                                                );
+
+                                                // If under 3MB, open in new tab
+                                                if (size && size < 3 * 1024 * 1024) {
+                                                    window.open(fileUrl, "_blank");
+                                                } else {
+                                                    // Otherwise, force download
+                                                    const a = document.createElement("a");
+                                                    a.href = fileUrl;
+                                                    a.download = file.name;
+                                                    document.body.appendChild(a);
+                                                    a.click();
+                                                    document.body.removeChild(a);
+                                                }
+                                            })
+                                            .catch((err) => {
+                                                alert("Failed to fetch file info. Opening normally...");
+                                                window.open(fileUrl, "_blank");
+                                            });
+                                    });
+
+                                fileBox.append(button);
+                                fileList.append(fileBox);
+                            });
+                        } else {
+                            fileList.append(
+                                $("<p>").addClass("text-muted").text("No file attachments found.")
+                            );
+                        }
+
                         $('#dispoModal').modal('show');
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

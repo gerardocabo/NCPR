@@ -284,14 +284,14 @@ if ($row = $result->fetch_assoc()) {
             <div class="modal-content">
                 <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                     <!-- First Image (Left Corner) -->
-                    <img src="asset/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                    <img src="assets/img/Picture1.png" alt="Logo" style="height: 50px; object-fit: contain;">
 
                     <!-- Second Image (Right Corner) -->
                     <div style="position: relative;">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="position: absolute; top: -10px; right: -10px;" class="m-5">
                         </button>
-                        <img src="asset/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
+                        <img src="assets/img/Picture2.png" alt="Logo" style="height: 50px; object-fit: contain;">
                     </div>
                 </div>
 
@@ -423,13 +423,14 @@ if ($row = $result->fetch_assoc()) {
                                     }
                                 });
 
-                                // ✅ Show notification for new unseen NCPRs
+                                // Show notification for unseen NCPRs
                                 if (unseenNCPRs.length > 0) {
                                     showNotification(unseenNCPRs, username);
+                                    notifiedNCPRs.push(...unseenNCPRs); // Mark all as notified
+                                    sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
                                 }
 
-                                sessionStorage.setItem("notifiedNCPRs_" + username, JSON.stringify(notifiedNCPRs));
-
+                                // Update last seen ID in sessionStorage and database
                                 if (unseenNCPRs.length > 0) {
                                     let latestId = Math.max(...json.ncprs.map(item => parseInt(item.id)));
                                     sessionStorage.setItem("lastSeenId_" + username, latestId);
@@ -642,7 +643,7 @@ if ($row = $result->fetch_assoc()) {
                         });
 
                         // Populate text fields
-                        $('#impact_analysis').text(response.notes || "");
+                        $('#notes').text(response.impact_analysis || "");
                         $('#contact_person').text(response.contact_person || "");
                         $('#other_specify').text(response.other_specify || "");
                         $('#yield_off').text(response.yield_off || "");
@@ -667,14 +668,33 @@ if ($row = $result->fetch_assoc()) {
                         }
 
                         if (Array.isArray(response.intervention_inputs) && response.intervention_inputs.length > 0) {
-                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction', 'document_alert_s', 'other_specify_s', 'released_by'];
+                            let intervention_inp = ['affected_process', 'other_resumption', 'process_instruction',
+                                'document_alert_s', 'other_specify_s', 'released_by',
+                                'acknowledgment_signature', 'head_signature', 'prod_manager_signature'
+                            ];
 
+                            intervention_inp.forEach(function(input) {
+                                let found = response.intervention_inputs.find(obj => obj.input_name === input);
+
+                                if (found) {
+                                    let $el = $('#' + input);
+
+                                    if ($el.length && ($el.is('div') || $el.is('span'))) {
+                                        $el.text(found.inputted_data || "");
+                                    } else {
+                                        $(`[name="${input}"]`).val(found.inputted_data || "");
+                                    }
+                                }
+                            });
+
+                            // use this if it change into not input tag or view only .
+                            /* 
                             intervention_inp.forEach(function(input) {
                                 let found = response.intervention_inputs.find(obj => obj.input_name === input);
                                 if (found) {
                                     $('#' + input).text(found.inputted_data || "");
                                 }
-                            });
+                            });*/
                         }
 
                         //filled the approvals
@@ -712,8 +732,64 @@ if ($row = $result->fetch_assoc()) {
                                 }
                             });
                         }
-                        // Disable all form elements to prevent modification
-                        //$('.lock, .locked').prop('disabled', true);
+
+                        //field for file query
+                        const fileList = $("#fileList");
+                        fileList.empty(); // Clear old stuff
+
+                        if (
+                            Array.isArray(response.files_attach) &&
+                            response.files_attach.length > 0
+                        ) {
+                            response.files_attach.forEach((file) => {
+                                const fileBox = $("<div>").addClass("mb-3 p-2 border rounded");
+
+                                const button = $("<button>")
+                                    .addClass("btn btn-primary btn-sm")
+                                    .text(file.name)
+                                    .on("click", function(e) {
+                                        e.preventDefault();
+
+                                        const fileUrl = file.path;
+
+                                        // Try to fetch headers and check size
+                                        fetch(fileUrl, {
+                                                method: "HEAD"
+                                            })
+                                            .then((res) => {
+                                                const size = parseInt(
+                                                    res.headers.get("Content-Length"),
+                                                    10
+                                                );
+
+                                                // If under 3MB, open in new tab
+                                                if (size && size < 3 * 1024 * 1024) {
+                                                    window.open(fileUrl, "_blank");
+                                                } else {
+                                                    // Otherwise, force download
+                                                    const a = document.createElement("a");
+                                                    a.href = fileUrl;
+                                                    a.download = file.name;
+                                                    document.body.appendChild(a);
+                                                    a.click();
+                                                    document.body.removeChild(a);
+                                                }
+                                            })
+                                            .catch((err) => {
+                                                alert("Failed to fetch file info. Opening normally...");
+                                                window.open(fileUrl, "_blank");
+                                            });
+                                    });
+
+                                fileBox.append(button);
+                                fileList.append(fileBox);
+                            });
+                        } else {
+                            fileList.append(
+                                $("<p>").addClass("text-muted").text("No file attachments found.")
+                            );
+                        }
+
                         $('#dispoModal').modal('show');
                     },
                     error: function(jqXHR, textStatus, errorThrown) {

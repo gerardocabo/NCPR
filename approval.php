@@ -161,7 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 executeQuery($conn, $query, [$status, $ncpr_num], "ss");
             }
         } else {
-
+            
             // Convert action to past tense for dispo_approval
             $status = isset($action_map[$action]) ? ucfirst($action_map[$action]) : ucfirst($action);
 

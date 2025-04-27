@@ -1,33 +1,43 @@
+<style>
+    .fortyle {
+        display: inline-block;
+        border-bottom: 1px solid #000;
+        padding-bottom: 2px;
+        min-width: 150px;
+        /* baseline length */
+    }
+</style>
+
 <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
 <div class="border mb-3 align-items-center p-2">
     <span class="d-block"><strong>This space is intended for QA verification, containment and investigation activities.</strong></span>
-    <span id="containment" style="margin-left: 12px;"></span>
+    <span id="containment" style="margin-left: 12px;" class="fortyle"></span>
 </div>
 
 <!-- Cause of Non-Conformance Table -->
 <table class="table table-bordered align-middle">
     <tr>
-        <td>
-            <strong>Cause of Non-conformance:</strong><br>
+        <td class="mt-3">
+            <strong>Cause of Non-conformance:</strong>
         </td>
-        <td>
-            <strong>Potential Field Failure:</strong><br>
+        <td class="mt-3">
+            <strong>Potential Field Failure:</strong>
         </td>
         <!-- Corrective Action Request -->
-        <td class="d-flex align-items-center gap-3 mt-3">
-            <strong class="me-2">Corrective Action Request:</strong>
+        <td class="d-flex align-items-center gap-2 mt-3">
+            <strong>Corrective Action Request:</strong>
             <div class="d-flex gap-3">
                 <div class="form-check">
                     <input class="locked form-check-input" type="radio" name="corrective_action" value="YES" id="corrective_yes">
-                    <label class="form-check-label" for="corrective_yes">YES</label>
+                    <label class="form-check-label">YES</label>
                 </div>
                 <div class="form-check">
                     <input class="locked form-check-input" type="radio" name="corrective_action" value="NO" id="corrective_no">
-                    <label class="form-check-label" for="corrective_no">NO</label>
+                    <label class="form-check-label">NO</label>
                 </div>
                 <div class="form-check">
-                    <input class="locked form-check-input" type="radio" name="corrective_action" value="NA" id="corrective_na">
-                    <label class="form-check-label" for="corrective_na">NA</label>
+                    <input class="locked form-check-input" type="radio" name="corrective_action" value="N/A" id="corrective_na">
+                    <label class="form-check-label">N/A</label>
                 </div>
             </div>
         </td>
@@ -40,15 +50,15 @@
                 <div class="me-4">
                     <input class="locked" type="checkbox" name="cause[]" value="Man"> Man<br>
                     <label>ID No:</label>
-                    <span id="id_no"></span><br>
+                    <span id="id_no" class="fortyle"></span><br>
                     <label>Name:</label>
-                    <span id="name"></span><br>
+                    <span id="name" class="fortyle"></span><br>
                     <input class="locked" type="checkbox" name="cause[]" value="Method"> Method<br>
                     <input class="locked" type="checkbox" name="cause[]" value="Machine"> Machine<br>
                 </div>
 
                 <!-- Right Side -->
-                <div>
+                <div style="margin-left: auto;">
                     <input class="locked" type="checkbox" name="cause[]" value="Material"> Material<br>
                     <input class="locked" type="checkbox" name="cause[]" value="NID Item"> NFLD Item<br>
                     <input class="locked" type="checkbox" name="cause[]" value="NID Purchased Item"> NFLD Purchased Item<br>
@@ -60,20 +70,20 @@
             </div>
         </td>
         <td>
-            <input class="locked" type="radio" name="potential_failure" value="YES" class="mb-5"> Yes<br>
-            <input class="locked" type="radio" name="potential_failure" value="NO"> No<br>
+            <input class="locked form-check-input" type="radio" name="potential_failure" value="YES" class="mb-5"> Yes<br>
+            <input class="locked form-check-input" type="radio" name="potential_failure" value="NO"> No<br>
         </td>
         <td>
-            <div class="d-flex align-items-center mb-2">
+            <div class="d-flex align-items-center mt-2">
                 <input class="locked" type="checkbox" name="car" value="CAR"> CAR, CAR No:
-                <span id="car_no"></span><br>
+                <span id="car_no" class="fortyle"></span><br>
                 <span class="me-2">8D Report:</span>
-                <input class="locked" type="radio" name="bd_report" value="YES" class="me-1"> YES
-                <input class="locked" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
+                <input class="locked form-check-input" type="radio" name="bd_report" value="YES" class="me-1"> YES
+                <input class="locked form-check-input" type="radio" name="bd_report" value="NO" class="ms-3 me-1"> NO
             </div>
-            <div class="d-flex align-items-center mt-5">
+            <div class="d-flex align-items-center mt-2">
                 <input class="locked" type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
-                <span id="scar_no"></span><br>
+                <span id="scar_no" class="fortyle"></span><br>
             </div>
         </td>
     </tr>
@@ -90,8 +100,8 @@
             <input class="locked" type="checkbox" name="dispo_from[]" value="NTPI"> NTPI
 
             <strong>MRB:</strong>
-            <input class="locked" type="radio" name="mrb" value="YES"> YES
-            <input class="locked" type="radio" name="mrb" value="NO"> NO
+            <input class="locked form-check-input" type="radio" name="mrb" value="YES"> YES
+            <input class="locked form-check-input" type="radio" name="mrb" value="NO"> NO
 
         </td>
         <td>
@@ -103,10 +113,10 @@
             <!-- Second Section with Spacing and Inline Layout -->
             <div class="d-flex align-items-center flex-wrap gap-3">
                 <strong>Need Customer Approval?</strong>
-                <input class="locked" type="radio" name="customer_approval" value="YES"> YES
-                <input class="locked" type="radio" name="customer_approval" value="NO"> NO
+                <input class="locked form-check-input" type="radio" name="customer_approval" value="YES"> YES
+                <input class="locked form-check-input" type="radio" name="customer_approval" value="NO"> NO
                 <span>Document Alert No:</span>
-                <span id="document_alert"></span>
+                <span id="document_alert" class="fortyle"></span>
             </div>
 
         </td>
@@ -121,8 +131,8 @@
                     <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP FMEA"> Review of NCP FMEA
                     <input class="locked" type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                 </div>
-                <label for="impact_analysis">Notes:</label>
-                <span id="impact_analysis"></span>
+                <label for="notes">Notes:</label><br>
+                <span id="notes" class="fortyle"></span>
             </td>
 
             <!-- Right Section (Spanning Rows) -->
@@ -130,12 +140,13 @@
                 <div class="h-100 d-flex flex-column justify-content-between">
                     <div class="mb-2">
                         <input class="locked" type="checkbox" name="affected_business" value="Affected business"> Affected business unit/ contact person <br>
-                        <span id="contact_person"></span>
+                        <span id="contact_person" class="fortyle"></span>
                     </div>
+                    <br>
                     <div>
                         <input class="locked" type="checkbox" name="other_instructions" value="Other instructions"> Other instructions,
                         <span>pls specify;</span><br>
-                        <span id="other_specify"></span>
+                        <span id="other_specify" class="fortyle"></span>
                     </div>
                 </div>
             </td>
@@ -155,17 +166,17 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center mt-2">
-                    Yield-off $<span id="yield_off"></span>
+                    Yield-off $<span id="yield_off" class="fortyle"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Re-grade"> Re-grade, DA No:
-                    <span id="da_no"></span>
+                    <span id="da_no" class="fortyle"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Rework"> Rework, DA No:
-                    <span id="rework_da_no"></span>
+                    <span id="rework_da_no" class="fortyle"></span>
                     WIS No:
-                    <span id="wis_no"></span>
+                    <span id="wis_no" class="fortyle"></span>
                 </div>
                 <div class="d-flex gap-3 align-items-center flex-wrap mt-2 gap-2">
                     <input class="locked  ms-4" type="checkbox" name="product_dispo[]" value="Re-press"> Re-press
@@ -176,16 +187,16 @@
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
-                    <span id="document_alert"></span>
+                    <span id="document_alert" class="fortyle"></span>
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
-                    <span id="scrap_amount"></span>
+                    <span id="scrap_amount" class="fortyle"></span>
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date: </span>
-                    <span id="shipment_date"></span>
+                    <span id="shipment_date" class="fortyle"></span>
                 </div>
             </td>
         </tr>
@@ -212,8 +223,8 @@
                 <input class="locked" type="checkbox" name="process_dispo[]" value="PD2"> Stop Production
                 <br><br>
                 <span>Affected process/es:</span>
-                <span id="affected_process"></span><br><br>
-                <input class="locked" type="checkbox" name="further_eval" value="For further Eng'g Evaluation">
+                <span id="affected_process" class="fortyle"></span><br><br>
+                <input class="locked" type="checkbox" name="further_eval" value="F1">
                 <span>For further Eng’g Evaluation</span>
             </td>
 
@@ -228,21 +239,21 @@
                 <input class="locked" type="checkbox" name="resumption_reason[]" value="R6">
                 <span>Others, pls specify</span>
                 <br>
-                <span id="other_resumption"></span><br><br>
+                <span id="other_resumption" class="fortyle"></span><br><br>
 
                 <strong>Process Instruction in general:</strong>
-                <span>(for <span>DJs</span> other than the affected)</span>
-                <span id="process_instruction"></span>
+                <span>(for <span>DJs</span> other than the affected)</span><br>
+                <span id="process_instruction" class="fortyle"></span>
             </td>
 
             <td style="width: 33%; vertical-align: top;">
                 <strong>Instructions in detail, see reference doc:</strong><br>
                 <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I1"> Document Alert #:
-                <span id="document_alert_s" ></span><br>
+                <span id="document_alert_s" class="fortyle"></span><br>
 
                 <input class="locked" type="checkbox" name="instructions_detail[]" value="D_I2">
                 <span>Other (pls specify)</span>
-                <span id="other_specify" ></span>
+                <span id="other_specify_s" class="fortyle"></span>
                 <br><br>
 
                 <strong>Documents needing revision:</strong><br>
@@ -264,7 +275,7 @@
                         <label class="form-check-label" for="doc_proc" style="font-size: 12px;">PROC</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DR5" id="doc_cp">
+                        <input class="locked form-check-input" type="checkbox" name="documents_revision[]" value="DR5" id="doc_cp">
                         <label class="form-check-label" for="doc_cp" style="font-size: 12px;">CP</label>
                     </div>
                     <div class="form-check">
@@ -276,9 +287,9 @@
                 <br><br>
 
                 <strong>Process Released By:</strong><br>
-                <span id="released_by" ></span>
-                <br>
+
                 <div class="text-center mt-3">
+                    <strong><span id="released_by" class="fortyle"></span></strong><br>
                     <small>(Signature Above Printed Name/ Date)</small>
                 </div>
             </td>
@@ -317,8 +328,7 @@
                     </div>
                 </td>
 
-            <?php endif; ?>
-            <?php if ($user_role === 'SHELDAHL REPRESENTATIVE'): ?>
+            <?php else: ?>
                 <td>
                     <strong>QA Manager or his/her appointee:</strong><br>
                     (Signature & Date)
@@ -361,8 +371,8 @@
             <!-- PE or EE Head Section -->
             <td>
                 <div class="form-floating">
-                    <input type="text" name="pe_ee_head_signature" class="form-control" id="pe_ee_head_signature" placeholder="PE or EE Head">
-                    <label for="pe_ee_head_signature"><strong>PE or EE Head or his/her appointee:</strong></label>
+                    <input type="text" name="head_signature" class="form-control" id="pe_ee_head_signature" placeholder="PE or EE Head">
+                    <label for="head_signature"><strong>PE or EE Head or his/her appointee:</strong></label>
                 </div>
             </td>
 
@@ -376,6 +386,6 @@
         </tr>
     </table>
     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
-    <div id="file-list" class="d-block flex-wrap">
+    <div id="fileList" class="d-block flex-wrap">
     </div>
 </table>

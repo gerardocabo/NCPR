@@ -66,6 +66,15 @@ $(document).ready(function () {
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
+        Swal.fire({
+          title: "Processing...",
+          html: "Please wait while data is being inserted.",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
         if (role === "QA Engineer" && action !== "cancel") {
           // Then, upload file attachments and include the ncpr_num
           uploadFileAttachments();
@@ -87,7 +96,7 @@ $(document).ready(function () {
 
   function uploadFileAttachments() {
     let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
-    
+
     // Use the global allFiles array to collect all selected files
     var files = allFiles;
 
