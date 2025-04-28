@@ -29,18 +29,25 @@ $token = generateCSRFToken();
 <style>
     body {
         font-family: 'Roboto', sans-serif;
-        background: linear-gradient(to right, #1e3c72, #2a5298);
+        background: #f1f3f5;
     }
 </style>
 
 <body class="d-flex flex-column min-vh-100">
-    <header class="py-3 shadow-sm" style="background-color: rgba(0, 0, 0, 0.3);">
-        <div class="container d-flex justify-content-center align-items-center">
-            <a class="navbar-brand" href="#">
-                <span class="fs-4 fw-bold ms-2" style="color:rgb(252, 253, 255);">NON-CONFORMING PRODUCT RECORD</span>
-            </a>
+    <header class="py-3 shadow-md" style="background-color:rgb(23, 137, 231);">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <img src="assets/img/Picture1.png" alt="Left Logo" style="height: 50px;">
+                <a class="navbar-brand mx-auto text-center" href="#">
+                    <span class="fs-4 fw-bold" style="color: black">
+                        NON-CONFORMING PRODUCT RECORD
+                    </span>
+                </a>
+                <img src="assets/img/Picture2.png" alt="Right Logo" style="height: 50px;">
+            </div>
         </div>
     </header>
+
     <div class="container d-flex flex-grow-1 justify-content-center align-items-center">
         <div class="login-form bg-light p-4 rounded shadow" style="width: 500px;">
             <h2 class="text-center">Login</h2>

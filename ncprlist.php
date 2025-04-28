@@ -520,9 +520,10 @@ require "config.php";
                         </div>
                     </div>
                     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
-                    <div id="file-list" class="d-block flex-wrap">
+                    <div id="file-list" class="d-flex flex-wrap gap-3">
                         <!-- Files will be dynamically inserted here -->
                     </div>
+
                 </div>
             </div>
         </div>
@@ -1183,9 +1184,10 @@ require "config.php";
         $(document).ready(function() {
             $('#ncpr-table-body').on('click', '.view-btn', function() {
                 var ncprNum = $(this).data('id');
+
                 // AJAX call to fetch full details
                 $.ajax({
-                    url: 'fetch_ncpr_details.php', // Your PHP file to fetch full data
+                    url: 'fetch_ncpr_details.php',
                     method: 'POST',
                     data: {
                         ncpr_num: ncprNum
@@ -1200,15 +1202,16 @@ require "config.php";
                         $('#view-part-name').text(response.part_name);
                         $('#view-process').text(response.process);
                         $('#view-issue').text(response.issue);
-                        // Check if urgent is "on"
+
                         if (response.urgent === "on") {
-                            $('#view-urgent-checkbox').prop('checked', true); // Check the checkbox
+                            $('#view-urgent-checkbox').prop('checked', true);
                         } else {
-                            $('#view-urgent-checkbox').prop('checked', false); // Uncheck the checkbox
+                            $('#view-urgent-checkbox').prop('checked', false);
                         }
 
                         $('#view-awpi').text(response.awpi);
                         $('#view-dc').text(response.dc);
+
                         if (response.deviation === "Yes") {
                             $('#deviation-yes').prop('checked', true);
                             $('#deviation-no').prop('checked', false);
@@ -1232,6 +1235,7 @@ require "config.php";
                         $('#view-mcs').prop('checked', response.mcs === "yes");
                         $('#view-mcs_details').text(response.mcs_details);
                         $('#view-customer_notif').prop('checked', response.customer_notif === "yes");
+
                         if (response.recall === "yes") {
                             $('#view-recall-yes').prop('checked', true);
                             $('#view-recall-no').prop('checked', false);
@@ -1242,7 +1246,9 @@ require "config.php";
                             $('#view-recall-yes').prop('checked', false);
                             $('#view-recall-no').prop('checked', false);
                         }
+
                         $('#view-fgparts').prop('checked', response.fgparts === "yes");
+
                         if (response.shipment === "yes") {
                             $('#view-shipment-yes').prop('checked', true);
                             $('#view-shipment-no').prop('checked', false);
@@ -1253,10 +1259,12 @@ require "config.php";
                             $('#view-shipment-yes').prop('checked', false);
                             $('#view-shipment-no').prop('checked', false);
                         }
+
                         $('#view-location').text(response.location);
                         $('#view-ship_proc').text(response.ship_proc);
                         $('#view-ship_sched').text(response.ship_sched);
                         $('#view-wip').prop('checked', response.wip === "yes");
+
                         if (response.stop_proc === "yes") {
                             $('#view-stop_proc-yes').prop('checked', true);
                             $('#view-stop_proc-no').prop('checked', false);
@@ -1285,6 +1293,7 @@ require "config.php";
                         $('#view-four').prop('checked', response.four === "yes");
                         $('#view-five').prop('checked', response.five === "yes");
                         $('#view-six').prop('checked', response.six === "yes");
+
                         if (response.seven === "yes") {
                             $('#view-seven-yes').prop('checked', true);
                             $('#view-seven-no').prop('checked', false);
@@ -1298,9 +1307,9 @@ require "config.php";
 
                         $('#view-seven-one').text(response.seven_one);
                         $('#view-seven-two').text(response.seven_two);
-                        $('#view-eight').prop('checked', response.eight === "yes")
+                        $('#view-eight').prop('checked', response.eight === "yes");
                         $('#view-eight-one').text(response.eight_one);
-                        $('#view-nine').prop('checked', response.nine === "yes")
+                        $('#view-nine').prop('checked', response.nine === "yes");
                         $('#view-nine-one').text(response.nine_one);
 
                         if (
@@ -1310,10 +1319,9 @@ require "config.php";
                             !response.invoice_num &&
                             !response.purchase_order
                         ) {
-                            $('.supplier-details').hide(); // This hides the entire section
-
+                            $('.supplier-details').hide();
                         } else {
-                            $('.supplier-details').show(); // Show the supplier section
+                            $('.supplier-details').show();
                         }
 
                         // Handling multiple material records
@@ -1336,28 +1344,39 @@ require "config.php";
                             materialTable.append(`<tr><td colspan="7">No material records found</td></tr>`);
                         }
 
-                        // Handling file attachments
+                        // 🔁 Handling file attachments with preview and download button
                         var filesContainer = $('#file-list');
                         filesContainer.empty();
 
                         if (response.files.length > 0) {
                             response.files.forEach(function(file) {
-                                let fileLink;
                                 let fileType = file.file_type.toLowerCase();
+                                let fileExtension = file.file_name.split('.').pop().toLowerCase();
 
-                                if (fileType === "jpg" || fileType === "png" || fileType === "jpeg" || fileType === "gif") {
-                                    // Image preview
-                                    fileLink = `<img src="${file.file_path}" class="img-thumbnail" style="max-width: 150px; margin: 5px; margin-bottom: 10px;" />`;
-                                } else {
-                                    // Download link
-                                    fileLink = `<a href="${file.file_path}" download="${file.file_name}" class="btn btn-primary btn-sm" 
-                    style="margin-bottom: 10px;">
-                        <i class="fa fa-download"></i> Download ${file.file_name}
-                    </a>`;
-                                }
+                                let previewLink = `
+                            <a href="${file.file_path}" target="_blank" class="text-decoration-none mb-2 d-block">
+                                <div class="file-thumb text-center">
+                                    ${["jpg", "jpeg", "png", "gif", "webp", "bmp"].includes(fileExtension)
+                                        ? `<img src="${file.file_path}" class="img-thumbnail" style="max-width: 200px;" />`
+                                        : fileExtension === "pdf"
+                                        ? `<iframe src="${file.file_path}" style="width: 200px; height: 150px;" class="border mb-2"></iframe>`
+                                        : `<i class="fa fa-file-alt fa-3x text-muted"></i><br><small>${file.file_name}</small>`}
+                                </div>
+                            </a>
+                        `;
 
+                                let downloadBtn = `
+                            <a href="${file.file_path}" download="${file.file_name}" class="btn btn-outline-primary btn-sm">
+                                <i class="fa fa-download"></i> Download
+                            </a>
+                        `;
 
-                                filesContainer.append(`<div>${fileLink}</div>`);
+                                filesContainer.append(`
+                            <div class="file-preview d-flex flex-column align-items-center mb-4">
+                                ${previewLink}
+                                ${downloadBtn}
+                            </div>
+                        `);
                             });
                         } else {
                             filesContainer.append(`<p>No files uploaded</p>`);
@@ -1369,6 +1388,7 @@ require "config.php";
                 });
             });
         });
+
         // Function to set checkbox based on response value
         function setCheckboxValue(selector, value) {
             if (value === "yes") {

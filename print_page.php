@@ -13,6 +13,46 @@ if (isset($_GET['ncpr_num'])) {
     if ($row = $result->fetch_assoc()) {
         $ncpr_id = $row['id']; // Primary key for relationships
 
+        // Fetch intervention inputs from disposition_tbl_intervention
+        $stmt_intervention = $conn->prepare("
+    SELECT input_name, inputted_data 
+    FROM disposition_tbl_intervention 
+    WHERE ncpr_num = ?
+");
+        $stmt_intervention->bind_param("s", $ncpr_num);
+        $stmt_intervention->execute();
+        $result_intervention = $stmt_intervention->get_result();
+
+        $intervention_inputs = [];
+        while ($intervention_row = $result_intervention->fetch_assoc()) {
+            $intervention_inputs[$intervention_row['input_name']] = $intervention_row['inputted_data'];
+        }
+        $stmt_intervention->close();
+
+
+        // ✅ Fetch approvers and their full names
+        $approvers = [];
+        $stmt_approvers = $conn->prepare("
+    SELECT a.approver_id, a.approver_role, k.fname, k.lname
+    FROM dispo_approval a
+    LEFT JOIN users u ON a.approver_id = u.id
+    LEFT JOIN key_person k ON u.person_id = k.id
+    WHERE a.ncpr_num = ?
+");
+        $stmt_approvers->bind_param("s", $ncpr_num);
+        $stmt_approvers->execute();
+        $result_approvers = $stmt_approvers->get_result();
+
+
+
+        while ($appr = $result_approvers->fetch_assoc()) {
+            if (!empty($appr['approver_role'])) {
+                $fullName = trim($appr['fname'] . ' ' . $appr['lname']);
+                $approvers[$appr['approver_role']] = $fullName ?: 'Pending Approval';
+            }
+        }
+        $stmt_approvers->close();
+
         // Fetch corresponding fomo_table data (single row)
         $stmt_fomo = $conn->prepare("SELECT * FROM fomo WHERE ncpr_id = ?");
         $stmt_fomo->bind_param("i", $ncpr_id);
@@ -31,10 +71,75 @@ if (isset($_GET['ncpr_num'])) {
             $materials[] = $material;
         }
 
-        // Close statements
+        // Fetch disposition_tbl data
+        $stmt_dispo = $conn->prepare("SELECT * FROM disposition_tbl WHERE ncpr_num = ?");
+        $stmt_dispo->bind_param("s", $ncpr_num);
+        $stmt_dispo->execute();
+        $result_dispo = $stmt_dispo->get_result();
+
+        $dispositions = [];
+        while ($dispo = $result_dispo->fetch_assoc()) {
+            $dispositions[] = $dispo;
+        }
+
+        // Fetch dispo_radio_values
+        $stmt_radio = $conn->prepare("SELECT * FROM dispo_radio_values WHERE ncpr_num = ?");
+        $stmt_radio->bind_param("s", $ncpr_num);
+        $stmt_radio->execute();
+        $result_radio = $stmt_radio->get_result();
+
+        $radio_values = [];
+        while ($radio = $result_radio->fetch_assoc()) {
+            $radio_values[$radio['field_name']] = $radio['field_value'];
+        }
+
+        // Fetch checkboxes from dispo_table and predefined_checkboxes
+        $stmt_checkbox = $conn->prepare("
+            SELECT p.checkbox_name 
+            FROM dispo_table dt
+            LEFT JOIN predefined_checkboxes p ON dt.checkbox_id = p.id
+            WHERE dt.ncpr_num = ?
+        ");
+        $stmt_checkbox->bind_param("s", $ncpr_num);
+        $stmt_checkbox->execute();
+        $result_checkbox = $stmt_checkbox->get_result();
+
+        $checkboxes = [];
+        while ($cb = $result_checkbox->fetch_assoc()) {
+            $checkboxes[] = $cb['checkbox_name'];
+        }
+
+        $stmt_intervention = $conn->prepare("
+        SELECT p2.name 
+        FROM dispo_table_intervention dti
+        LEFT JOIN predefined_checkboxes_2 p2 ON dti.checkbox_id = p2.id
+        WHERE dti.ncpr_num = ?
+    ");
+
+        if (!$stmt_intervention) {
+            die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+        }
+        $stmt_intervention->bind_param("s", $ncpr_num);
+        $stmt_intervention->execute();
+        $result_intervention = $stmt_intervention->get_result();
+
+        $intervention_checkboxes = [];
+        while ($icb = $result_intervention->fetch_assoc()) {
+            $intervention_checkboxes[] = $icb['name'];
+        }
+
+
+        // Close all other statements
         $stmt->close();
         $stmt_fomo->close();
         $stmt_material->close();
+        $stmt_dispo->close();
+        $stmt_radio->close();
+        $stmt_checkbox->close();
+
+        // ✅ Optional: echo for debugging
+        // echo '<pre>'; print_r($approvers); echo '</pre>';
+
         $conn->close();
     } else {
         echo "<span class='text-danger'>No record found</span>";
@@ -42,6 +147,8 @@ if (isset($_GET['ncpr_num'])) {
     }
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -184,10 +291,10 @@ if (isset($_GET['ncpr_num'])) {
 <body>
     <div class="print-container">
         <div style="display: flex; justify-content: space-between; align-items: center; position: relative; margin-bottom: 2px;">
-            <img src="asset/Picture1.png" alt="Logo" style="height: 40px; object-fit: contain;">
+            <img src="assets/img/Picture1.png" alt="Logo" style="height: 40px; object-fit: contain;">
 
             <div style="position: relative;">
-                <img src="asset/Picture2.png" alt="Logo" style="height: 40px; object-fit: contain;">
+                <img src="assets/img/Picture2.png" alt="Logo" style="height: 40px; object-fit: contain;">
             </div>
         </div>
         <div style="text-align: center; border: 1px solid black; margin-bottom: 2px;">
@@ -539,8 +646,12 @@ if (isset($_GET['ncpr_num'])) {
     </div>
     <div class="print-container-for-page-2">
 
-        <span>This space is intended for QA verification, containment and investigation activities</span>
-        <span></span>
+        <div style="position: relative;">
+            <textarea id="containment" style="width: 100%; height: 100px; padding-top: 20px; padding-left: 5px; font-size: 14px;" placeholder=" "><?php echo isset($dispositions[0]['containment']) ? $dispositions[0]['containment'] : ''; ?></textarea>
+            <label for="containment" style="position: absolute; top: 10px; left: 10px; font-size: 14px; color: #6c757d; pointer-events: none;">
+                This space is intended for QA verification, containment and investigation activities
+            </label>
+        </div>
         <table>
             <tr>
                 <!-- Cause of Non-Conformance -->
@@ -562,8 +673,12 @@ if (isset($_GET['ncpr_num'])) {
                 <!-- Cause of Non-Conformance: Left Column -->
                 <td class="text-start" style="font-size: 10px">
                     <input type="checkbox" name="cause[]" value="Man"> Man<br>
-                    <span>ID No: <input type="text" class="border-0 border-bottom" name="id_no"></span><br>
-                    <span>Name: <input type="text" class="border-0 border-bottom" name="name"></span><br>
+                    <span>ID No:</span><span class="text-center" style="text-decoration: underline;">
+                        <?php echo isset($dispositions[0]['id_no']) ? $dispositions[0]['id_no'] : 'N/A'; ?>
+                    </span><br>
+                    <span>Name:</span><span class="text-center" style="text-decoration: underline;">
+                        <?php echo isset($dispositions[0]['name']) ? $dispositions[0]['name'] : 'N/A'; ?>
+                    </span><br>
                     <input type="checkbox" name="cause[]" value="Method"> Method<br>
                     <input type="checkbox" name="cause[]" value="Machine"> Machine
                 </td>
@@ -580,20 +695,24 @@ if (isset($_GET['ncpr_num'])) {
                 </td>
                 <!-- Potential Field Failure -->
                 <td class="text-center" style="font-size: 10px">
-                    <input type="radio" name="potential_failure" value="Yes"> Yes<br>
-                    <input type="radio" name="potential_failure" value="No"> No
+                    <input type="radio" name="potential_failure" value="YES"> Yes <br>
+                    <input type="radio" name="potential_failure" value="NO"> No
                 </td>
                 <!-- Corrective Action: CAR & SCAR -->
                 <td class="text-start" style="font-size: 10px">
                     <input type="checkbox" name="car" value="CAR">
                     <span style="text-decoration: underline; color: blue; font-size: 10px">CAR</span>, CAR No:
-                    <input type="text" class="border-0 border-bottom w-25" name="car_no">
+                    <span class="text-center" style="text-decoration: underline;">
+                        <?php echo isset($dispositions[0]['car_no']) ? $dispositions[0]['car_no'] : 'N/A'; ?>
+                    </span>
                     &nbsp; 8D Report:
                     <input type="radio" name="bd_report" value="YES"> YES
                     <input type="radio" name="bd_report" value="NO"> NO
                     <br>
                     <input type="checkbox" name="scar" value="SCAR"> SCAR, SCAR No:
-                    <input type="text" class="border-0 border-bottom w-25" name="scar_no">
+                    <span class="text-center" style="text-decoration: underline;">
+                        <?php echo isset($dispositions[0]['scar_no']) ? $dispositions[0]['scar_no'] : 'N/A'; ?>
+                    </span>
                 </td>
             </tr>
             <tr>
@@ -614,7 +733,9 @@ if (isset($_GET['ncpr_num'])) {
                     <input type="radio" name="customer_approval" value="YES"> YES
                     <input type="radio" name="customer_approval" value="NO"> NO
                     <span>Document Alert No:</span>
-                    <input type="text" name="document_alert" class="border-0 border-bottom w-25">
+                    <span class="text-center" style="text-decoration: underline;">
+                        <?php echo isset($dispositions[0]['document_alert']) ? $dispositions[0]['document_alert'] : 'N/A'; ?>
+                    </span>
                 </td>
             </tr>
             <tr style="font-size: 10px;">
@@ -626,7 +747,9 @@ if (isset($_GET['ncpr_num'])) {
                         <input type="checkbox" name="impact_analysis[]" value="Review of NCP Control Plan"> Review of NCP Control Plan
                     </div>
                     <div class="form-floating w-100 mt-2">
-                        <span></span>
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['notes']) ? $dispositions[0]['notes'] : 'N/A'; ?>
+                        </span>
                         <label for="impact_analysis">Notes:</label>
                     </div>
                 </td>
@@ -636,12 +759,16 @@ if (isset($_GET['ncpr_num'])) {
                     <div class="h-100 d-flex flex-column justify-content-between">
                         <div class="mb-2">
                             <input type="checkbox" name="affected_business" value="Affected business"> Affected business unit/ contact person <br>
-                            <input type="text" name="contact_person" class="border-0 border-bottom w-100">
+                            <span class="text-center" style="text-decoration: underline;">
+                                <?php echo isset($dispositions[0]['contact_person']) ? $dispositions[0]['contact_person'] : 'N/A'; ?>
+                            </span>
                         </div>
                         <div>
                             <input type="checkbox" name="other_instructions" value="Other instructions"> Other instructions,
                             <span>pls specify;</span><br>
-                            <input type="text" name="other_specify" class="border-0 border-bottom w-100">
+                            <span class="text-center" style="text-decoration: underline;">
+                                <?php echo isset($dispositions[0]['other_specify']) ? $dispositions[0]['other_specify'] : 'N/A'; ?>
+                            </span>
                         </div>
                     </div>
                 </td>
@@ -657,17 +784,25 @@ if (isset($_GET['ncpr_num'])) {
                         <input type="checkbox" name="product_dispo[]" value="Run under normal process"> Run under normal process
                     </div>
                     <div class="d-flex align-items-center mt-2">
-                        Yield-off $ <input type="text" name="yield_off" class="border-0 border-bottom w-25 ms-2">
+                        Yield-off $ <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['yield_off']) ? $dispositions[0]['yield_off'] : 'N/A'; ?>
+                        </span>
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input type="checkbox" name="product_dispo[]" value="Re-grade"> Re-grade, DA No:
-                        <input type="text" name="da_no" class="border-0 border-bottom w-25 ms-2">
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['da_no']) ? $dispositions[0]['da_no'] : 'N/A'; ?>
+                        </span>
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input type="checkbox" name="product_dispo[]" value="Rework"> Rework, DA No:
-                        <input type="text" name="rework_da_no" class="border-0 border-bottom w-25 ms-2">
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['rework_da_no']) ? $dispositions[0]['rework_da_no'] : 'N/A'; ?>
+                        </span>
                         WIS No:
-                        <input type="text" name="wis_no" class="border-0 border-bottom w-25 ms-2">
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['wis_no']) ? $dispositions[0]['wis_no'] : 'N/A'; ?>
+                        </span>
                     </div>
                     <div class="d-flex gap-3 align-items-center flex-wrap mt-2 gap-2">
                         <input type="checkbox" name="product_dispo[]" value="Re-press"> Re-press
@@ -678,16 +813,22 @@ if (isset($_GET['ncpr_num'])) {
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
-                        <input type="text" name="document_alert" class="border-0 border-bottom w-25 ms-2">
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['repair_DA']) ? $dispositions[0]['repair_DA'] : 'N/A'; ?>
+                        </span>
                         <input type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
-                        <input type="text" name="scrap_amount" class="border-0 border-bottom w-25 ms-2">
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['scrap_amount']) ? $dispositions[0]['scrap_amount'] : 'N/A'; ?>
+                        </span>
                     </div>
                     <div class="d-flex align-items-center mt-2">
                         <input type="checkbox" name="product_dispo[]" value="RTV"> RTV <span style="color: blue; text-decoration: underline; margin-left: 20px;">Shipment Date:</span>
-                        <input type="text" name="shipment_date" class="border-0 border-bottom w-25 ms-2">
+                        <span class="text-center" style="text-decoration: underline;">
+                            <?php echo isset($dispositions[0]['shipment_date']) ? $dispositions[0]['shipment_date'] : 'N/A'; ?>
+                        </span>
                     </div>
                 </td>
             </tr>
@@ -711,7 +852,7 @@ if (isset($_GET['ncpr_num'])) {
                     <input type="checkbox" name="process_dispo[]" value="Stop Production"> Stop Production
 
                     <span>Affected process/es:</span>
-                    <input type="text" name="affected_process" class="border-0 border-bottom w-100">
+                    <span><?= htmlspecialchars($intervention_inputs['affected_process'] ?? '') ?></span>
                     <input type="checkbox" name="further_eval" value="For further Eng'g Evaluation">
                     <span>For further Eng’g Evaluation</span>
                 </td>
@@ -726,52 +867,49 @@ if (isset($_GET['ncpr_num'])) {
                     <input type="checkbox" name="resumption_reason[]" value="Others">
                     <span>Others, pls specify</span>
 
-                    <input type="text" name="other_resumption" class="border-0 border-bottom w-100"><br><br>
+                    <span><?= htmlspecialchars($intervention_inputs['other_resumption'] ?? '') ?></span><br><br>
 
                     <strong>Process Instruction in general:</strong>
                     <span>(for <span>DJs</span> other than the affected)</span>
-                    <span class="form-control mt-2" name="process_instruction"></span>
+                    <span><?= htmlspecialchars($intervention_inputs['process_instruction'] ?? '') ?></span>
                 </td>
                 <td style="font-size: 10px">
                     <strong>Instructions in detail, see reference doc:</strong>
                     <input type="checkbox" name="instructions_detail[]" value="Document Alert #"> Document Alert #:
-                    <input type="text" name="document_alert" class="border-0 border-bottom w-75">
+                    <span><?= htmlspecialchars($intervention_inputs['document_alert_s'] ?? '') ?></span>
 
                     <input type="checkbox" name="instructions_detail[]" value="Other">
                     <span>Other (pls specify)</span>
-                    <input type="text" name="other_specify" class="border-0 border-bottom w-75">
+                    <span><?= htmlspecialchars($intervention_inputs['other_specify_s'] ?? '') ?></span>
 
 
                     <strong>Documents needing revision:</strong><br>
                     <div class="d-flex flex-wrap gap-0">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="N/A" id="doc_na">
-                            <label class="form-check-label" for="doc_na" style="font-size: 12px;">N/A</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="WIS" id="doc_wis">
-                            <label class="form-check-label" for="doc_wis" style="font-size: 12px;">WIS</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DJ" id="doc_dj">
-                            <label class="form-check-label" for="doc_dj" style="font-size: 12px;">DJ</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="PROC" id="doc_proc">
-                            <label class="form-check-label" for="doc_proc" style="font-size: 12px;">PROC</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="CP" id="doc_cp">
-                            <label class="form-check-label" for="doc_cp" style="font-size: 12px;">CP</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="documents_revision[]" value="PFMEA" id="doc_pfmea">
-                            <label class="form-check-label" for="doc_pfmea" style="font-size: 12px;">PFMEA</label>
-                        </div>
+
+                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="N/A" id="doc_na">
+                        <label class="form-check-label" for="doc_na" style="font-size: 12px;">N/A</label>
+
+
+                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="WIS" id="doc_wis">
+                        <label class="form-check-label" for="doc_wis" style="font-size: 12px;">WIS</label>
+
+
+                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="DJ" id="doc_dj">
+                        <label class="form-check-label" for="doc_dj" style="font-size: 12px;">DJ</label>
+
+                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="PROC" id="doc_proc">
+                        <label class="form-check-label" for="doc_proc" style="font-size: 12px;">PROC</label>
+
+                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="CP" id="doc_cp">
+                        <label class="form-check-label" for="doc_cp" style="font-size: 12px;">CP</label>
+
+                        <input class="form-check-input" type="checkbox" name="documents_revision[]" value="PFMEA" id="doc_pfmea">
+                        <label class="form-check-label" for="doc_pfmea" style="font-size: 12px;">PFMEA</label>
+
                     </div>
 
                     <strong>Process Released By:</strong>
-                    <input type="text" name="released_by" class="border-0 border-bottom w-100">
+                    <span><?= htmlspecialchars($intervention_inputs['released_by'] ?? '') ?></span>
 
 
                     <span>(Signature Above Printed Name/ Date)</span>
@@ -785,14 +923,30 @@ if (isset($_GET['ncpr_num'])) {
                 <td style="font-size: 10px;">
                     <strong>QA Engineer / NT Representative:</strong><br>
                     (Signature & Date)
+                    <br>
+                    <?php echo isset($approvers['QA ENGINEER']) ? $approvers['QA ENGINEER'] : 'Pending Approval'; ?>
                 </td>
                 <td colspan="2" style="font-size: 10px;">
                     <strong>QA Manager or his/her appointee:</strong><br>
                     (Signature & Date)
+                    <br>
+                    <?php
+                    // Display the name for either QA MANAGER or QA SUPERVISOR
+                    if (isset($approvers['QA MANAGER'])) {
+                        echo $approvers['QA MANAGER'];
+                    } elseif (isset($approvers['QA SUPERVISOR'])) {
+                        echo $approvers['QA SUPERVISOR'];
+                    } else {
+                        echo 'Pending Approval';
+                    }
+                    ?>
                 </td>
+
                 <td style="font-size: 10px;">
                     <strong>Sheilah / NT Representative:</strong><br>
                     (Signature & Date)
+                    <br>
+                    <?php echo isset($approvers['SHELDAHL REPRESENTATIVE']) ? $approvers['SHELDAHL REPRESENTATIVE'] : 'Pending Approval'; ?>
                 </td>
             </tr>
             <tr>
@@ -815,6 +969,52 @@ if (isset($_GET['ncpr_num'])) {
             <span>Page <span class="page-number"></span> of <span class="total-pages"></span></span>
         </div>
     </div>
+    <?php
+    $radio_json = json_encode($radio_values);
+    $checkbox_json = json_encode($checkboxes); // From original dispo_table
+    $intervention_checkbox_json = json_encode($intervention_checkboxes); // New one
+    ?>
+    <?php
+    echo '<script>console.log("potential_failure value from PHP: ' . ($radio_values['potential_failure'] ?? 'NOT SET') . '");</script>';
+    ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const radioValues = <?php echo $radio_json; ?>;
+            const checkboxValues = <?php echo $checkbox_json; ?>;
+            const interventionCheckboxValues = <?php echo $intervention_checkbox_json; ?>;
+
+            console.log("Full radioValues object:", radioValues); // 🔍 Debug all radio values
+            console.log("Checkbox Values:", checkboxValues); // 🔍 For dispo_table
+            console.log("Intervention Checkbox Values:", interventionCheckboxValues); // 🔍 For dispo_table_intervention
+
+            // Set radio buttons
+            for (const name in radioValues) {
+                const radios = document.getElementsByName(name);
+                radios.forEach(radio => {
+                    if (radio.value === radioValues[name]) {
+                        radio.checked = true;
+                    }
+                });
+            }
+
+            // Set original checkboxes
+            checkboxValues.forEach(value => {
+                const checkboxes = document.querySelectorAll(`input[type="checkbox"][value="${value}"]`);
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+            });
+
+            // Set intervention checkboxes
+            interventionCheckboxValues.forEach(value => {
+                const interventionBoxes = document.querySelectorAll(`input[type="checkbox"][value="${value}"]`);
+                interventionBoxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+            });
+        });
+    </script>
+
 
 
 
