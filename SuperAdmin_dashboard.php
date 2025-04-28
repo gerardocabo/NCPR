@@ -28,7 +28,7 @@ require "config.php";
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active">
-                    <a href="admin_dashboard.php" class="sidebar-link">
+                    <a href="SuperAdmin_dashboard.php" class="sidebar-link">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
