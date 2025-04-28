@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 28, 2025 at 04:17 AM
+-- Generation Time: Apr 28, 2025 at 08:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -121,6 +121,25 @@ CREATE TABLE `dispo_table_intervention` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `email_settings`
+--
+
+CREATE TABLE `email_settings` (
+  `id` int(11) NOT NULL,
+  `smtpUsername` varchar(255) NOT NULL,
+  `smtpPass` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `email_settings`
+--
+
+INSERT INTO `email_settings` (`id`, `smtpUsername`, `smtpPass`) VALUES
+(1, 'jr.gerardo14@gmail.com', 'tzoi hybo aqtq meue');
 
 -- --------------------------------------------------------
 
@@ -1409,6 +1428,12 @@ ALTER TABLE `dispo_table_intervention`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `email_settings`
+--
+ALTER TABLE `email_settings`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `fomo`
 --
 ALTER TABLE `fomo`
@@ -1537,6 +1562,12 @@ ALTER TABLE `dispo_table`
 --
 ALTER TABLE `dispo_table_intervention`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `email_settings`
+--
+ALTER TABLE `email_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `fomo`
