@@ -60,6 +60,8 @@ function handleAdminLogin($username, $password, $pdo)
             "SUPERADMIN"                => "SuperAdmin_dashboard.php",
             "ADMIN"                     => "admin_dashboard.php",
             "QA STAFF"                  => "admin_dashboard.php",
+            "PCO"                       => "admin_dashboard.php",
+            "QEMS OFFICER"              => "admin_dashboard.php",
             "QA ENGINEER"               => "engineer_dashboard.php",
             "QA SUPERVISOR"             => "supv_mgr_dashboard.php",
             "QA MANAGER"                => "supv_mgr_dashboard.php",

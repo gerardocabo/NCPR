@@ -13,6 +13,7 @@ $current_page = basename(filter_input(INPUT_SERVER, 'PHP_SELF', FILTER_UNSAFE_RA
 define('ROLE_SUPERADMIN', 'SUPERADMIN');
 define('ROLE_ADMIN', 'ADMIN');
 define('ROLE_QEMS', 'QEMS OFFICER');
+define('ROLE_PCO', 'PCO');
 define('ROLE_QA_STAFF', 'QA STAFF');
 define('ROLE_QA_ENGINEER', 'QA ENGINEER');
 define('ROLE_QA_SUPERVISOR', 'QA SUPERVISOR');
@@ -29,6 +30,8 @@ $role_dashboard = [
     ROLE_SUPERADMIN     => "SuperAdmin_dashboard.php",
     ROLE_ADMIN          => "admin_dashboard.php",
     ROLE_QA_STAFF       => "admin_dashboard.php",
+    ROLE_PCO            => "admin_dashboard.php",
+    ROLE_QEMS           => "admin_dashboard.php",
     ROLE_QA_ENGINEER    => "engineer_dashboard.php",
     ROLE_QA_SUPERVISOR  => "supv_mgr_dashboard.php",
     ROLE_QA_MANAGER     => "supv_mgr_dashboard.php",
@@ -39,7 +42,7 @@ $role_dashboard = [
 // Define role-based access for each page
 $page_roles = [
     "SuperAdmin_dashboard.php"     => [ROLE_SUPERADMIN],
-    "admin_dashboard.php"          => [ROLE_ADMIN, ROLE_QA_STAFF, ROLE_QEMS, "PCO", ROLE_SUPERADMIN],
+    "admin_dashboard.php"          => [ROLE_ADMIN, ROLE_QA_STAFF, ROLE_QEMS, ROLE_PCO, ROLE_SUPERADMIN],
     "engineer_dashboard.php"       => [ROLE_QA_ENGINEER, /*ROLE_QA_SUPERVISOR,*/ ROLE_SUPERADMIN],
     "supv_mgr_dashboard.php"       => [ROLE_QA_SUPERVISOR, ROLE_QA_MANAGER, ROLE_SUPERADMIN],
     "representative_dashboard.php" => [ROLE_REPRESENTATIVE, ROLE_SUPERADMIN],

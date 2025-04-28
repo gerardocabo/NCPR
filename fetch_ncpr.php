@@ -61,10 +61,10 @@ try {
     $pdo = require 'connection.php';
 
     // Define the valid roles that can access the system
-    $valid_roles = ['QA STAFF', 'QA ENGINEER', 'QA SUPERVISOR', 'QA MANAGER', 'SHELDAHL REPRESENTATIVE'];
+    $valid_roles = ['QA STAFF', 'QEMS OFFICER', 'PCO', 'QA ENGINEER', 'QA SUPERVISOR', 'QA MANAGER', 'SHELDAHL REPRESENTATIVE'];
 
-    // Get the user role from session, default to 'QA ENGINEER' if not set
-    $user_role = $_SESSION['role'] ?? 'QA ENGINEER';
+    // Get the user role from session, default to 'QA STAFF' if not set
+    $user_role = $_SESSION['role'] ?? 'QA STAFF';
 
     // Validate the user role
     if (!in_array($user_role, $valid_roles)) {
