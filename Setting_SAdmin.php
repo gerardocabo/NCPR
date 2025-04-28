@@ -3,10 +3,8 @@ require "connection.php"; // Include database connection
 require "config.php";
 
 try {
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     // Fetch roles
-    $stmt = $pdo->query("SELECT id, username FROM users ORDER BY id ASC");
+    $stmt = $pdo->query("SELECT id, role_name FROM users_roles WHERE NOT (id = 1); ORDER BY id ASC");
     $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
@@ -66,7 +64,7 @@ try {
                     <header class="py-3 shadow-sm" style="background-color: #0e2238">
                         <div class="container d-flex align-items-center">
                             <a class="navbar-brand text-white" href="#">
-                                <span class="fs-4 fw-bold ms-2">LOGO</span>
+                                <span class="fs-4 fw-bold ms-2">NCPR</span>
                             </a>
                         </div>
                     </header>
@@ -93,7 +91,7 @@ try {
                                     <select class="form-control p-2 fs-6" id="role" name="role" required>
                                         <option value="" disabled selected>Select a role</option>
                                         <?php foreach ($roles as $role): ?>
-                                            <option value="<?= htmlspecialchars($role['id']) ?>"><?= htmlspecialchars($role['name']) ?></option>
+                                            <option value="<?= htmlspecialchars($role['id']) ?>"><?= htmlspecialchars($role['role_name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
