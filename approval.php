@@ -31,9 +31,6 @@ if (!isset($_SESSION['role']) || !isset($_SESSION["user"])) {
 $username = $_SESSION["user"];
 $user_role = $_SESSION['role'];
 
-// Log received POST data
-error_log("Received Data: " . print_r($_POST, true));
-
 // Role-based permission mapping
 $allowed_roles = [
     ROLE_QA_ENGINEER    => "QA Engineer",

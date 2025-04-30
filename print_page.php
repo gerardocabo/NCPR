@@ -137,9 +137,6 @@ if (isset($_GET['ncpr_num'])) {
         $stmt_radio->close();
         $stmt_checkbox->close();
 
-        // ✅ Optional: echo for debugging
-        // echo '<pre>'; print_r($approvers); echo '</pre>';
-
         $conn->close();
     } else {
         echo "<span class='text-danger'>No record found</span>";
@@ -974,18 +971,11 @@ if (isset($_GET['ncpr_num'])) {
     $checkbox_json = json_encode($checkboxes); // From original dispo_table
     $intervention_checkbox_json = json_encode($intervention_checkboxes); // New one
     ?>
-    <?php
-    echo '<script>console.log("potential_failure value from PHP: ' . ($radio_values['potential_failure'] ?? 'NOT SET') . '");</script>';
-    ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const radioValues = <?php echo $radio_json; ?>;
             const checkboxValues = <?php echo $checkbox_json; ?>;
             const interventionCheckboxValues = <?php echo $intervention_checkbox_json; ?>;
-
-            console.log("Full radioValues object:", radioValues); // 🔍 Debug all radio values
-            console.log("Checkbox Values:", checkboxValues); // 🔍 For dispo_table
-            console.log("Intervention Checkbox Values:", interventionCheckboxValues); // 🔍 For dispo_table_intervention
 
             // Set radio buttons
             for (const name in radioValues) {

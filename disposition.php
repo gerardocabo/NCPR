@@ -464,9 +464,6 @@
                         remFiles.push(fileName);
                     }
                 }
-
-                console.log("Updated allFiles:", allFiles);
-                console.log("Removed files (remFiles):", remFiles);
             }
         </script>
 </form>

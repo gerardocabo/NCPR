@@ -1,6 +1,14 @@
 <?php
 session_start();
 
+/*
+if(empty($_SESSION['GATEWAY_VERIFIED'])){
+    header(unauthorized.php);
+    http_response_code(403);    
+    exit();
+}
+*/
+
 // Prevent browser caching to avoid back button issues after logout
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
@@ -30,8 +38,8 @@ $role_dashboard = [
     ROLE_SUPERADMIN     => "SuperAdmin_dashboard.php",
     ROLE_ADMIN          => "admin_dashboard.php",
     ROLE_QA_STAFF       => "admin_dashboard.php",
-    ROLE_PCO            => "admin_dashboard.php",
     ROLE_QEMS           => "admin_dashboard.php",
+    ROLE_PCO            => "engineer_dashboard.php",
     ROLE_QA_ENGINEER    => "engineer_dashboard.php",
     ROLE_QA_SUPERVISOR  => "supv_mgr_dashboard.php",
     ROLE_QA_MANAGER     => "supv_mgr_dashboard.php",
@@ -43,7 +51,7 @@ $role_dashboard = [
 $page_roles = [
     "SuperAdmin_dashboard.php"     => [ROLE_SUPERADMIN],
     "admin_dashboard.php"          => [ROLE_ADMIN, ROLE_QA_STAFF, ROLE_QEMS, ROLE_PCO, ROLE_SUPERADMIN],
-    "engineer_dashboard.php"       => [ROLE_QA_ENGINEER, /*ROLE_QA_SUPERVISOR,*/ ROLE_SUPERADMIN],
+    "engineer_dashboard.php"       => [ROLE_PCO, ROLE_QA_ENGINEER, ROLE_SUPERADMIN],
     "supv_mgr_dashboard.php"       => [ROLE_QA_SUPERVISOR, ROLE_QA_MANAGER, ROLE_SUPERADMIN],
     "representative_dashboard.php" => [ROLE_REPRESENTATIVE, ROLE_SUPERADMIN],
     "guest_ncprfiling.php"         => [ROLE_GUEST],

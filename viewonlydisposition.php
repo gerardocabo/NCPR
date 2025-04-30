@@ -306,6 +306,7 @@
                 (Signature & Date)
                 <div class="signature-line">
                     <strong><span id="approvd_by_engineer"></span></strong>
+                    <p id="dt_engineer"></p>
                 </div>
             </td>
             <td>
@@ -313,6 +314,7 @@
                 (Signature & Date)
                 <div class="signature-line">
                     <strong><span id="approvd_by_supv_mgr"></span></strong>
+                    <p id="dt_supv_mgr"></p>
                 </div>
             </td>
             <td>
@@ -320,36 +322,37 @@
                 (Signature & Date)
                 <div class="signature-line">
                     <strong><span id="approvd_by_SheldahlRep"></span></strong>
+                    <p id="dt_SheldahlRep"></p>
                 </div>
             </td>
         </tr>
         </tr>
 
         <tr>
-                <td>
-                    <div class="form-floating">
-                        <input type="text" name="acknowledgment_signature" class="form-control" id="acknowledgment_signature" placeholder="Signature">
-                        <label for="acknowledgment_signature"><strong>Acknowledgment</strong></label>
-                    </div>
-                    <small class="text-muted">(Applies only with CAR & COPQ issues)</small>
-                </td>
+            <td>
+                <div class="form-floating">
+                    <input type="text" name="acknowledgment_signature" class="form-control" id="acknowledgment_signature" placeholder="Signature">
+                    <label for="acknowledgment_signature"><strong>Acknowledgment</strong></label>
+                </div>
+                <small class="text-muted">(Applies only with CAR & COPQ issues)</small>
+            </td>
 
-                <!-- PE or EE Head Section -->
-                <td>
-                    <div class="form-floating">
-                        <input type="text" name="head_signature" class="form-control" id="pe_ee_head_signature" placeholder="PE or EE Head">
-                        <label for="head_signature"><strong>PE or EE Head or his/her appointee:</strong></label>
-                    </div>
-                </td>
+            <!-- PE or EE Head Section -->
+            <td>
+                <div class="form-floating">
+                    <input type="text" name="head_signature" class="form-control" id="pe_ee_head_signature" placeholder="PE or EE Head">
+                    <label for="head_signature"><strong>PE or EE Head or his/her appointee:</strong></label>
+                </div>
+            </td>
 
-                <!-- Production Manager Section -->
-                <td>
-                    <div class="form-floating">
-                        <input type="text" name="prod_manager_signature" class="form-control" id="prod_manager_signature" placeholder="Production Manager">
-                        <label for="prod_manager_signature"><strong>Production Manager or his/her appointee:</strong></label>
-                    </div>
-                </td>
-            </tr>
+            <!-- Production Manager Section -->
+            <td>
+                <div class="form-floating">
+                    <input type="text" name="prod_manager_signature" class="form-control" id="prod_manager_signature" placeholder="Production Manager">
+                    <label for="prod_manager_signature"><strong>Production Manager or his/her appointee:</strong></label>
+                </div>
+            </td>
+        </tr>
     </table>
     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
     <div id="fileList" class="d-block flex-wrap"></div>

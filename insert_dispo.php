@@ -4,12 +4,6 @@ require 'conn.php';
 $dispo_id = !empty($_POST['dispo_id']) ? $_POST['dispo_id'] : NULL;
 $created_at = date('Y-m-d H:i:s');
 $updated_at = $created_at;
-// ✅ Debugging: Check $_POST['cause'] values
-/*if (!isset($_POST['cause']) || empty($_POST['cause'])) {
-    die("No checkboxes selected!");
-}*/
-
-//print_r($_POST['cause']); // Debugging: Show selected checkboxes
 
 // ✅ Fetch predefined checkboxes
 $sql_predefined = "SELECT id, checkbox_name FROM predefined_checkboxes";
@@ -21,8 +15,6 @@ if ($result->num_rows > 0) {
         $checkbox_map[$row['checkbox_name']] = $row['id'];
     }
 }
-
-//print_r($checkbox_map); // Debugging: Show checkbox mapping
 
 $checkbox_groups = ['cause', 'independents', 'dispo_from', 'IARA', 'product_dispo'];
 

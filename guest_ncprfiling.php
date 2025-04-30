@@ -18,7 +18,7 @@ $name = $_SESSION["user"];
 <html lang="en">
 
 <head>
-    <title>NCPR FILING - GUEST</title>
+    <title>NCPR Filing - Guest</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -52,7 +52,7 @@ $name = $_SESSION["user"];
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item active">
-                    <a href="ncprfiling.php" class="sidebar-link">
+                    <a href="guest_ncprfiling.php" class="sidebar-link">
                         <i class="fa-regular fa-folder-open"></i>
                         <span>NCPR Filing</span>
                     </a>

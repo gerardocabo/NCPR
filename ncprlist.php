@@ -21,17 +21,23 @@ require "config.php";
 
         .signature-line {
             display: flex;
-            justify-content: center;
-            /* Center the inner content */
-            margin-top: 5px;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            text-align: center;
         }
 
         .signature-line span {
             display: inline-block;
             border-bottom: 1px solid #000;
-            /* Underline just the name */
             padding-bottom: 2px;
-            /* Space between text and line */
+            margin-bottom: 4px;
+        }
+
+        .signature-line p {
+            margin: 0;
+            font-size: 0.7em;
+            color: #333;
         }
     </style>
 </head>
@@ -1609,7 +1615,6 @@ require "config.php";
             var parentDiv = $(this).closest(".file-item");
 
             if (fileId && fileId !== "undefined") {
-                console.log("Removing File ID:", fileId); // Debugging Step
                 $("#editForm").append(`<input type="hidden" name="deleted_files[]" value="${fileId}">`);
             } else {
                 console.error("Error: File ID is undefined!");
@@ -1621,21 +1626,10 @@ require "config.php";
             e.preventDefault();
             var formData = new FormData(this);
 
-            // Debugging: Check if deleted_files[] exists
-            console.log("Deleted files count:", $("input[name='deleted_files[]']").length);
-            $("input[name='deleted_files[]']").each(function() {
-                console.log("Deleted File Value:", $(this).val());
-            });
-
             // Ensure deleted_files[] is appended manually
             $("input[name='deleted_files[]']").each(function() {
                 formData.append("deleted_files[]", $(this).val());
             });
-
-            console.log("Final FormData before sending:");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ": " + pair[1]);
-            }
 
             $.ajax({
                 url: "update_ncpr.php",
@@ -1644,7 +1638,6 @@ require "config.php";
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    console.log("Server response:", response);
                     alert("NCPR updated successfully!");
                     $("#editModal").modal("hide");
                     location.reload();

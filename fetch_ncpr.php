@@ -31,7 +31,21 @@ function getPendingApprovals($user_role)
                         )
                 )
                 ORDER BY ncpr_num DESC";
-    } elseif ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
+    }
+    // if role is PCO, this query only chemical material from the database
+    elseif ($user_role === 'PCO') {
+        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
+                              FROM ncpr_table
+                              JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
+                              WHERE dispo_approval.approver_role = 'QA ENGINEER' 
+                              AND dispo_approval.status = 'Approved'
+                              AND ncpr_table.dispo_id IS NOT NULL
+                              AND ncpr_table.ncpr_num NOT IN (
+                                SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))
+                                ORDER BY ncpr_num DESC";
+    }
+    //
+    elseif ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
         $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
                   FROM ncpr_table
                   JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num

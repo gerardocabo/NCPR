@@ -48,7 +48,7 @@ try {
                 GROUP_CONCAT(DISTINCT p.checkbox_name SEPARATOR ', ') AS checkboxes,
                 GROUP_CONCAT(DISTINCT p2.key SEPARATOR ', ') AS intervention_checkboxes,
                 GROUP_CONCAT(DISTINCT CONCAT(dti.input_name, ':', dti.inputted_data) SEPARATOR ', ') AS intervention_inputs,
-                GROUP_CONCAT(DISTINCT CONCAT(a.approver_id, '::', a.approver_role, '::', k.fname, '::', k.lname) SEPARATOR '||') AS approver_data,
+                GROUP_CONCAT(DISTINCT CONCAT(a.approver_id, '::', a.approver_role, '::', k.fname, '::', k.lname, '::', a.approval_date) SEPARATOR '||') AS approver_data,
                 GROUP_CONCAT(DISTINCT CONCAT(f.file_name, ':', f.file_path) SEPARATOR ', ') AS files
 
             FROM disposition_tbl d
@@ -174,12 +174,14 @@ try {
     if (!empty($row['approver_data'])) {
         $approverEntries = explode('||', $row['approver_data']);
         foreach ($approverEntries as $entry) {
-            list($id, $role, $fname, $lname) = explode('::', $entry);
+            list($id, $role, $fname, $lname, $timestamp) = explode('::', $entry);
+            $formattedDateTime = date('d/m/Y \a\t g:i A', strtotime($timestamp));
             $disposition['approvers'][] = [
                 'approver_id' => $id,
                 'approver_role' => $role,
                 'fname' => $fname,
-                'lname' => $lname
+                'lname' => $lname,
+                'approval_date' => $formattedDateTime
             ];
         }
     }
@@ -193,7 +195,7 @@ try {
                 list($fileName, $filePath) = explode(':', $file, 2);
                 $disposition['files_attach'][] = [
                     'name' => $fileName,
-                    'path' => $filePath 
+                    'path' => $filePath
                 ];
             }
         }

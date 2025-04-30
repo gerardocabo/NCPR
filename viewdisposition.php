@@ -306,11 +306,12 @@
                 (Signature & Date)
                 <div class="signature-line">
                     <strong><span id="approvd_by_engineer"></span></strong>
+                    <p id="dt_engineer"></p>
                 </div>
             </td>
             <?php if ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR'): ?>
                 <td colspan="2">
-                    <div class="d-flex justify-content-end align-items-center">
+                    <div class="mt-4 d-flex justify-content-end align-items-center">
                         <div class="me-3">
                             <strong>QA Manager or his/her appointee:</strong><br>
                             (Signature & Date)
@@ -334,6 +335,7 @@
                     (Signature & Date)
                     <div class="signature-line">
                         <strong><span id="approvd_by_supv_mgr"></span></strong>
+                        <p id="dt_supv_mgr"></p>
                     </div>
                 </td>
                 <td>

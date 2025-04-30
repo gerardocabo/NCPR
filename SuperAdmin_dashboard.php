@@ -6,7 +6,7 @@ require "config.php";
 <html lang="en">
 
 <head>
-    <title>admin Dashboard</title>
+    <title>NCPR - Admin</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />

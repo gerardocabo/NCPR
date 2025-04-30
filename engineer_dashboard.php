@@ -595,8 +595,6 @@ if ($row = $result->fetch_assoc()) {
                 function updateLastSeenId(newLastSeenId) {
                     $.post("update_last_seen.php", {
                         lastSeenId: newLastSeenId
-                    }, function(response) {
-                        console.log("Last Seen ID Updated: ", response);
                     });
                 }
 
@@ -790,10 +788,9 @@ if ($row = $result->fetch_assoc()) {
                                                 approver.fname + " " + approver.lname
                                             );
                                             break;
-                                            // Add more cases for other roles as needed
                                         default:
                                             // Handle default case if needed (optional)
-                                            //console.log("Unknown role!", approver.approver_role);
+                                            // here
                                             break;
                                     }
                                 }
@@ -809,7 +806,6 @@ if ($row = $result->fetch_assoc()) {
                             response.files_attach.length > 0
                         ) {
                             allFiles = response.files_attach;
-                            console.log(allFiles);
                             response.files_attach.forEach((file) => {
                                 const fileBox = $("<div>").addClass("mb-3 p-2 border rounded d-flex justify-content-between align-items-center");
 
@@ -842,15 +838,17 @@ if ($row = $result->fetch_assoc()) {
 
                         $('#editDispoModal').modal('show');
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.log("Error fetching disposition data:", {
-                            status: jqXHR.status,
-                            statusText: jqXHR.statusText,
-                            responseText: jqXHR.responseText,
-                            textStatus: textStatus,
-                            errorThrown: errorThrown
-                        });
-                        alert(`Failed to fetch disposition data.`);
+                    error: function() {
+                        try {
+                            // Only minimal info for the console
+                            console.error("Failed to fetch disposition data.");
+
+                            // Friendly alert to users
+                            alert("Oops! Something went wrong. Please try again later or contact support.");
+                        } catch (err) {
+                            console.error("Unexpected error during error handling!");
+                            alert("A critical error occurred. Please try refreshing the page.");
+                        }
                     }
                 });
             });
@@ -956,8 +954,6 @@ if ($row = $result->fetch_assoc()) {
                 formData['ncpr_num'] = selectedId;
                 formData['delete_file'] = remFiles;
 
-                console.log(formData);
-
                 // AJAX request
                 $.ajax({
                     url: 'update_dispo.php',
@@ -989,12 +985,17 @@ if ($row = $result->fetch_assoc()) {
                             //Swal.fire("Error", response.message, "error");
                         }
                     },
-                    error: function(xhr, status, error) {
-                        let errorMsg = 'AJAX Error:\n';
-                        errorMsg += 'Status: ' + status + '\n';
-                        errorMsg += 'HTTP Code: ' + xhr.status + '\n';
-                        errorMsg += 'Response: ' + xhr.responseText;
-                        console.log(errorMsg);
+                    error: function() {
+                        try {
+                            // Only minimal info for the console
+                            console.error("Failed to fetch disposition data.");
+
+                            // Friendly alert to users
+                            alert("Oops! Something went wrong. Please try again later or contact support.");
+                        } catch (err) {
+                            console.error("Unexpected error during error handling!");
+                            alert("A critical error occurred. Please try refreshing the page.");
+                        }
                     }
                 });
             }

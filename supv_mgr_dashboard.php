@@ -1,6 +1,5 @@
 <?php
 require "config.php";
-$user_role = $_SESSION['role'];
 require "conn.php";
 $user_role = $_SESSION['role'];
 
@@ -29,7 +28,7 @@ if ($row = $result->fetch_assoc()) {
 <html lang="en">
 
 <head>
-    <title>Dashboard</title>
+    <title>NCPR - Dashboard</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -80,17 +79,23 @@ if ($row = $result->fetch_assoc()) {
 
         .signature-line {
             display: flex;
-            justify-content: center;
-            /* Center the inner content */
-            margin-top: 5px;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            text-align: center;
         }
 
         .signature-line span {
             display: inline-block;
             border-bottom: 1px solid #000;
-            /* Underline just the name */
             padding-bottom: 2px;
-            /* Space between text and line */
+            margin-bottom: 4px;
+        }
+
+        .signature-line p {
+            margin: 0;
+            font-size: 0.7em;
+            color: #333;
         }
     </style>
 </head>
@@ -523,8 +528,6 @@ if ($row = $result->fetch_assoc()) {
                 function updateLastSeenId(newLastSeenId) {
                     $.post("update_last_seen.php", {
                         lastSeenId: newLastSeenId
-                    }, function(response) {
-                        console.log("Last Seen ID Updated: ", response);
                     });
                 }
 
@@ -585,8 +588,6 @@ if ($row = $result->fetch_assoc()) {
                     },
                     dataType: 'json',
                     success: function(response) {
-                        console.log("Dispo ID found. Disabling inputs.", response);
-
                         // Populate fields with existing data
                         $('#modal-id').text(response.ncpr_num);
 
@@ -707,26 +708,30 @@ if ($row = $result->fetch_assoc()) {
                                             $("#approvd_by_engineer").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_engineer").text(approver.approval_date);
                                             break;
                                         case "QA MANAGER":
                                             $("#approvd_by_supv_mgr").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_supv_mgr").text(approver.approval_date);
                                             break;
                                         case "QA SUPERVISOR":
                                             $("#approvd_by_supv_mgr").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_supv_mgr").text(approver.approval_date);
                                             break;
                                         case "SHELDAHL REPRESENTATIVE":
                                             $("#approvd_by_SheldahlRep").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_SheldahlRep").text(approver.approval_date);
                                             break;
                                             // Add more cases for other roles as needed
                                         default:
                                             // Handle default case if needed (optional)
-                                            console.log("Unknown role:", approver.approver_role);
+                                            // here
                                             break;
                                     }
                                 }
@@ -792,16 +797,17 @@ if ($row = $result->fetch_assoc()) {
 
                         $('#dispoModal').modal('show');
                     },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.log("Error fetching disposition data:", {
-                            status: jqXHR.status,
-                            statusText: jqXHR.statusText,
-                            responseText: jqXHR.responseText,
-                            textStatus: textStatus,
-                            errorThrown: errorThrown
-                        });
+                    error: function() {
+                        try {
+                            // Only minimal info for the console
+                            console.error("Failed to fetch disposition data.");
 
-                        alert(`Failed to fetch disposition data.`);
+                            // Friendly alert to users
+                            alert("Oops! Something went wrong. Please try again later or contact support.");
+                        } catch (err) {
+                            console.error("Unexpected error during error handling!");
+                            alert("A critical error occurred. Please try refreshing the page.");
+                        }
                     }
                 });
             });

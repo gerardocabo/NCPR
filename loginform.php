@@ -18,9 +18,9 @@ $token = generateCSRFToken();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="secure-token" content="ABC123SECRET">
 
-    <title>NCPR System</title>
+    <title>NCPR - Login</title>
 
-    <link rel="stylesheet" href="assets/vendor/bootstrap/css/all.min.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
     <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
@@ -34,7 +34,7 @@ $token = generateCSRFToken();
 </style>
 
 <body class="d-flex flex-column min-vh-100">
-    <header class="py-3 shadow-md" style="background-color:rgb(23, 137, 231);">
+    <header class="py-3 shadow-md">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <img src="assets/img/Picture1.png" alt="Left Logo" style="height: 50px;">
@@ -152,16 +152,15 @@ $token = generateCSRFToken();
                         "X-SECURE-TOKEN": secureToken
                     },
                     success: function(response) {
-                        console.log("Response from server:", response); // Debugging
                         var data = JSON.parse(response);
                         if (data.status === "success") {
-                            window.location.href = data.redirect; // Redirect based on role
+                            window.location.href = data.redirect;
                         } else {
                             alert(data.message); // Show error message
                         }
                     },
-                    error: function(xhr, status, error) {
-                        console.log("Error:", error); // Log any AJAX error
+                    error: function() {
+                        console.error("Error:", error); // Log any AJAX error
                     }
                 });
             });

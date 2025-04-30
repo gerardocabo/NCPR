@@ -8,7 +8,6 @@
         margin: 0;
         padding: 0;
         font-family: Arial, sans-serif;
-        background: linear-gradient(to right, #1e3c72, #2a5298);
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -44,7 +43,8 @@
       }
 
       .btn:hover {
-        background-color: #0097a7;
+        background-color: #1e3c72;
+        color: white;
       }
 
       footer {
@@ -58,12 +58,15 @@
   <body>
     <div class="center">
       <h1>Welcome to the NCPR SYSTEM Portal</h1>
-      <!-- must chagne the server ip directory -->
-      <form method="POST" action="http:/localhost/NCPR/index.php">
+      <!-- 
+        must change the "localhost:8080" or add after "http:" to server ip directory
+        when copying to desktop 
+      -->
+      <form method="POST" action="http:/ncpr-2/NCPR/index.php">
         <input
           type="hidden"
           name="gateway_token"
-          value="82e7e1e81a74937dc2f9f88d9507f0f3d410e3cdc3bd03d5467343c900d80be7"
+          value="4435aca61665f7c411f05428c467cbc7d219347a868dab09fbba30078638b032"
         />
         <button type="submit" class="btn">LOGIN</button>
       </form>

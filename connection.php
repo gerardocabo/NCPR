@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost"; // XAMPP default
 $username = "root"; // Default username
-$password = ""; // Default password (empty in XAMPP)
+$password = "RidiculousDB"; // Default password (empty in XAMPP)
 $database = "ncpr_db"; // Your database name
 
 try {
@@ -13,6 +13,9 @@ try {
 
     // Set default fetch mode
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+    // Set MySQL session timezone to Philippine Time
+    $pdo->exec("SET time_zone = '+08:00';"); // or 'Asia/Manila' if available
 
     // Return the PDO connection object
     return $pdo;

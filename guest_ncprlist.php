@@ -9,7 +9,7 @@ $name = $_SESSION["user"];
 <html lang="en">
 
 <head>
-    <title>admin Dashboard</title>
+    <title>NCPR List - Guest</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -1171,7 +1171,6 @@ $name = $_SESSION["user"];
                     },
                     dataType: 'json',
                     success: function(response) {
-                        console.log(response); // Log the JSON response to the console
                         $('#view-id').text(response.id);
                         $('#view-initiator').text(response.initiator);
                         $('#view-ncpr-num').text(response.ncpr_num);
@@ -1568,7 +1567,6 @@ $name = $_SESSION["user"];
             var parentDiv = $(this).closest(".file-item");
 
             if (fileId && fileId !== "undefined") {
-                console.log("Removing File ID:", fileId); // Debugging Step
                 $("#editForm").append(`<input type="hidden" name="deleted_files[]" value="${fileId}">`);
             } else {
                 console.error("Error: File ID is undefined!");
@@ -1581,22 +1579,6 @@ $name = $_SESSION["user"];
             e.preventDefault();
             var formData = new FormData(this);
 
-            // Debugging: Check if deleted_files[] exists
-            console.log("Deleted files count:", $("input[name='deleted_files[]']").length);
-            $("input[name='deleted_files[]']").each(function() {
-                console.log("Deleted File Value:", $(this).val());
-            });
-
-            // Ensure deleted_files[] is appended manually
-            $("input[name='deleted_files[]']").each(function() {
-                formData.append("deleted_files[]", $(this).val());
-            });
-
-            console.log("Final FormData before sending:");
-            for (let pair of formData.entries()) {
-                console.log(pair[0] + ": " + pair[1]);
-            }
-
             $.ajax({
                 url: "update_ncpr.php",
                 type: "POST",
@@ -1604,7 +1586,6 @@ $name = $_SESSION["user"];
                 contentType: false,
                 processData: false,
                 success: function(response) {
-                    console.log("Server response:", response);
                     alert("NCPR updated successfully!");
                     $("#editModal").modal("hide");
                     location.reload();

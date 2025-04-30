@@ -29,7 +29,7 @@ if ($row = $result->fetch_assoc()) {
 <html lang="en">
 
 <head>
-    <title>admin Dashboard</title>
+    <title>NCPR System - Dashboard</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -562,8 +562,6 @@ if ($row = $result->fetch_assoc()) {
             function updateLastSeenId(newLastSeenId) {
                 $.post("update_last_seen.php", {
                     lastSeenId: newLastSeenId
-                }, function(response) {
-                    console.log("Last Seen ID Updated: ", response);
                 });
             }
 

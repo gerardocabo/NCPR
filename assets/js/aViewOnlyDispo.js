@@ -193,26 +193,30 @@ $(document).ready(function () {
                     $("#approvd_by_engineer").text(
                       approver.fname + " " + approver.lname
                     );
+                    $("#dt_engineer").text(approver.approval_date);
                     break;
                   case "QA MANAGER":
                     $("#approvd_by_supv_mgr").text(
                       approver.fname + " " + approver.lname
                     );
+                    $("#dt_supv_mgr").text(approver.approval_date);
                     break;
                   case "QA SUPERVISOR":
                     $("#approvd_by_supv_mgr").text(
                       approver.fname + " " + approver.lname
                     );
+                    $("#dt_supv_mgr").text(approver.approval_date);
                     break;
                   case "SHELDAHL REPRESENTATIVE":
                     $("#approvd_by_SheldahlRep").text(
                       approver.fname + " " + approver.lname
                     );
+                    $("#dt_SheldahlRep").text(approver.approval_date);
                     break;
                   // Add more cases for other roles as needed
                   default:
                     // Handle default case if needed (optional)
-                    console.log("Unknown role:", approver.approver_role);
+                    //
                     break;
                 }
               }
