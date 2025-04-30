@@ -30,11 +30,11 @@ function handleAdminLogin($username, $password, $pdo)
     }
 
     try {
-        // Get password, role, and status from the database
-        $stmt = $pdo->prepare("SELECT users.password, users.username, users.email, users.status, users_roles.role_name 
-                               FROM users 
-                               JOIN users_roles ON users.role_id = users_roles.id 
-                               WHERE users.username = :username OR users.email = :username");
+        $stmt = $pdo->prepare("SELECT users.id, users.password, users.username, users.email, users.status, users_roles.role_name 
+        FROM users 
+        JOIN users_roles ON users.role_id = users_roles.id 
+        WHERE users.username = :username OR users.email = :username");
+
 
         $stmt->execute(["username" => $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -53,6 +53,8 @@ function handleAdminLogin($username, $password, $pdo)
             return json_encode(["status" => "error", "message" => "Incorrect Password."]);
         }
 
+        // ✅ SET SESSION DATA
+        $_SESSION["user_id"] = $user["id"];       // ✅ NEW
         $_SESSION["user"] = $user["username"];
         $_SESSION["role"] = $user["role_name"];
 

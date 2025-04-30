@@ -1,14 +1,15 @@
 <?php
 include 'conn.php'; // Make sure you have a proper database connection here
 // Fetch data from ncpr_table
-$query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id 
-FROM ncpr_table
-ORDER BY
-  CASE status
-    WHEN 'Open' THEN 1
-    ELSE 2
-  END,
-  ncpr_num DESC";
+
+$query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, status, urgent, issue, dispo_id 
+        FROM ncpr_table
+        ORDER BY
+            CASE status
+                WHEN 'Open' THEN 1
+                ELSE 2
+            END,
+            ncpr_num DESC";
 $result = $conn->query($query);
 
 while ($row = $result->fetch_assoc()): ?>
@@ -17,9 +18,11 @@ while ($row = $result->fetch_assoc()): ?>
         <td hidden><?php echo $row['dispo_id']; ?></td>
         <td><?php echo $row['ncpr_num']; ?></td>
         <td><?php echo $row['initiator']; ?></td>
-        <td><?php echo $row['date']; ?></td>
+        <td><?php echo $row['process']; ?></td>
+        <td class="text-center"><?php echo $row['date']; ?></td>
         <td><?php echo $row['part_number']; ?></td>
         <td><?php echo $row['part_name']; ?></td>
+        <td><?php echo $row['issue']; ?></td>
         <td>
             <?php
             if ($row['urgent'] === 'on') {
@@ -29,7 +32,6 @@ while ($row = $result->fetch_assoc()): ?>
             }
             ?>
         </td>
-
         <td>
             <?php
             $status = $row['status'];
@@ -46,7 +48,6 @@ while ($row = $result->fetch_assoc()): ?>
             echo "<span class='$badgeClass'>$status</span>";
             ?>
         </td>
-
         <td class="text-center">
             <div class="d-flex flex-wrap gap-1 justify-content-center">
                 <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">

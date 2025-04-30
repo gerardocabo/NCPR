@@ -50,7 +50,7 @@ include "config.php"
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>

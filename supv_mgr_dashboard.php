@@ -269,8 +269,12 @@ if ($row = $result->fetch_assoc()) {
                                     <th hidden>ID</th>
                                     <th class="text-center">NCPR Number</th>
                                     <th class="text-center">Initiator</th>
-                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Process</th>
                                     <th class="text-center">Date</th>
+                                    <th class="text-center">Part Number</th>
+                                    <th class="text-center">Part Name</th>
+                                    <th class="text-center">Call Out</th>
+                                    <th class="text-center">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -462,6 +466,26 @@ if ($row = $result->fetch_assoc()) {
                             "className": "text-center" // Center the initiator column
                         },
                         {
+                            "data": "process",
+                            "className": "text-center" // Center the initiator column
+                        },
+                        {
+                            "data": "date",
+                            "className": "text-center" // Center the initiator column
+                        },
+                        {
+                            "data": "part_number",
+                            "className": "text-center" // Center the initiator column
+                        },
+                        {
+                            "data": "part_name",
+                            "className": "text-center" // Center the initiator column
+                        },
+                        {
+                            "data": "issue",
+                            "className": "text-center" // Center the initiator column
+                        },
+                        {
                             "data": "status",
                             "className": "text-center",
                             "render": function(data, type, row) {
@@ -473,10 +497,6 @@ if ($row = $result->fetch_assoc()) {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
                             }
-                        },
-                        {
-                            "data": "date",
-                            "className": "text-center" // Center the initiator column
                         },
                         {
                             "data": "id",

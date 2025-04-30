@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost"; // XAMPP default
 $username = "root"; // Default username
-$password = "RidiculousDB"; // Default password (empty in XAMPP)
+$password = ""; // Default password (empty in XAMPP)
 $database = "ncpr_db"; // Your database name
 
 try {
