@@ -144,7 +144,7 @@ if ($row = $result->fetch_assoc()) {
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="setting.php" class="sidebar-link">
+                    <a href="setting_admin.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>

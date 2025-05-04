@@ -83,30 +83,29 @@ try {
 
             <div class="card">
                 <div class="card-body">
-                    <header class="py-3 shadow-sm" style="background-color: #0e2238">
+                    <header class="py-3 shadow-sm">
                         <div class="container d-flex align-items-center">
-                            <a class="navbar-brand text-white" href="#">
-                                <span class="fs-4 fw-bold ms-2">NCPR</span>
+                            <a class="navbar-brand text-dark" href="#">
+                                <span class="fs-4 fw-bold ms-2">Account Management</span>
                             </a>
                         </div>
                     </header>
 
-                    <div class="container d-flex flex-grow-1 justify-content-center align-items-center">
+                    <div class="container d-flex flex-grow-1 justify-content-center align-items-center mt-2">
                         <div class="login-form bg-light p-4 rounded shadow" style="width: 500px;">
-                            <h2 class="text-center">ADD ACCESS ACCOUNTS</h2>
+                            <h5 class="text-center"><span class="text-primary fw-bold">Register</span> Account</h5>
                             <form id="accessForm">
-                                <div class="mb-3">
-                                    <label class="form-label">EMAIL/USERNAME</label>
-                                    <input type="text" class="form-control p-2 fs-6" name="username" placeholder="Enter email" required>
+                                <div class="mb-3 form-floating">
+                                    <input type="text" class="form-control" name="username" id="username" placeholder="Enter email" required>
+                                    <label for="username" class="form-label">Email/username</label>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">PASSWORD</label>
-                                    <div class="position-relative">
-                                        <input type="password" class="form-control p-2 fs-6 pe-5" id="password" name="password" placeholder="Enter password" required>
-                                        <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y p-0 border-0 bg-transparent shadow-none me-2" id="togglePassword">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
+
+                                <div class="mb-3 position-relative form-floating">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                                    <label for="password" class="form-label">Password</label>
+                                    <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y p-0 border-0 bg-transparent shadow-none me-2" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">ROLE</label>
