@@ -2,13 +2,6 @@
 session_start();
 require 'conn.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'PHPMailer/Exception.php';
-require 'PHPMailer/PHPMailer.php';
-require 'PHPMailer/SMTP.php';
-
 // Enable error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -17,6 +10,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 header("Content-Type: application/json");
 
+define('ROLE_QA_PCO', 'PCO');
 define('ROLE_QA_ENGINEER', 'QA ENGINEER');
 define('ROLE_QA_SUPERVISOR', 'QA SUPERVISOR');
 define('ROLE_QA_MANAGER', 'QA MANAGER');
@@ -33,6 +27,7 @@ $user_role = $_SESSION['role'];
 
 // Role-based permission mapping
 $allowed_roles = [
+    ROLE_QA_PCO         => "QA PCO",
     ROLE_QA_ENGINEER    => "QA Engineer",
     ROLE_QA_SUPERVISOR  => "QA Manager",
     ROLE_QA_MANAGER     => "QA Manager",
@@ -44,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action_check = $_POST['action'] ?? '';
     $role = $_POST['role'] ?? '';
     $ncpr_num = $_POST['ncpr_num'] ?? '';
+    $reason = $_POST['reason'] ?? '';
 
     if (empty($action) || empty($role) || empty($ncpr_num)) {
         echo json_encode([
@@ -90,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         // Execute only if user role is ENGINEER
-        if ($user_role === "QA ENGINEER" && $action !== "cancel") {
+        if ($user_role === "QA ENGINEER" || $user_role === "PCO") {
 
             $inputs_sakses = include 'insert_dispo_input.php';
             if (!$inputs_sakses) {
@@ -115,34 +111,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             error_log("Skipping dispo execution as user role is not ENGINEER.");
         }
 
-        if ($action !== "cancel" && $action !== "reject") {
-            // Convert certain actions to past tense
-            $action_map = [
-                "full_approve" => "approved",
-                "approve" => "approved",
-                "reject" => "rejected",
-                "submit" => "submitted",
-                "cancel" => "canceled"
-            ];
+        $normalized_action = strtolower($action);
 
-            if (isset($action_map[strtolower($action)])) {
-                $action = $action_map[strtolower($action)];
-            }
+        switch ($normalized_action) {
+            case 'approve':
+            case 'full_approve':
+                $status = 'Approved';
+                break;
+            case 'reject':
+                $status = 'Rejected';
+                break;
+            case 'cancel':
+                $status = 'Canceled';
+                break;
+            default:
+                $status = ucfirst($normalized_action);
+                break;
+        }
 
-            $status = ucfirst(strtolower($action));
+        // Insert approval record
+        $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                  VALUES (?, ?, ?, ?, NOW())";
+        $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
 
-            // Insert into dispo_approval
-            $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
-                      VALUES (?, ?, ?, ?, NOW())";
-            $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+        // Additional processing per action
+        switch ($normalized_action) {
+            case 'approve':
+                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+                break;
 
-            // Update dispo_id in ncpr_table
-            $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
-            executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
-
-            if ($action_check === "full_approve") {
-
-                // Single approver object
+            case 'full_approve':
+                // Add representative approval
                 $approver = (object)[
                     'user_role' => 'SHELDAHL REPRESENTATIVE',
                     'person_id' => 9
@@ -155,146 +155,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
 
-                $user_role = $approver->user_role;
-            }
+                // Close the status if representative is last
+                $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, ['Closed', $ncpr_num], "ss");
+                break;
 
-            // If the user role is REPRESENTATIVE, update the status to Close
-            if ($user_role === "SHELDAHL REPRESENTATIVE") {
-                $status = "Close";
+            case 'reject':
+                /*if ($role === 'Representative') {
+                    // Update the reason for the specific record
+                    $updateSuccess = updateReason($pdo, $ncpr_num, $reason);
+                }*/
+
+                $query = "UPDATE disposition_tbl SET reason = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$reason, $ncpr_num], "ss");
+                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
                 $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$status, $ncpr_num], "ss");
-            }
-        } else {
-            
-            // Convert action to past tense for dispo_approval
-            $status = isset($action_map[$action]) ? ucfirst($action_map[$action]) : ucfirst($action);
+                break;
 
-            // Always set status to "Close" in ncpr_table
-            $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
-            executeQuery($conn, $query, ["Close", $ncpr_num], "ss");
+            case 'cancel':
+                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+                // Handle cancel or reject logic based on user role
+                $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
 
-            // Insert into dispo_approval
-            $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
-              VALUES (?, ?, ?, ?, NOW())";
-            executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+                if ($normalized_action === 'cancel' && ($user_role === 'QA SUPERVISOR' || $user_role === 'QA MANAGER')) {
+                    $final_status = 'Closed';  // If QA SUPERVISOR cancels, set status to "Closed"
+                } else {
+                    $final_status = ucfirst($status);  // Otherwise, set it to "Canceled" or "Rejected"
+                }
+
+                executeQuery($conn, $query, [$final_status, $ncpr_num], "ss");
+                break;
         }
 
         // Commit transaction
         $conn->commit();
 
-        // Email Notification with Debug
-        try {
-            // Fetch initiator from ncpr_table
-            $ncprQuery = $conn->prepare("SELECT initiator FROM ncpr_table WHERE ncpr_num = ?");
-            $ncprQuery->bind_param("s", $ncpr_num);
-            $ncprQuery->execute();
-            $ncprQuery->bind_result($initiator);
-            $ncprQuery->fetch();
-            $ncprQuery->close();
+        //always change or config based on the OS 
+        /*
+        $phpPath = 'C:\xampp\php\php.exe';
+        $scriptPath = 'C:\xampp\htdocs\ncpr-2\NCPR\sendPushNotif.php';
 
-            if (empty($initiator)) {
-                $initiator = "Unknown Initiator";
-            }
-            // Check if the person who approved has role_id = 10
-            $roleCheck = $conn->prepare("SELECT role_id FROM users WHERE id = ?");
-            $roleCheck->bind_param("i", $person_id);
-            $roleCheck->execute();
-            $roleCheck->bind_result($person_role_id);
-            $roleCheck->fetch();
-            $roleCheck->close();
+        // Escape parameters
+        $escaped_ncpr = escapeshellarg($ncpr_num);
+        $escaped_person_id = escapeshellarg($person_id);
 
-            if ($person_role_id == 10) {
-                $result = $conn->query("SELECT smtpUsername, smtpPass FROM email_settings WHERE id = 1");
-                $emailConfig = $result->fetch_assoc();
+        // Run in background using `start /B`
+        $command = "start /B \"\" \"$phpPath\" \"$scriptPath\" $escaped_ncpr $escaped_person_id";
+        pclose(popen("cmd /c $command", "r"));
 
-                if (!$emailConfig) throw new Exception("SMTP configuration not found.");
-
-                $mail = new PHPMailer(true);
-
-                $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';
-                $mail->SMTPAuth = true;
-                $mail->Username = trim($emailConfig['smtpUsername']);
-                $mail->Password = trim($emailConfig['smtpPass']);
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                $mail->Port = 465;
-
-                $mail->SMTPDebug = 2; // 0 = off, 2 = full output
-                $mail->Debugoutput = function ($str, $level) {
-                    error_log("PHPMailer Debug: $str");
-                };
-
-                $mail->setFrom($mail->Username, 'N.T. PHILIPPINES INC.');
-
-                $usersQuery = $conn->query("SELECT email FROM users WHERE role_id IN (8,9,10)");
-                while ($user = $usersQuery->fetch_assoc()) {
-                    $email = trim($user['email']);
-                    if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $mail->addAddress($email);
-                        error_log("Adding email recipient: $email");
-                    } else {
-                        error_log("Invalid or empty email skipped: $email");
-                    }
-                }
-
-                $mail->isHTML(true);
-                $mail->Subject = "NCPR File Notification - {$ncpr_num}";
-                // Fetch approver email and role name
-                $approverQuery = $conn->prepare("
-        SELECT u.email, ur.role_name 
-        FROM users u 
-        JOIN users_roles ur ON u.role_id = ur.id 
-        WHERE u.id = ?
-        ");
-                $approverQuery->bind_param("i", $person_id);
-                $approverQuery->execute();
-                $approverQuery->bind_result($approver_email, $approver_role_name);
-                $approverQuery->fetch();
-                $approverQuery->close();
-
-                if (empty($approver_email)) {
-                    $approver_email = "Unknown Email";
-                }
-                if (empty($approver_role_name)) {
-                    $approver_role_name = "Unknown Role";
-                }
-
-                $mail->Body = "
-                <div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
-                    <h2 style='color: #004085;'>NCPR Notification</h2>
-                   <p>The Non-Conformance Product Report (NCPR) <strong style='color: #0056b3;'>{$ncpr_num}</strong> was filed by <strong style='color: #0056b3;'>{$initiator}</strong>.</p>
-                
-                    <table style='border-collapse: collapse; margin-top: 15px;'>
-                        <tr>
-                            <td style='padding: 6px 12px; font-weight: bold;'>Action Taken By:</td>
-                            <td style='padding: 6px 12px;'>{$approver_email}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 6px 12px; font-weight: bold;'>Role:</td>
-                            <td style='padding: 6px 12px;'>{$approver_role_name}</td>
-                        </tr>
-                        <tr>
-                            <td style='padding: 6px 12px; font-weight: bold;'>Date/Time:</td>
-                            <td style='padding: 6px 12px;'>" . date('F j, Y \a\t g:i A') . "</td>
-                        </tr>
-                    </table>
-                
-                    <p style='margin-top: 20px;'>This is an automated message from the NCPR System. Please do not reply directly to this email.</p>
-                    <hr style='border: none; border-top: 1px solid #ccc; margin: 20px 0;'>
-                    <p style='font-size: 12px; color: #777;'>N.T. PHILIPPINES INC. - Quality Assurance Department</p>
-                </div>
-                ";
-
-                $mail->send();
-                error_log("PHPMailer: Email sent successfully!");
-            } else {
-                error_log("Email not sent: person_id $person_id has role_id $person_role_id");
-            }
-        } catch (\PHPMailer\PHPMailer\Exception $e) {
-            error_log("PHPMailer Exception: " . $e->getMessage());
-        } catch (Exception $e) {
-            error_log("General Email Exception: " . $e->getMessage());
-        }
+        error_log("Triggered email script with: $ncpr_num, $person_id");
+        */
 
         echo json_encode(["status" => "success", "message" => "All data inserted successfully!"]);
     } catch (Exception $e) {
@@ -319,4 +232,15 @@ function executeQuery($conn, $query, $params, $types)
     $stmt->close();
 
     return $insert_id;
+}
+
+// The updateReason function as described earlier
+function updateReason(PDO $pdo, int $id, ?string $reason = null): bool
+{
+    $sql = "UPDATE disposition_tbl SET reason = :reason WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    return $stmt->execute([
+        ':reason' => $reason,
+        ':id' => $id
+    ]);
 }

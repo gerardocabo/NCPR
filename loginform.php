@@ -121,7 +121,8 @@ $token = generateCSRFToken();
     <script src="assets/js/sweetalert2.min.js"></script>
 
     <script>
-        $(document).ready(function() {
+        //dors not actually work
+        /*$(document).ready(function() {
             $("#loginForm").submit(function(e) {
                 e.preventDefault(); // Prevent form submission
 
@@ -164,8 +165,7 @@ $token = generateCSRFToken();
                     }
                 });
             });
-        });
-
+        });*/
 
         $(document).ready(function() {
             $("#resetPasswordForm").on("submit", function(e) {

@@ -79,17 +79,23 @@ if ($row = $result->fetch_assoc()) {
 
         .signature-line {
             display: flex;
-            justify-content: center;
-            /* Center the inner content */
-            margin-top: 5px;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            text-align: center;
         }
 
         .signature-line span {
             display: inline-block;
             border-bottom: 1px solid #000;
-            /* Underline just the name */
             padding-bottom: 2px;
-            /* Space between text and line */
+            margin-bottom: 4px;
+        }
+
+        .signature-line p {
+            margin: 0;
+            font-size: 0.7em;
+            color: #333;
         }
     </style>
 </head>
@@ -454,13 +460,11 @@ if ($row = $result->fetch_assoc()) {
                             "className": "text-center"
                         },
                         {
-                            "data": "status",
+                            "data": "statuses",
                             "className": "text-center",
                             "render": function(data, type, row) {
-                                if (data === "open") {
-                                    return '<span class="badge bg-success">open</span>';
-                                } else if (data === "Close") {
-                                    return '<span class="badge bg-danger">Close</span>';
+                                if (data === 'Approved') {
+                                    return '<span class="badge bg-success">Approved</span>';
                                 } else {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
@@ -580,7 +584,18 @@ if ($row = $result->fetch_assoc()) {
                         ncpr_num: ncprNum
                     },
                     dataType: 'json',
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: "Loading...",
+                            text: "Fetching disposition details...",
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                        });
+                    },
                     success: function(response) {
+                        Swal.close();
                         // Populate fields with existing data
                         $('#modal-id').text(response.ncpr_num);
 
@@ -694,25 +709,35 @@ if ($row = $result->fetch_assoc()) {
                             response.approvers.forEach(function(approver) {
                                 if (approver.approver_role) {
                                     switch (approver.approver_role) {
+                                        case "PCO":
+                                            $("#approvd_by_engineer").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            $("#dt_engineer").text(approver.approval_date);
+                                            break;
                                         case "QA ENGINEER":
                                             $("#approvd_by_engineer").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_engineer").text(approver.approval_date);
                                             break;
                                         case "QA MANAGER":
                                             $("#approvd_by_supv_mgr").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_supv_mgr").text(approver.approval_date);
                                             break;
                                         case "QA SUPERVISOR":
                                             $("#approvd_by_supv_mgr").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_supv_mgr").text(approver.approval_date);
                                             break;
                                         case "SHELDAHL REPRESENTATIVE":
                                             $("#approvd_by_SheldahlRep").text(
                                                 approver.fname + " " + approver.lname
                                             );
+                                            $("#dt_SheldahlRep").text(approver.approval_date);
                                             break;
                                             // Add more cases for other roles as needed
                                         default:
@@ -796,6 +821,11 @@ if ($row = $result->fetch_assoc()) {
                         }
                     }
                 });
+            });
+
+            $(".btn-close.remove-division").on("click", function() {
+                $("#reject-form").addClass("d-none");
+                $("#reject_form").addClass("d-none");
             });
         });
     </script>

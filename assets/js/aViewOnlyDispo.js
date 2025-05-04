@@ -11,9 +11,18 @@ $(document).ready(function () {
         ncpr_num: ncprNum,
       },
       dataType: "json",
+      beforeSend: function () {
+        Swal.fire({
+          title: "Loading...",
+          text: "Fetching disposition details...",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+      },
       success: function (response) {
-        // Log the full response for debugging
-        console.log("Encoded JSON response:", response);
+        Swal.close();
         if (response.error === "No matching records found") {
           Swal.fire({
             icon: "info", // Soft message icon
@@ -25,10 +34,15 @@ $(document).ready(function () {
           });
           return;
         } else {
-          console.log("Dispo ID found. Disabling inputs.", response);
+          let $dispoStatus = response.dispo_status;
 
           // Populate fields with existing data
           $("#modal-id").text(response.ncpr_num);
+
+          if ($dispoStatus === "Rejected") {
+            document.getElementById("RR_display").classList.remove("d-none"); // Corrected DOM manipulation
+            $("#reject_reason_display").text(response.RR_display); // jQuery for text update
+          }
 
           //$('#containment').val(response.containment);
           $("#containment").text(response.containment); // Sets the text content
@@ -189,6 +203,12 @@ $(document).ready(function () {
             response.approvers.forEach(function (approver) {
               if (approver.approver_role) {
                 switch (approver.approver_role) {
+                  case "PCO":
+                    $("#approvd_by_engineer").text(
+                      approver.fname + " " + approver.lname
+                    );
+                    $("#dt_engineer").text(approver.approval_date);
+                    break;
                   case "QA ENGINEER":
                     $("#approvd_by_engineer").text(
                       approver.fname + " " + approver.lname
@@ -284,7 +304,7 @@ $(document).ready(function () {
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Error fetching disposition data:", {
+        console.error("Error fetching disposition data:", {
           status: jqXHR.status,
           statusText: jqXHR.statusText,
           responseText: jqXHR.responseText,
@@ -292,44 +312,10 @@ $(document).ready(function () {
           errorThrown: errorThrown,
         });
 
-        alert(`Failed to fetch disposition data.`);
+        alert(
+          "An unexpected error occurred while retrieving disposition data. Please contact support and refer to the console for technical details."
+        );
       },
-    });
-  });
-
-  // Select the modal element
-  let dispoModal = document.getElementById("dispoModal");
-
-  // Listen for the modal close event
-  dispoModal.addEventListener("hidden.bs.modal", function () {
-    // Select all checkboxes and radio buttons inside the modal
-    let inputs = dispoModal.querySelectorAll(
-      "input[type='checkbox'], input[type='radio']"
-    );
-
-    // Loop through each input and uncheck it
-    inputs.forEach((input) => {
-      input.checked = false;
-    });
-
-    // Clear the text content of the specific <span> elements
-    let clear_inp = [
-      "affected_process",
-      "other_resumption",
-      "process_instruction",
-      "document_alert_s",
-      "other_specify_s",
-      "released_by",
-      "approvd_by_engineer",
-      "approvd_by_supv_mgr",
-      "approvd_by_SheldahlRep",
-    ];
-
-    clear_inp.forEach((id) => {
-      let spanElement = dispoModal.querySelector(`#${id}`);
-      if (spanElement) {
-        spanElement.textContent = ""; // Clear the content of the <span>
-      }
     });
   });
 });

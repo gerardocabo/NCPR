@@ -43,31 +43,6 @@ if ($row = $result->fetch_assoc()) {
         /* Prevent clicking */
     }
 
-    #loader {
-        display: none;
-        width: 50px;
-        height: 50px;
-        border: 5px solid #f3f3f3;
-        border-top: 5px solid #3498db;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>
-<style>
     .action-container {
         position: relative;
         /* Ensure floating indicator stays positioned correctly */
@@ -107,7 +82,6 @@ if ($row = $result->fetch_assoc()) {
 </style>
 
 <body class="bg-white">
-    <div id="loader"></div>
     <div class="wrapper bg-white">
         <aside id="sidebar">
             <div class="d-flex">
@@ -504,7 +478,7 @@ if ($row = $result->fetch_assoc()) {
                         "data": "status",
                         "className": "text-center",
                         "render": function(data, type, row) {
-                            if (data === "open") {
+                            if (data === "Open") {
                                 return '<span class="badge bg-success">Open</span>';
                             } else if (data === "Close") {
                                 return '<span class="badge bg-danger">Close</span>';

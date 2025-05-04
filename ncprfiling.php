@@ -114,6 +114,11 @@ include "config.php"
                                         </div>
                                     </div>
 
+                                    <div>
+                                        <input type="checkbox" id="is_Chem" class="form-check-input" name="isChem" value="1">
+                                        <strong><label for="is_Chem" class="form-check-label">If Chemical pls. check.</label></strong>
+                                    </div>
+
                                     <div class="d-flex flex-wrap gap-3 mb-1">
                                         <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
                                             <input type="text" id="part_number" name="part_number" class="form-control"

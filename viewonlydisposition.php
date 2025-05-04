@@ -9,6 +9,12 @@
 </style>
 
 <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
+
+<p id="RR_display" class="d-none text-info">
+  <strong class="me-2">Rejection Reason / Note: </strong>
+  <span id="reject_reason_display"></span>
+</p>
+
 <div class="border mb-3 align-items-center p-2">
     <span class="d-block"><strong>This space is intended for QA verification, containment and investigation activities.</strong></span>
     <span id="containment" style="margin-left: 12px;" class="fortyle"></span>
@@ -188,7 +194,7 @@
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
                     <span id="document_alert" class="fortyle"></span>
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
+                    <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler2s"> Rework Traveler
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $

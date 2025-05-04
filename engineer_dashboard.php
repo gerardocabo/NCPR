@@ -340,7 +340,7 @@ if ($row = $result->fetch_assoc()) {
             </div>
         </div>
     </div>
-
+    <div id="username" data-user="<?php echo $_SESSION['user']; ?>" style="display: none;"></div>
     <div id="notification-box" style="
         position: fixed;
         top: 10px;
@@ -492,8 +492,8 @@ if ($row = $result->fetch_assoc()) {
                             "data": "status",
                             "className": "text-center",
                             "render": function(data, type, row) {
-                                if (data === "open") {
-                                    return '<span class="badge bg-success">open</span>';
+                                if (data === "Open") {
+                                    return '<span class="badge bg-success">Open</span>';
                                 } else if (data === "Close") {
                                     return '<span class="badge bg-danger">Close</span>';
                                 } else {
@@ -677,7 +677,18 @@ if ($row = $result->fetch_assoc()) {
                         ncpr_num: ncprNum
                     },
                     dataType: 'json',
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: "Loading...",
+                            text: "Fetching disposition details...",
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                        });
+                    },
                     success: function(response) {
+                        Swal.close();
                         targetForm.find('#modal-id').text(response.ncpr_num);
                         targetForm.find('#containment').text(response.containment); // Sets the text for textarea
                         targetForm.find('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);

@@ -7,64 +7,80 @@ header('Content-Type: application/json');
 // Function to get pending approvals based on the user's role
 function getPendingApprovals($user_role)
 {
-    // Default query: Fetch all NCPRs that haven't been disposed yet
-    $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at
-                FROM ncpr_table 
-                WHERE status = 'open' AND dispo_id IS NULL
-                ORDER BY ncpr_num DESC";
-
-    // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
-    if ($user_role === 'QA ENGINEER') {
-        $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
+    // Switch based on user role
+    switch ($user_role) {
+        case 'QA ENGINEER':
+            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
                     dispo.status as statuses, dispo.approver_role
-                    FROM ncpr_table AS ncpr
-                    LEFT JOIN dispo_approval AS dispo 
-                    ON ncpr.ncpr_num = dispo.ncpr_num 
-                    AND dispo.approver_role = 'QA ENGINEER'
-                    WHERE ncpr.status = 'open' 
-                    AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
-                    AND (
-                        dispo.status = 'Approved'
-                        OR ncpr.ncpr_num NOT IN (
-                            SELECT ncpr_num FROM dispo_approval 
-                        WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
-                        )
-                )
-                ORDER BY ncpr_num DESC";
-    }
-    // if role is PCO, this query only chemical material from the database
-    elseif ($user_role === 'PCO') {
-        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
-                              FROM ncpr_table
-                              JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
-                              WHERE dispo_approval.approver_role = 'QA ENGINEER' 
-                              AND dispo_approval.status = 'Approved'
-                              AND ncpr_table.dispo_id IS NOT NULL
-                              AND ncpr_table.ncpr_num NOT IN (
-                                SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))
-                                ORDER BY ncpr_num DESC";
-    }
-    //
-    elseif ($user_role === 'QA MANAGER' || $user_role === 'QA SUPERVISOR') {
-        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
+                  FROM ncpr_table AS ncpr
+                  LEFT JOIN dispo_approval AS dispo 
+                  ON ncpr.ncpr_num = dispo.ncpr_num 
+                  AND dispo.approver_role = 'QA ENGINEER'
+                  WHERE ncpr.status = 'Open' 
+                  AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
+                  AND (
+                      dispo.status = 'Approved'
+                      AND ncpr.ncpr_num NOT IN (
+                          SELECT ncpr_num FROM dispo_approval 
+                      WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
+                      )
+                  )
+                  ORDER BY ncpr_num DESC";
+            break;
+
+        case 'PCO':
+            // If the user is a PCO, query to show the chemicals
+            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
+                    dispo.status as statuses, dispo.approver_role
+                  FROM ncpr_table AS ncpr
+                  LEFT JOIN dispo_approval AS dispo 
+                  ON ncpr.ncpr_num = dispo.ncpr_num 
+                  AND dispo.approver_role = 'QA ENGINEER'
+                  WHERE ncpr.status = 'Open' 
+                  AND ncpr.is_chem = 1 
+                  AND ncpr.dispo_id IS NULL OR ncpr.dispo_id = dispo.id
+                  AND (
+                      dispo.status = 'Approved'
+                      AND ncpr.ncpr_num NOT IN (
+                          SELECT ncpr_num FROM dispo_approval 
+                      WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR')
+                      )
+                  )
+                  ORDER BY ncpr_num DESC";
+            break;
+
+        case 'QA MANAGER':
+        case 'QA SUPERVISOR':
+            // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
+            $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent, dispo.status as statuses
                   FROM ncpr_table
-                  JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
-                  WHERE dispo_approval.approver_role = 'QA ENGINEER' 
-                  AND dispo_approval.status = 'Approved'
+                  JOIN dispo_approval AS dispo ON ncpr_table.ncpr_num = dispo.ncpr_num
+                  WHERE dispo.approver_role = 'SHELDAHL REPRESENTATIVE' AND dispo.status = 'Rejected' 
+                  OR dispo.approver_role IN ('QA ENGINEER','PCO')
                   AND ncpr_table.dispo_id IS NOT NULL
                   AND ncpr_table.ncpr_num NOT IN (
                     SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))
-                    ORDER BY ncpr_num DESC";
-    }
-    // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
-    elseif ($user_role === 'SHELDAHL REPRESENTATIVE') {
-        $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent
-                  FROM ncpr_table
-                  JOIN dispo_approval ON ncpr_table.ncpr_num = dispo_approval.ncpr_num
-                  WHERE dispo_approval.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 
-                  AND dispo_approval.status = 'Approved'
-                  AND ncpr_table.status = 'open'
                   ORDER BY ncpr_num DESC";
+            break;
+
+        case 'SHELDAHL REPRESENTATIVE':
+            // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
+            $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent, dispo.status as statuses
+                  FROM ncpr_table
+                  JOIN dispo_approval AS dispo ON ncpr_table.ncpr_num = dispo.ncpr_num
+                  WHERE dispo.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 
+                  AND dispo.status = 'Approved'
+                  AND ncpr_table.status = 'Open'
+                  ORDER BY ncpr_num DESC";
+            break;
+
+        default:
+            // Default query: Fetch all NCPRs that haven't been disposed yet
+            $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at
+                    FROM ncpr_table 
+                    WHERE status = 'Open' AND dispo_id IS NULL
+                    ORDER BY ncpr_num DESC";
+            break;
     }
 
     return $query;

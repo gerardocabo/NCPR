@@ -37,6 +37,27 @@ $name = $_SESSION["user"];
         -moz-appearance: textfield;
         /* For Firefox */
     }
+
+    .signature-line {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .signature-line span {
+        display: inline-block;
+        border-bottom: 1px solid #000;
+        padding-bottom: 2px;
+        margin-bottom: 4px;
+    }
+
+    .signature-line p {
+        margin: 0;
+        font-size: 0.7em;
+        color: #333;
+    }
 </style>
 
 <body>
@@ -71,7 +92,7 @@ $name = $_SESSION["user"];
                 </a>
             </div>
         </aside>
-        
+
         <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -124,11 +145,16 @@ $name = $_SESSION["user"];
                                         </div>
                                     </div>
 
+                                    <div>
+                                        <input type="checkbox" id="is_Chem" class="form-check-input" name="isChem" value="1">
+                                        <strong><label for="is_Chem" class="form-check-label">If Chemical pls. check.</label></strong>
+                                    </div>
+                                    
                                     <div class="d-flex flex-wrap gap-3 mb-1">
                                         <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
                                             <input type="text" id="part_number" name="part_number" class="form-control"
                                                 style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off" required>
-                                            <label for="part_number">Part Number/Model Number:</label>
+                                            <label for="part_number">Part Number/Model Number: </label>
                                             <!-- Dropdown List -->
                                             <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
                                                 style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
@@ -245,7 +271,6 @@ $name = $_SESSION["user"];
                                                 }
                                             });
                                         </script>
-
                                         <div class="form-floating g-0" style="flex: 1; min-width: 250px;">
                                             <input type="text" class="form-control" name="process" placeholder="Enter Part Description" required>
                                             <label>Process:</label>

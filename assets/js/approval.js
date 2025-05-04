@@ -2,58 +2,54 @@ $(document).ready(function () {
   $(".approval-action").click(function (e) {
     e.preventDefault();
 
-    // Check if all required inputs (including textareas) are filled before continuing
-    var isValid = true;
-    var firstInvalidElement = null; // To store the first invalid field
+    var action = $(this).data("action");
+    var role = $(this).data("role");
 
-    // Check required inputs
-    $("input[required]").each(function () {
-      if ($(this).val() === "") {
-        isValid = false;
-        $(this).addClass("is-invalid"); // Optionally, add a class for styling
-        if (!firstInvalidElement) {
-          firstInvalidElement = $(this); // Set first invalid element
+    var action = $(this).data("action");
+    var role = $(this).data("role");
+
+    if (action === "reject_show") {
+      const rejectdiv = document.getElementById("reject-form");
+      const rejectform = document.getElementById("reject_form");
+
+      if (rejectdiv && rejectform) {
+        rejectdiv.classList.remove("d-none");
+        rejectform.classList.remove("d-none");
+
+        const textarea = rejectform.querySelector("textarea");
+        if (textarea) {
+          textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+          textarea.focus();
         }
-      } else {
-        $(this).removeClass("is-invalid");
       }
-    });
+      return;
+    }
 
-    // Check required textareas
-    $("textarea[required]").each(function () {
-      if ($(this).val().trim() === "") {
-        isValid = false;
-        $(this).addClass("is-invalid"); // Optionally, add a class for styling
-        if (!firstInvalidElement) {
-          firstInvalidElement = $(this); // Set first invalid element
-        }
-      } else {
-        $(this).removeClass("is-invalid");
+    // Only run validation logic if the reject form is expected to be visible
+    if (
+      document.getElementById("reject-form") &&
+      document.getElementById("reject_form")
+    ) {
+      const rejectdiv = document.getElementById("reject-form");
+
+      if (
+        !rejectdiv.classList.contains("d-none") &&
+        !validateRequiredFields("#reject_form")
+      ) {
+        return; // Validation failed
       }
-    });
+    }
 
-    if (!isValid) {
-      // Scroll to the first invalid field and focus on it
-      $("html, body").animate(
-        {
-          scrollTop: firstInvalidElement.offset().top - 20, // Adjust for better visibility
-        },
-        500
-      );
-
-      firstInvalidElement.focus(); // Focus the first invalid field
-      // Show a message if any required field is empty
+    if (!validateRequiredFields("#dispoForm")) {
+      // Optional: show alert
       /*Swal.fire({
         title: "Validation Error",
         text: "Please fill all the required fields before proceeding.",
         icon: "error",
         confirmButtonText: "OK",
       });*/
-      return; // Stop the rest of the code from executing
+      return; // prevent further action
     }
-
-    var action = $(this).data("action");
-    var role = $(this).data("role");
 
     Swal.fire({
       title: "Are you sure?",
@@ -75,13 +71,13 @@ $(document).ready(function () {
           },
         });
 
-        if (role === "QA Engineer" && action !== "cancel") {
+        const allowedRoles = ["QA Supervisor", "QA Manager", "Representative"];
+
+        if (role === "QA Engineer" || role === "QA PCO") {
           // Then, upload file attachments and include the ncpr_num
           uploadFileAttachments();
           sendApprovalRequest(action, role); // ENGINEER approval function
-        } else if (role === "QA Manager" || "Representative") {
-          sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
-        } else if (action === "cancel" || "reject") {
+        } else if (allowedRoles.includes(role)) {
           sendSPMGRApproval(action, role); // MANAGER/SUPERVISOR approval function
         } else {
           Swal.fire(
@@ -93,6 +89,36 @@ $(document).ready(function () {
       }
     });
   });
+
+  function validateRequiredFields(scopeSelector) {
+    let isValid = true;
+    let firstInvalidElement = null;
+
+    // Select required inputs and textareas within the scope
+    $(
+      `${scopeSelector} input[required], ${scopeSelector} textarea[required]`
+    ).each(function () {
+      const value = $(this).val().trim();
+
+      if (value === "") {
+        isValid = false;
+        $(this).addClass("is-invalid");
+        if (!firstInvalidElement) firstInvalidElement = $(this);
+      } else {
+        $(this).removeClass("is-invalid");
+      }
+    });
+
+    if (!isValid) {
+      $("html, body").animate(
+        { scrollTop: firstInvalidElement.offset().top - 20 },
+        500
+      );
+      firstInvalidElement.focus();
+    }
+
+    return isValid;
+  }
 
   function uploadFileAttachments() {
     let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
@@ -246,9 +272,6 @@ $(document).ready(function () {
         ...interventionData,
       },
       dataType: "json", // Expect JSON response
-      beforeSend: function () {
-        console.log("Sending before the succes/error AJAX request...");
-      },
       success: function (response) {
         if (response.status === "success") {
           Swal.fire({
@@ -278,33 +301,29 @@ $(document).ready(function () {
       },
       error: function (xhr, status, error) {
         console.error("AJAX Error:", error, xhr.responseText);
-        Swal.fire("Error", "AJAX request failed. Check console.", "error");
+        alert("An Error Occurred", "A system error has occurred. Please contact support for assistance. Check the console for more details.", "error");
       },
     });
   }
 
   function sendSPMGRApproval(action, role) {
     let selectedId = $("#modal-id").text(); // Ensure selected ID is correctly retrieved
-    console.log("Sending AJAX request for MANAGER/SUPERVISOR...");
 
-    /*let viewmodalID = $("#view-ncpr-num").text(); // Ensure selected ID is correctly retrieved
-    if(viewmodalID){console.log("Sending AJAX request for cancel...");}
+    let data = {
+      action: action,
+      role: role,
+      ncpr_num: selectedId,
+    };
 
-    if (role === "QA Engineer") {
-      selectedId = viewmodalID;
-    }*/
-    if (action === "cancel") {
-      console.log("Sending AJAX request for cancel...");
+    if (role === "Representative") {
+      var reason = $("#rejection_reason").val();
+      data.reason = reason;
     }
 
     $.ajax({
       url: "approval.php",
       type: "POST",
-      data: {
-        action: action,
-        role: role,
-        ncpr_num: selectedId,
-      },
+      data: data,
       success: function (response) {
         // Handle success response
         if (response.status === "success") {
@@ -341,7 +360,7 @@ $(document).ready(function () {
             }*/
       error: function (xhr, status, error) {
         console.error("AJAX Error:", error, xhr.responseText);
-        Swal.fire("Error", "AJAX request failed. Check console.", "error");
+        alert("An Error Occurred", "A system error has occurred. Please contact support for assistance. Check the console for more details.", "error");
       },
     });
   }

@@ -56,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $part_name = isset($_POST['part_name']) ? $_POST['part_name'] : null;
     $process = isset($_POST['process']) ? $_POST['process'] : null;
     $urgent = $_POST['urgent']; // Will be 'on' if checked, 'off' if not
+    $isChem = isset($_POST['isChem']) && $_POST['isChem'] === '1';
 
 
     // New Fields (Check if they exist before assigning)
@@ -99,8 +100,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nine_one = isset($_POST['nine_one']) ? $_POST['nine_one'] : NULL;
 
 
+    $chem = $chem ?? false; // Default to false if not set
 
     if (!empty($part_name)) {
+
+        // Handle chemical material insertion
+        if ($chem === true) {
+            // Set part_number to "N/A" if empty
+            $chem_part_number = !empty($part_number) ? $part_number : "N/A";
+
+            // Check if part_name exists in chem_material_table
+            $check_chem_query = "SELECT part_name FROM chem_material_table WHERE part_name = ?";
+            $stmt = mysqli_prepare($conn, $check_chem_query);
+            mysqli_stmt_bind_param($stmt, "s", $part_name);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            if (mysqli_num_rows($result) == 0) {
+                // Insert into chem_material_table
+                $insert_chem_query = "INSERT INTO chem_material_table (part_name, part_number) VALUES (?, ?)";
+                $stmt = mysqli_prepare($conn, $insert_chem_query);
+                mysqli_stmt_bind_param($stmt, "ss", $part_name, $chem_part_number);
+                mysqli_stmt_execute($stmt);
+            }
+        }
+
+        // Proceed with product_list logic
         if (!empty($part_number)) {
             // Check if part_number exists
             $check_query = "SELECT part_name FROM product_list WHERE part_number = ?";
@@ -110,14 +135,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = mysqli_stmt_get_result($stmt);
 
             if (mysqli_num_rows($result) == 0) {
-                // Insert both part_number and part_name if part_number is new
+                // Insert into product_list
                 $insert_query = "INSERT INTO product_list (part_number, part_name) VALUES (?, ?)";
                 $stmt = mysqli_prepare($conn, $insert_query);
                 mysqli_stmt_bind_param($stmt, "ss", $part_number, $part_name);
                 mysqli_stmt_execute($stmt);
             }
         } else {
-            // Insert "N/A" if part_number is empty
+            // Insert with "N/A" as part_number
             $part_number = "N/A";
             $insert_query = "INSERT INTO product_list (part_number, part_name) VALUES (?, ?)";
             $stmt = mysqli_prepare($conn, $insert_query);
@@ -134,19 +159,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $sql = "INSERT INTO ncpr_table (
-            initiator, ncpr_num, date, part_number, part_name, process, urgent, 
+            initiator, ncpr_num, date, part_number, part_name, is_chem, process, urgent, 
             issue, awpi, dc, deviation, repeating, cavity, machine, ref, bg, 
             recall, fgparts, shipment, ship_sched, wip, stop_proc, location, 
             mcs, mcs_details, customer_notif, 
             one, one_one, two, two_one, three, three_one, four, five, six, 
             seven, seven_one, seven_two, eight, eight_one, nine, nine_one, status
         ) VALUES (
-            '$initiator', '$ncpr_num', '$date', '$part_number', '$part_name', '$process', '$urgent',
+            '$initiator', '$ncpr_num', '$date', '$part_number', '$part_name', '$isChem', '$process', '$urgent',
             '$issue', '$awpi', '$dc', '$deviation', '$repeating', '$cavity', '$machine', '$ref', '$bg',
             '$recall', '$fgparts', '$shipment', '$ship_sched', '$wip', '$stop_proc', '$location', 
             '$mcs', '$mcs_details', '$customer_notif', 
             '$one', '$one_one', '$two', '$two_one', '$three', '$three_one', '$four', '$five', '$six', 
-            '$seven', '$seven_one', '$seven_two', '$eight', '$eight_one', '$nine', '$nine_one', 'open'
+            '$seven', '$seven_one', '$seven_two', '$eight', '$eight_one', '$nine', '$nine_one', 'Open'
         )";
 
 

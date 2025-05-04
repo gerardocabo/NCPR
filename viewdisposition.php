@@ -9,6 +9,11 @@
 </style>
 
 <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
+<p id="RR_display" class="d-none text-info">
+  <strong class="me-2">Rejection Reason / Note: </strong>
+  <span id="reject_reason_display"></span>
+</p>
+
 <div class="border mb-3 align-items-center p-2">
     <span class="d-block"><strong>This space is intended for QA verification, containment and investigation activities.</strong></span>
     <span id="containment" style="margin-left: 12px;" class="fortyle"></span>
@@ -188,7 +193,7 @@
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
                     <span id="document_alert" class="fortyle"></span>
-                    <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
+                    <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler2"> Rework Traveler
                 </div>
                 <div class="d-flex align-items-center mt-2 gap-2">
                     <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
@@ -321,9 +326,9 @@
                                 Select Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager" title="approve the NCPR">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
+                                <li class="cancel_removed"><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager" title="approve the NCPR">Approve</a></li>
+                                <li class="cancel_removed"><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
+                                <li class="cancel-approved"><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
                             </ul>
                         </div>
                     </div>
@@ -339,7 +344,7 @@
                     </div>
                 </td>
                 <td>
-                    <div class="d-flex align-items-center">
+                    <div class="mt-4 d-flex align-items-center">
                         <div class="d-flex align-items-center" style="margin-right: auto;">
                             <div class="me-3">
                                 <strong>Sheldahl / NT Representative:</strong><br>
@@ -352,7 +357,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="Representative">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="reject" data-role="Representative">Reject</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="reject_show" data-role="Representative">Reject</a></li>
                                 <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="Representative">Cancel</a></li>
                             </ul>
                         </div>
@@ -390,4 +395,43 @@
     <h5 class="text-center mb-5 mt-5">File Attachments</h5>
     <div id="fileList" class="d-block flex-wrap">
     </div>
+    <?php if ($user_role === 'SHELDAHL REPRESENTATIVE'): ?>
+        <table id="reject-form" class="table table-bordered border border-danger division-section d-none">
+            <tr>
+                <td>
+                    <div class="col-sm-12 text-end">
+                        <button type="button" class="btn-close remove-division" aria-label="Close"></button>
+                    </div>
+                    <form id="reject_form" class="d-none">
+                        <div class="form-group row mb-3">
+                            <label for="division" class="col-sm-2 col-form-label">Specified Form Part</label>
+                            <div class="col-sm-3">
+                                <?php
+                                $divisions = [
+                                    "containment" => "QA verification, containment etc.",
+                                    "CNC" => "Cause of Non-conformance:",
+                                    "IARA" => "IMPACT ANALYSIS / RISK ASSESSMENT",
+                                    "Prod_dispo" => "PRODUCT DISPOSITION"
+                                ];
+                                ?>
+                                <select id="division" name="division" class="form-control">
+                                    <option value="">-- select --</option>
+                                    <?php foreach ($divisions as $value => $label): ?>
+                                        <option value="<?= htmlspecialchars($value) ?>"><?= htmlspecialchars($label) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason</label>
+                            <textarea id="rejection_reason" name="rejection_reason" class="form-control" required></textarea>
+                        </div>
+                        <button class="btn btn-danger approval-action float-end" data-action="reject" data-role="Representative">
+                            <span style="color: yellow;">&#9888;</span> Confirm Rejection
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    <?php endif; ?>
 </table>

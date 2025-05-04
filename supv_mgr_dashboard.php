@@ -462,13 +462,15 @@ if ($row = $result->fetch_assoc()) {
                             "className": "text-center" // Center the initiator column
                         },
                         {
-                            "data": "status",
+                            "data": "statuses",
                             "className": "text-center",
                             "render": function(data, type, row) {
-                                if (data === "open") {
-                                    return '<span class="badge bg-success">open</span>';
-                                } else if (data === "Close") {
-                                    return '<span class="badge bg-danger">Close</span>';
+                                if (data === "Approved") {
+                                    return '<span class="badge bg-success">Pending</span>';
+                                } else if (data === "Canceled") {
+                                    return '<span class="badge bg-danger">Canceled</span>';
+                                } else if (data === "Rejected") {
+                                    return '<span class="badge bg-danger">Rejected</span>';
                                 } else {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
@@ -587,9 +589,34 @@ if ($row = $result->fetch_assoc()) {
                         ncpr_num: ncprNum
                     },
                     dataType: 'json',
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: "Loading...",
+                            text: "Fetching disposition details...",
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                        });
+                    },
                     success: function(response) {
+                        Swal.close();
                         // Populate fields with existing data
+                        let $dispoStatus = response.dispo_status;
+                        if ($dispoStatus === "Canceled") {
+                            document.querySelectorAll('.cancel_removed').forEach(el => {
+                                el.style.display = "none";
+                            })
+                            let el = document.querySelector('li.cancel-approved a[data-action="cancel"][data-role="QA Manager"]');
+                            if (el) el.textContent = "Approve";
+                        }
+
                         $('#modal-id').text(response.ncpr_num);
+
+                        if ($dispoStatus === "Rejected") {
+                            document.getElementById('RR_display').classList.remove("d-none"); // Corrected DOM manipulation
+                            $('#reject_reason_display').text(response.RR_display); // jQuery for text update
+                        }
 
                         //$('#containment').val(response.containment);
                         $('#containment').text(response.containment); // Sets the text content
@@ -704,6 +731,12 @@ if ($row = $result->fetch_assoc()) {
                             response.approvers.forEach(function(approver) {
                                 if (approver.approver_role) {
                                     switch (approver.approver_role) {
+                                        case "PCO":
+                                            $("#approvd_by_engineer").text(
+                                                approver.fname + " " + approver.lname
+                                            );
+                                            $("#dt_engineer").text(approver.approval_date);
+                                            break;
                                         case "QA ENGINEER":
                                             $("#approvd_by_engineer").text(
                                                 approver.fname + " " + approver.lname

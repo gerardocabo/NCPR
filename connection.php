@@ -15,7 +15,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
     // Set MySQL session timezone to Philippine Time
-    $pdo->exec("SET time_zone = '+08:00';"); // or 'Asia/Manila' if available
+    //$pdo->exec("SET time_zone = '+08:00';"); // or 'Asia/Manila' if available
 
     // Return the PDO connection object
     return $pdo;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 28, 2025 at 08:29 AM
+-- Generation Time: May 04, 2025 at 10:18 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,122 @@ SET time_zone = "+00:00";
 --
 -- Database: `ncpr_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chem_material_table`
+--
+
+CREATE TABLE `chem_material_table` (
+  `chem_id` int(11) NOT NULL,
+  `item_description` varchar(100) NOT NULL,
+  `uom` varchar(50) NOT NULL,
+  `part_number` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chem_material_table`
+--
+
+INSERT INTO `chem_material_table` (`chem_id`, `item_description`, `uom`, `part_number`) VALUES
+(1, 'Nikal PC3 Additive', 'lts', '179357-001'),
+(2, 'Wetting Agent W', 'lts', '179358-001'),
+(3, 'Auro Strike GP3 Sea Replenisher', 'unit', '179359-001'),
+(4, 'Strike Conductivity Salt', 'kgs.', '179361-001'),
+(5, 'Ronovel N Replenisher', 'unit', '179362-001'),
+(6, 'Ronovel N Nickel Concentrate', 'lts', '179363-001'),
+(7, 'Ronovel N Booster', 'lts', '179364-001'),
+(8, 'Nickel Sulphamate 185G/L', 'kgs.', '179473-001'),
+(9, 'Ronovel N Conductivity Salt', 'kgs.', '179474-001'),
+(10, 'AU Acid Salt', 'kgs.', 'n/a'),
+(11, 'Ronovel N Acid Salt', 'kgs.', 'n/a'),
+(12, 'NICKEL CHLORIDE 500G/L', 'lts.', 'n/a'),
+(13, 'NIMUDEN NPR-4M', 'LTS', '176107-001'),
+(14, 'NIMUDEN NPR-4A', 'LTS', '176111-001'),
+(15, 'NIMUDEN NPR-4B', 'LTS', '176113-001'),
+(16, 'NIMUDEN NPR-4C', 'LTS', '176114-001'),
+(17, 'NIMUDEN NPR-4D', 'LTS', '176116-001'),
+(18, 'GO BRIGHT TCL-61 M5', 'LTS', '176117-001'),
+(19, 'KAT-450', 'LTS', '176119-001'),
+(20, 'Acid Concentrate FF', 'kgs.', '176441-001'),
+(21, 'Tin Concentrate FS20', 'kgs.', '176443-001'),
+(22, 'Additive SAT 25', 'kgs.', '176444-001'),
+(23, 'Pure Tin Anode Balls', 'kgs', '176445-001'),
+(24, 'NICKEL S PELLET ANODE', 'kgs', 'N/A'),
+(25, 'SOLDER ANODE', 'kgs', '176449-001'),
+(26, 'CATHODE GOLD BUG GB002', 'EA', 'N/A'),
+(27, 'NITRIC ACID 68% (TECHNICAL GRADE)', 'kgs.', 'N/A'),
+(28, 'NITRIC ACID 69-70%', 'ltrs', 'N/A'),
+(29, 'Hydrochloric Acid 37%J.T Baker 9535-69 Packaging per bottle 2.5 liter ', 'BTLS', 'N/A'),
+(30, 'HYDROCHLORIC ACID TG 25kgs/Cby', 'kgs.', 'N/A'),
+(31, 'Sulfuric Acid 97% Macron 2876-69 Packaging per bottle 2.5 liter ', 'BTLS', 'N/A'),
+(32, 'SULFURIC ACID 75-98% (TECHNICAL GRADE)', 'ltrs', 'N/A'),
+(33, 'HYDROGEN PEROXIDE 50%', 'kgs.', 'N/A'),
+(34, 'SILVER STANDARD ', 'amp', 'N/A'),
+(35, 'PALLADIUM STD', 'ml', 'N/A'),
+(36, 'IPA 99.9%', 'LTR', 'N/A'),
+(37, 'MARABU INK CLEANER', 'BTL', 'N/A'),
+(38, 'FLUX WATER SOLUBLE 358', 'GAL', 'N/A'),
+(39, 'FLUX NO CLEAN 737N', 'ML', 'N/A'),
+(40, 'KRYTOX OIL', 'KG', 'N/A'),
+(41, '1-METHOXY 2- PROPANOL', 'ML', 'N/A'),
+(42, 'NITROGEN UHP', 'TANK', 'N/A'),
+(43, 'OXYGEN', 'TANK', 'N/A'),
+(44, 'ARGON UHP', 'TANK', 'N/A'),
+(45, 'ACETYLENE INSTRUMENT GRADE', 'TANK', 'N/A'),
+(46, 'ENTEK', 'LTR', 'N/A'),
+(47, 'SODIUM PERSULFATE', 'KG', 'N/A'),
+(48, 'TRISODIUM PHOSPHATE  25 kgs.', 'BAGS', 'N/A'),
+(49, 'POTASSIUM CYANIDE', 'KG', 'N/A'),
+(50, 'PCT CG70', 'LTR', 'N/A'),
+(51, 'NAPTHA SOLVENT CLEANER', 'GALLON', 'N/A'),
+(52, 'FLUX ORGANO', 'LTR', 'N/A'),
+(53, 'COPPER ATOMIC SPECTROSCOPY STD', 'AMP', 'N/A'),
+(54, 'GOLD ATOMIC SPECTROSCOPY STD', 'AMP', 'N/A'),
+(55, 'IRON ATOMIC SPECTROSCOPY STD', 'AMP', 'N/A'),
+(56, 'NICKEL ATOMIC SPECTROSCOPY STD', 'AMP', 'N/A'),
+(57, 'LEAD ATOMIC SPECTROSCOPY STD', 'AMP', 'N/A'),
+(58, 'BUFFER PH4', 'BTL', 'N/A'),
+(59, 'BUFFER PH7', 'BTL', 'N/A'),
+(60, 'BUFFER PH10', 'BTL', 'N/A'),
+(61, 'BROMOCRESOL PUPPLE INDICATOR CAT.NO.1030250025', 'GRAM', 'N/A'),
+(62, 'AMMONIUM HYDROXIDE', 'BTL', 'N/A'),
+(63, 'HYDROCHLORIC ACID AR', 'BTL', 'N/A'),
+(64, 'SULFURIC ACID AR', 'BTL', 'N/A'),
+(65, '0.1M EDTA', 'AMP', 'N/A'),
+(66, 'ETHANOL 95% ALCOHOL 4litrs.', 'GAL', 'N/A'),
+(67, 'STARCH SOLUBLE 500 grams', 'BTL', 'N/A'),
+(68, 'THYODENE INDICATOR', 'GRAM', 'N/A'),
+(69, 'ETHYL ACETATE 4 litr per gal ', 'GAL', 'N/A'),
+(70, 'EPO KWICK', 'SET', 'N/A'),
+(71, 'LANTHANUM CHLORIDE', 'GRAM', 'N/A'),
+(72, 'MANNITOL 500 PER BTL', 'BTL', 'N/A'),
+(73, 'MUREXIDE METAL INDICATOR', 'GRAM', 'N/A'),
+(74, 'NICKEL SULFATE HEXAHYDRATE', 'KG', 'N/A'),
+(75, 'POTASSIUM HYDROXIDE PELLET', 'BTL', 'N/A'),
+(76, 'POTASSIUM IODIDE', 'KGS.', 'N/A'),
+(77, 'POTASSIUM CHROMATE CRYSTAL', 'GRAM', 'N/A'),
+(78, 'PAN INDICATOR', 'BTL', 'N/A'),
+(79, 'PHENOLPTHALEIN INDICATOR', 'GRAM', 'N/A'),
+(80, 'POTASSIUM CHLORIDE SOLUTION', 'BTL', 'N/A'),
+(81, 'SUPER STRIP', 'KG', 'N/A'),
+(82, 'SODIUM HYDROXIDE PELLET', 'KG', 'N/A'),
+(83, 'SODIUM NITRITE', 'GRAM', 'N/A'),
+(84, 'IODINE SOLUTION', 'AMP', 'N/A'),
+(85, 'SODIUM THIOSULFATE', 'AMP/BTL', 'N/A'),
+(86, 'ACETIC ACID GLACIAL', 'LTR', 'N/A'),
+(87, 'METHYL ORANGE INDICATOR CAT.NO.1013220025B', 'GRAM', 'N/A'),
+(88, 'BORIC ACID 25kgs/bag', 'bag', 'N/A'),
+(89, 'PCT CG70-1(PolyAluminum Chloride Powder)25kgs', 'kgs.', 'N/A'),
+(90, 'PCT FLOC60 (HIGH MOLECULAR ANIONIC POLYMER)', 'kg', 'N/A'),
+(91, 'PCT CLEANER K-30', 'kg', 'N/A'),
+(92, 'SLOTOCLEAN S21 ADDITIVE020012', 'kgs.', 'N/A'),
+(93, 'PORTABLE MIXED BED3.5 cuft', 'tank', 'N/A'),
+(94, 'SULFAMIC ACID', 'kgs.', 'N/A'),
+(95, 'QUICKSET ACRYLIC POWDER  5 lb.(2.3kg)', 'ea', 'N/A'),
+(96, 'MOLD RELEASE,HOT & COLD,PTFE', 'ea', 'N/A'),
+(97, 'QUICKSET ACRYLIC LIQUID 64oz.(1.9L)', 'ea', 'N/A');
 
 -- --------------------------------------------------------
 
@@ -46,6 +162,7 @@ CREATE TABLE `disposition_tbl` (
   `repair_DA` varchar(255) DEFAULT NULL,
   `scrap_amount` decimal(10,2) DEFAULT NULL,
   `shipment_date` date DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -157,6 +274,13 @@ CREATE TABLE `fomo` (
   `ncpr_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `fomo`
+--
+
+INSERT INTO `fomo` (`fomo_id`, `supplier`, `supplier_part_name`, `supplier_part_number`, `invoice_num`, `purchase_order`, `ncpr_id`) VALUES
+(1, 'N/A', 'N/A', '123', '123', '123', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -204,6 +328,13 @@ CREATE TABLE `material` (
   `ncpr_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `material`
+--
+
+INSERT INTO `material` (`material_id`, `ntdj_num`, `mns_num`, `lot_sublot_qty`, `qty_affected`, `qty_affected_text`, `defect_rate`, `ncpr_id`) VALUES
+(1, 'qwe', '123-1', 123, 23, '', '18.70', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -217,9 +348,10 @@ CREATE TABLE `ncpr_table` (
   `date` varchar(255) NOT NULL,
   `part_number` varchar(255) NOT NULL,
   `part_name` varchar(255) NOT NULL,
+  `is_chem` tinyint(1) NOT NULL,
   `process` varchar(255) NOT NULL,
   `urgent` varchar(255) NOT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `status` enum('Open','Closed','Canceled','Rejected') DEFAULT NULL,
   `issue` varchar(255) NOT NULL,
   `awpi` varchar(255) NOT NULL,
   `dc` varchar(255) NOT NULL,
@@ -258,6 +390,13 @@ CREATE TABLE `ncpr_table` (
   `dispo_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ncpr_table`
+--
+
+INSERT INTO `ncpr_table` (`id`, `initiator`, `ncpr_num`, `date`, `part_number`, `part_name`, `is_chem`, `process`, `urgent`, `status`, `issue`, `awpi`, `dc`, `deviation`, `repeating`, `cavity`, `machine`, `ref`, `bg`, `one`, `one_one`, `two`, `two_one`, `three`, `three_one`, `four`, `five`, `six`, `seven`, `seven_one`, `seven_two`, `eight`, `eight_one`, `nine`, `nine_one`, `recall`, `fgparts`, `shipment`, `ship_sched`, `wip`, `stop_proc`, `location`, `mcs`, `mcs_details`, `customer_notif`, `dispo_id`, `created_at`) VALUES
+(1, 'ABC', '26-0001', '2025-05-04', '179123-001', 'FLEXTRONICS DODGE RH', 0, 'QC', 'on', 'Open', 'issue need fix this part coz of small font in view', 'edited', 'edited', 'No', 'No', 'edited', 'edited', 'issue need fix this part coz of small font in view', 'issue need fix this part coz of small font in view', 'yes', 'yes', 'yes', '', 'yes', 'N/A', 'yes', 'yes', 'yes', 'no', 'N/A', 'N/A', 'yes', 'N/A', 'yes', 'N/A', 'no', 'yes', 'no', 'N/A', 'yes', 'no', 'N/A', 'yes', '', 'yes', NULL, '2025-05-05 01:10:09');
 
 -- --------------------------------------------------------
 
@@ -305,7 +444,8 @@ INSERT INTO `predefined_checkboxes` (`id`, `checkbox_name`, `default_value`) VAL
 (27, 'Repair', 'yes'),
 (28, 'Rework Traveler', 'yes'),
 (29, 'Scrap', 'yes'),
-(30, 'RTV', 'yes');
+(30, 'RTV', 'yes'),
+(31, 'Rework Traveler2', 'yes');
 
 -- --------------------------------------------------------
 
@@ -1342,10 +1482,10 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `role_id`, `status`,
 (3, 'Superadmin', '$2y$10$nqr.jgUU5knN8gEWd1YlB.2VGLDPCH.fhNHeFiYwD3nGGeIk.W28C', '', 1, NULL, '2025-03-17 06:55:18', 0, 0),
 (4, 'qastaff1@ntphil.com', '$2y$10$./PMVLBHDHh05BPvTaON3.zvvvBFvD9RDhsZiC8zXeGNXGLVZoFVa', '', 4, NULL, '2025-03-17 07:02:11', 2, 0),
 (5, 'engr_user', '$2y$10$MKfvuNI6yfh4/IGo.QkrjOlt0vg1w1r8uOLgRmNRZdTJfz/7.Wrgu', '', 7, NULL, '2025-03-19 02:30:54', 8, 0),
-(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', '', 9, NULL, '2025-03-23 13:38:27', 7, 4),
-(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', '', 7, NULL, '2025-03-23 13:38:44', 8, 8),
-(8, 'admin', '$2y$10$sYkHASxQdYPQVu7GMwz1P.z21qPb6LWXPtvfLTohUNiPdqSwRzm3u', '', 4, NULL, '2025-03-23 13:38:50', 0, 2),
-(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', 'rep@gmail.com', 10, NULL, '2025-03-24 02:13:14', 10, 2),
+(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', 'mikespruce49@gmail.com', 9, NULL, '2025-03-23 13:38:27', 7, 0),
+(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', '', 7, NULL, '2025-03-23 13:38:44', 8, 1),
+(8, 'admin', '$2y$10$sYkHASxQdYPQVu7GMwz1P.z21qPb6LWXPtvfLTohUNiPdqSwRzm3u', '', 4, NULL, '2025-03-23 13:38:50', 0, 1),
+(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', '', 10, NULL, '2025-03-24 02:13:14', 10, 0),
 (20, 'jim.rutt', '$2y$10$IxIvbZqokUAhD4JjBhQfhe1O4jZeTh00/NC55zyn9mbrAk/b.759a', 'jim.rutt@shedahl.com', 10, NULL, '2025-04-02 07:05:12', 0, 0),
 (21, 'bing.marte', '$2y$10$pD3DP2nB6pc9p/GQRlnC3u7BDcmIWkAT5ondiLFf.rf1LJTFW2kXW', 'bing.marte@shedahl.com', 10, NULL, '2025-04-02 07:05:13', 11, 0),
 (22, 'jun.marcos', '$2y$10$4CdnrSriJEDxw5l8/NeLGeWEO48tvJq1otv5esZBq1WUbq.nOnILa', 'jun.marcos@sheldahl.com', 10, NULL, '2025-04-02 07:05:13', 10, 0),
@@ -1389,6 +1529,12 @@ INSERT INTO `users_roles` (`id`, `role_name`) VALUES
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `chem_material_table`
+--
+ALTER TABLE `chem_material_table`
+  ADD PRIMARY KEY (`chem_id`);
 
 --
 -- Indexes for table `disposition_tbl`
@@ -1528,6 +1674,12 @@ ALTER TABLE `users_roles`
 --
 
 --
+-- AUTO_INCREMENT for table `chem_material_table`
+--
+ALTER TABLE `chem_material_table`
+  MODIFY `chem_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+
+--
 -- AUTO_INCREMENT for table `disposition_tbl`
 --
 ALTER TABLE `disposition_tbl`
@@ -1573,7 +1725,7 @@ ALTER TABLE `email_settings`
 -- AUTO_INCREMENT for table `fomo`
 --
 ALTER TABLE `fomo`
-  MODIFY `fomo_id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `fomo_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `key_person`
@@ -1585,19 +1737,19 @@ ALTER TABLE `key_person`
 -- AUTO_INCREMENT for table `material`
 --
 ALTER TABLE `material`
-  MODIFY `material_id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `material_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `ncpr_table`
 --
 ALTER TABLE `ncpr_table`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `predefined_checkboxes`
 --
 ALTER TABLE `predefined_checkboxes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `predefined_checkboxes_2`
@@ -1615,7 +1767,7 @@ ALTER TABLE `process_area`
 -- AUTO_INCREMENT for table `product_list`
 --
 ALTER TABLE `product_list`
-  MODIFY `product_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=874;
+  MODIFY `product_id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=876;
 
 --
 -- AUTO_INCREMENT for table `register`

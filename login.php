@@ -31,7 +31,7 @@ function handleAdminLogin($username, $password, $pdo)
 
     try {
         // Get password, role, and status from the database
-        $stmt = $pdo->prepare("SELECT users.password, users.username, users.email, users.status, users_roles.role_name 
+        $stmt = $pdo->prepare("SELECT users.password, users.username, users.email, users.status, users.person_id, users_roles.role_name 
                                FROM users 
                                JOIN users_roles ON users.role_id = users_roles.id 
                                WHERE users.username = :username OR users.email = :username");
@@ -54,7 +54,16 @@ function handleAdminLogin($username, $password, $pdo)
         }
 
         $_SESSION["user"] = $user["username"];
-        $_SESSION["role"] = $user["role_name"];
+        $role = $_SESSION["role"] = $user["role_name"];
+        $id_name = $user["person_id"] ?? '';
+        $sweetname = ucfirst(strtolower($user["username"]));
+
+        if ($role === "SHELDAHL REPRESENTATIVE") {
+            $query = $pdo->prepare("SELECT fname, lname FROM key_person where id = :id");
+            $query->execute(["id" => $id_name]);
+            $name = $query->fetch(PDO::FETCH_ASSOC);
+            $sweetname = ucfirst(strtolower($name["fname"])) . " " . ucfirst(strtolower($name["lname"]));
+        }
 
         $redirectPages = [
             "SUPERADMIN"                => "SuperAdmin_dashboard.php",
@@ -72,12 +81,17 @@ function handleAdminLogin($username, $password, $pdo)
 
         return json_encode([
             "status" => "success",
-            "message" => ucfirst(strtolower($_SESSION["user"])),
+            "message" => $sweetname,
             "redirect" => $_SESSION['page']
         ]);
     } catch (PDOException $e) {
-        error_log("Database Error: " . $e->getMessage());
-        return json_encode(["status" => "error", "message" => "An error occurred while processing your request."]);
+        $_SESSION["user"] = null;
+        $_SESSION["role"] = null;
+        error_log("[Database Error] " . $e->getMessage());
+        return json_encode([
+            "status" => "error",
+            "message" => "An unexpected error occurred. Please try again later."
+        ]);
     }
 }
 

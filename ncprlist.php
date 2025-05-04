@@ -171,12 +171,21 @@ require "config.php";
                                         $status = $row['status'];
                                         $badgeClass = '';
 
-                                        if ($status === 'open') {
-                                            $badgeClass = 'badge bg-success';
-                                        } elseif ($status === 'Close') {
-                                            $badgeClass = 'badge bg-danger';
-                                        } else {
-                                            $badgeClass = 'badge bg-danger'; // default/unknown status
+                                        switch ($status) {
+                                            case 'Open':
+                                                $badgeClass = 'badge bg-success';
+                                                break;
+
+                                            case 'Closed':
+                                            case 'Rejected':
+                                            case 'Canceled':
+                                                $badgeClass = 'badge bg-danger';
+                                                break;
+
+                                            // Optional: handle other statuses
+                                            default:
+                                                $badgeClass = 'badge bg-secondary'; // fallback class
+                                                break;
                                         }
 
                                         echo "<span class='$badgeClass'>$status</span>";

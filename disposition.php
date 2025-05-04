@@ -176,7 +176,7 @@
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
                         <input type="text" name="repair_DA" class="border-0 border-bottom w-25 ms-2">
-                        <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler"> Rework Traveler
+                        <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Travedler2"> Rework Traveler
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $
@@ -292,14 +292,18 @@
                 <td>
                     <strong>QA Engineer / NT Representative:</strong><br>
                     (Signature & Date)
-                    <?php if ($user_role === 'QA ENGINEER'): ?>
+                    <?php
+                    $role = ($user_role === "PCO") ? "QA PCO" : "QA Engineer";
+                    ?>
+
+                    <?php if ($user_role === 'PCO' || $user_role === 'QA ENGINEER'): ?>
                         <div class="btn-group">
                             <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 Select Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Engineer">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Engineer">Cancel</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="<?= htmlspecialchars($role) ?>">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="<?= htmlspecialchars($role) ?>">Cancel</a></li>
                             </ul>
                         </div>
                     <?php endif; ?>
@@ -313,8 +317,8 @@
                                 Select Action
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Approved" data-role="QA Manager">Approve</a></li>
-                                <li><a class="dropdown-item approval-action" href="#" data-action="Cancel" data-role="QA Manager">Cancel</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager">Approve</a></li>
+                                <li><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
                             </ul>
                         </div>
                     <?php endif; ?>

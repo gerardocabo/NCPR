@@ -140,16 +140,26 @@ $name = $_SESSION["user"];
                                         }
                                         ?>
                                     </td>
-                                    <td><?php
+                                    <td>
+                                        <?php
                                         $status = $row['status'];
                                         $badgeClass = '';
 
-                                        if ($status === 'open') {
-                                            $badgeClass = 'badge bg-success';
-                                        } elseif ($status === 'Close') {
-                                            $badgeClass = 'badge bg-danger';
-                                        } else {
-                                            $badgeClass = 'badge bg-danger'; // default/unknown status
+                                        switch ($status) {
+                                            case 'Open':
+                                                $badgeClass = 'badge bg-success';
+                                                break;
+
+                                            case 'Closed':
+                                            case 'Rejected':
+                                            case 'Canceled':
+                                                $badgeClass = 'badge bg-danger';
+                                                break;
+
+                                            // Optional: handle other statuses
+                                            default:
+                                                $badgeClass = 'badge bg-secondary'; // fallback class
+                                                break;
                                         }
 
                                         echo "<span class='$badgeClass'>$status</span>";
@@ -159,13 +169,13 @@ $name = $_SESSION["user"];
                                         <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
                                             NCPR Form
                                         </button>
-                                        <?php if (is_null($row['dispo_id']) && ($row['status'] === "open")): ?>
+                                        <?php if (is_null($row['dispo_id']) && ($row['status'] === "Open")): ?>
                                             <button class="btn btn-warning btn-sm edit-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                                EDIT
+                                                Edit
                                             </button>
-                                        <?php elseif (($row['dispo_id']) && ($row['status'] === "Close")): ?>
+                                        <?php elseif (($row['dispo_id']) && ($row['status'] !== "Closed")): ?>
                                             <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                                DISPOSITION
+                                                Disposition Form
                                             </button>
                                         <?php endif; ?>
                                     </td>

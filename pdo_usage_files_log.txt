@@ -1,0 +1,9 @@
+Files using $pdo:
+File: C:\xampp\htdocs\ncpr-2\NCPR\connection.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\fetch_dispo_details.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\fetch_ncpr.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\login.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\Setting_delete.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\Setting_register.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\Setting_SAdmin.php uses $pdo
+File: C:\xampp\htdocs\ncpr-2\NCPR\update_dispo.php uses $pdo
