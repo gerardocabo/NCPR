@@ -327,7 +327,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li class="cancel_removed"><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager" title="approve the NCPR">Approve</a></li>
-                                <li class="cancel_removed"><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
+                                <li class="cancel_removed reject_reopen"><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
                                 <li class="cancel-approved"><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
                             </ul>
                         </div>

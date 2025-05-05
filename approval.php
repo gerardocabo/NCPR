@@ -170,8 +170,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 executeQuery($conn, $query, [$reason, $ncpr_num], "ss");
                 $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
-                $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
-                executeQuery($conn, $query, [$status, $ncpr_num], "ss");
                 break;
 
             case 'cancel':

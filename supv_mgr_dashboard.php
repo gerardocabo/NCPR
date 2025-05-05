@@ -630,6 +630,11 @@ if ($row = $result->fetch_assoc()) {
                             let el = document.querySelector('li.cancel-approved a[data-action="cancel"][data-role="QA Manager"]');
                             if (el) el.textContent = "Approve";
                         }
+                        if ($dispoStatus === "Rejected") {
+                            document.querySelectorAll('.reject_reopen').forEach(elreject => {
+                                elreject.style.display = "none";
+                            })
+                        }
 
                         $('#modal-id').text(response.ncpr_num);
 
