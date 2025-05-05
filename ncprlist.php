@@ -7,7 +7,7 @@ require "config.php";
 <html lang="en">
 
 <head>
-    <title>admin Dashboard</title>
+    <title>NCPR System - List</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -51,7 +51,7 @@ require "config.php";
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">LOGO</a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -80,7 +80,7 @@ require "config.php";
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>
@@ -127,9 +127,11 @@ require "config.php";
                                 <th hidden>ID</th>
                                 <th class="text-center">NCPR Number</th>
                                 <th class="text-center">Initiator</th>
+                                <th class="text-center">Process</th>
                                 <th class="text-center">Date</th>
                                 <th class="text-center">Part Number</th>
-                                <th hidden>Part Name</th>
+                                <th class="text-center">Part Name</th>
+                                <th class="text-center">Call Out</th>
                                 <th class="text-center">Urgent</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
@@ -138,7 +140,7 @@ require "config.php";
                         <tbody id="ncpr-table-body">
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id 
+                            $query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, status, urgent, issue, dispo_id 
                                     FROM ncpr_table
                                     ORDER BY
                                         CASE status
@@ -154,9 +156,11 @@ require "config.php";
                                     <td hidden><?php echo $row['dispo_id']; ?></td>
                                     <td><?php echo $row['ncpr_num']; ?></td>
                                     <td><?php echo $row['initiator']; ?></td>
+                                    <td><?php echo $row['process']; ?></td>
                                     <td class="text-center"><?php echo $row['date']; ?></td>
                                     <td><?php echo $row['part_number']; ?></td>
-                                    <td hidden><?php echo $row['part_name']; ?></td>
+                                    <td><?php echo $row['part_name']; ?></td>
+                                    <td><?php echo $row['issue']; ?></td>
                                     <td>
                                         <?php
                                         if ($row['urgent'] === 'on') {
@@ -1754,7 +1758,7 @@ require "config.php";
             // Initialize the DataTable
             var table = $('#ncprTable').DataTable({
                 "columnDefs": [{
-                    "targets": [0, 1, 6],
+                    "targets": [0, 1],
                     "visible": false
                 }],
                 "order": [],

@@ -12,7 +12,7 @@ if (isset($_SESSION['page'])) {
 <html lang="en">
 
 <head>
-    <title>NCPR List</title>
+    <title>NCPR System - List</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -73,7 +73,7 @@ if (isset($_SESSION['page'])) {
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>
@@ -117,9 +117,11 @@ if (isset($_SESSION['page'])) {
                                 <th hidden>ID</th>
                                 <th class="text-center">NCPR Number</th>
                                 <th class="text-center">Initiator</th>
+                                <th class="text-center">Process</th>
                                 <th class="text-center">Date</th>
-                                <th hidden>Part Number</th>
-                                <th hidden>Part Name</th>
+                                <th class="text-center">Part Number</th>
+                                <th class="text-center">Part Name</th>
+                                <th class="text-center">Call Out</th>
                                 <th class="text-center">Urgent</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
@@ -128,7 +130,7 @@ if (isset($_SESSION['page'])) {
                         <tbody>
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent 
+                            $query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, issue, status, urgent 
                         FROM ncpr_table 
                         ORDER BY 
                             CASE status
@@ -143,9 +145,11 @@ if (isset($_SESSION['page'])) {
                                     <td hidden><?php echo $row['id']; ?></td>
                                     <td><?php echo $row['ncpr_num']; ?></td>
                                     <td><?php echo $row['initiator']; ?></td>
+                                    <td><?php echo $row['process']; ?></td>
                                     <td><?php echo $row['date']; ?></td>
-                                    <td hidden class="text-center"><?php echo $row['part_number']; ?></td>
-                                    <td hidden><?php echo $row['part_name']; ?></td>
+                                    <td class="text-center"><?php echo $row['part_number']; ?></td>
+                                    <td><?php echo $row['part_name']; ?></td>
+                                    <td><?php echo $row['issue']; ?></td>
                                     <td>
                                         <?php
                                         if ($row['urgent'] === 'on') {
@@ -585,7 +589,7 @@ if (isset($_SESSION['page'])) {
         $(document).ready(function() {
             $('#ncprTable').DataTable({
                 "columnDefs": [{
-                        "targets": [0, 4, 5],
+                        "targets": [0],
                         "visible": false,
                     },
                     {

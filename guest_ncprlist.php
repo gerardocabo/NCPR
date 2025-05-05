@@ -9,7 +9,7 @@ $name = $_SESSION["user"];
 <html lang="en">
 
 <head>
-    <title>NCPR List - Guest</title>
+    <title>NCPR System - List</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -48,7 +48,7 @@ $name = $_SESSION["user"];
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#"><?php echo $name ?></a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -105,9 +105,11 @@ $name = $_SESSION["user"];
                                 <th hidden>ID</th>
                                 <th class="text-center">NCPR Number</th>
                                 <th class="text-center">Initiator</th>
+                                <th class="text-center">Process</th>
                                 <th class="text-center">Date</th>
-                                <!-- <th>Part Number</th>
-                            <th>Part Name</th> -->
+                                <th class="text-center">Part Number</th>
+                                <th class="text-center">Part Name</th>
+                                <th class="text-center">Call Out</th>
                                 <th class="text-center">Urgent</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Action</th>
@@ -116,7 +118,7 @@ $name = $_SESSION["user"];
                         <tbody>
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, date, part_number, part_name, status, urgent, dispo_id 
+                            $query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, status, urgent, issue, dispo_id 
                                     FROM ncpr_table
                                     ORDER BY
                                         CASE status
@@ -130,9 +132,11 @@ $name = $_SESSION["user"];
                                     <td hidden><?php echo $row['id']; ?></td>
                                     <td><?php echo $row['ncpr_num']; ?></td>
                                     <td><?php echo $row['initiator']; ?></td>
+                                    <td><?php echo $row['process']; ?></td>
                                     <td class="text-center"><?php echo $row['date']; ?></td>
-                                    <!-- <td><?php echo $row['part_number']; ?></td>
-                                    <td><?php echo $row['part_name']; ?></td> -->
+                                    <td><?php echo $row['part_number']; ?></td>
+                                    <td><?php echo $row['part_name']; ?></td>
+                                    <td><?php echo $row['issue']; ?></td>
                                     <td><?php if ($row['urgent'] === 'on') {
                                             echo '<i class="fas fa-exclamation-circle text-danger" title="Urgent"></i>';
                                         } else {

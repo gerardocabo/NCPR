@@ -118,7 +118,7 @@ if ($row = $result->fetch_assoc()) {
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>
@@ -262,8 +262,11 @@ if ($row = $result->fetch_assoc()) {
                                     <th hidden>ID</th>
                                     <th>NCPR Number</th>
                                     <th>Initiator</th>
-                                    <th>Status</th>
+                                    <th>Process</th>
                                     <th>Date</th>
+                                    <th>Part Number</th>
+                                    <th>Part Name</th>
+                                    <th>Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -475,6 +478,22 @@ if ($row = $result->fetch_assoc()) {
                         "className": "text-center"
                     },
                     {
+                        "data": "process",
+                        "className": "text-center"
+                    },
+                    {
+                        "data": "date",
+                        "className": "text-center"
+                    },
+                    {
+                        "data": "part_number",
+                        "className": "text-center"
+                    },
+                    {
+                        "data": "part_name",
+                        "className": "text-center"
+                    },
+                    {
                         "data": "status",
                         "className": "text-center",
                         "render": function(data, type, row) {
@@ -486,10 +505,6 @@ if ($row = $result->fetch_assoc()) {
                                 return '<span class="badge bg-secondary">' + data + '</span>';
                             }
                         }
-                    },
-                    {
-                        "data": "date",
-                        "className": "text-center"
                     },
                     {
                         "data": "id",

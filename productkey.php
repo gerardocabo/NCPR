@@ -18,7 +18,7 @@ $conn->close();
 <html lang="en">
 
 <head>
-    <title>admin Dashboard</title>
+    <title>NCPR System - Product List</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
@@ -36,7 +36,7 @@ $conn->close();
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">LOGO</a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -65,7 +65,7 @@ $conn->close();
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>

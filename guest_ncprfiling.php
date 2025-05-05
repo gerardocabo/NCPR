@@ -18,7 +18,7 @@ $name = $_SESSION["user"];
 <html lang="en">
 
 <head>
-    <title>NCPR Filing - Guest</title>
+    <title>NCPR System - Guest Filing</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />

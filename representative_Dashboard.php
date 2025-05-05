@@ -125,9 +125,9 @@ if ($row = $result->fetch_assoc()) {
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
-                        <span>Setting</span>
+                        <span>Settings</span>
                     </a>
                 </li>
             </ul>
@@ -267,8 +267,12 @@ if ($row = $result->fetch_assoc()) {
                                     <th hidden>ID</th>
                                     <th class="text-center">NCPR Number</th>
                                     <th class="text-center">Initiator</th>
-                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Process</th>
                                     <th class="text-center">Date</th>
+                                    <th class="text-center">Part Number</th>
+                                    <th class="text-center">Part Name</th>
+                                    <th class="text-center">Call Out</th>
+                                    <th class="text-center">Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -460,6 +464,26 @@ if ($row = $result->fetch_assoc()) {
                             "className": "text-center"
                         },
                         {
+                            "data": "process",
+                            "className": "text-center"
+                        },
+                        {
+                            "data": "date",
+                            "className": "text-center"
+                        },
+                        {
+                            "data": "part_number",
+                            "className": "text-center"
+                        },
+                        {
+                            "data": "part_name",
+                            "className": "text-center"
+                        },
+                        {
+                            "data": "issue",
+                            "className": "text-center"
+                        },
+                        {
                             "data": "statuses",
                             "className": "text-center",
                             "render": function(data, type, row) {
@@ -469,10 +493,6 @@ if ($row = $result->fetch_assoc()) {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
                             }
-                        },
-                        {
-                            "data": "date",
-                            "className": "text-center"
                         },
                         {
                             "data": "id",

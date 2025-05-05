@@ -5,7 +5,7 @@ include "config.php"
 <html lang="en">
 
 <head>
-    <title>admin Dashboard</title>
+    <title>NCPR System - Filing</title>
     <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/DataTables/datatables.min.css" />
@@ -21,7 +21,7 @@ include "config.php"
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">LOGO</a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -50,7 +50,7 @@ include "config.php"
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="" class="sidebar-link">
+                    <a href="setting.php" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Setting</span>
                     </a>

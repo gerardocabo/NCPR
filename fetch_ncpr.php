@@ -10,8 +10,9 @@ function getPendingApprovals($user_role)
     // Switch based on user role
     switch ($user_role) {
         case 'QA ENGINEER':
-            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
-                    dispo.status as statuses, dispo.approver_role
+            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                        ncpr.part_name, ncpr.issue, ncpr.status as status, ncpr.date, 
+                        ncpr.urgent, ncpr.created_at, dispo.status as statuses, dispo.approver_role
                   FROM ncpr_table AS ncpr
                   LEFT JOIN dispo_approval AS dispo 
                   ON ncpr.ncpr_num = dispo.ncpr_num 
@@ -30,8 +31,9 @@ function getPendingApprovals($user_role)
 
         case 'PCO':
             // If the user is a PCO, query to show the chemicals
-            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.status as status, ncpr.date, ncpr.urgent, ncpr.created_at, 
-                    dispo.status as statuses, dispo.approver_role
+            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                        ncpr.part_name, ncpr.issue, ncpr.status as status, ncpr.date, 
+                        ncpr.urgent, ncpr.created_at, dispo.status as statuses, dispo.approver_role
                   FROM ncpr_table AS ncpr
                   LEFT JOIN dispo_approval AS dispo 
                   ON ncpr.ncpr_num = dispo.ncpr_num 
@@ -52,31 +54,35 @@ function getPendingApprovals($user_role)
         case 'QA MANAGER':
         case 'QA SUPERVISOR':
             // If the user is a QA MANAGER or QA SUPERVISOR, modify the query to show only NCPRs approved by QA ENGINEER
-            $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent, dispo.status as statuses
-                  FROM ncpr_table
-                  JOIN dispo_approval AS dispo ON ncpr_table.ncpr_num = dispo.ncpr_num
+            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                        ncpr.part_name, ncpr.issue, ncpr.status as status, ncpr.date, 
+                        ncpr.urgent, ncpr.created_at, dispo.status as statuses, dispo.approver_role
+                  FROM ncpr_table AS ncpr
+                  JOIN dispo_approval AS dispo ON ncpr.ncpr_num = dispo.ncpr_num
                   WHERE dispo.approver_role = 'SHELDAHL REPRESENTATIVE' AND dispo.status = 'Rejected' 
                   OR dispo.approver_role IN ('QA ENGINEER','PCO')
-                  AND ncpr_table.dispo_id IS NOT NULL
-                  AND ncpr_table.ncpr_num NOT IN (
+                  AND ncpr.dispo_id IS NOT NULL
+                  AND ncpr.ncpr_num NOT IN (
                     SELECT ncpr_num FROM dispo_approval WHERE approver_role IN ('QA MANAGER', 'QA SUPERVISOR'))
                   ORDER BY ncpr_num DESC";
             break;
 
         case 'SHELDAHL REPRESENTATIVE':
             // If the user is a SHELDAHL REPRESENTATIVE, modify the query to show NCPRs approved by QA MANAGER or QA SUPERVISOR
-            $query = "SELECT ncpr_table.id, ncpr_table.ncpr_num, ncpr_table.initiator, ncpr_table.status, ncpr_table.`date`, ncpr_table.urgent, dispo.status as statuses
-                  FROM ncpr_table
-                  JOIN dispo_approval AS dispo ON ncpr_table.ncpr_num = dispo.ncpr_num
+            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                        ncpr.part_name, ncpr.issue, ncpr.status as status, ncpr.date, 
+                        ncpr.urgent, ncpr.created_at, dispo.status as statuses, dispo.approver_role
+                  FROM ncpr_table AS ncpr
+                  JOIN dispo_approval AS dispo ON ncpr.ncpr_num = dispo.ncpr_num
                   WHERE dispo.approver_role IN ('QA MANAGER', 'QA SUPERVISOR') 
                   AND dispo.status = 'Approved'
-                  AND ncpr_table.status = 'Open'
+                  AND ncpr.status = 'Open'
                   ORDER BY ncpr_num DESC";
             break;
 
         default:
             // Default query: Fetch all NCPRs that haven't been disposed yet
-            $query = "SELECT id, ncpr_num, initiator, status, `date`, urgent, created_at
+            $query = "SELECT id, ncpr_num, process, part_number, part_name, issue, initiator, status, `date`, urgent, created_at
                     FROM ncpr_table 
                     WHERE status = 'Open' AND dispo_id IS NULL
                     ORDER BY ncpr_num DESC";
