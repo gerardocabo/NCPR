@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2025 at 07:40 PM
+-- Generation Time: May 07, 2025 at 12:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -318,6 +318,23 @@ CREATE TABLE `material` (
   `qty_affected_text` varchar(255) NOT NULL,
   `defect_rate` varchar(255) NOT NULL,
   `ncpr_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ncpr_status_table`
+--
+
+CREATE TABLE `ncpr_status_table` (
+  `id` int(11) NOT NULL,
+  `ncpr_num` varchar(50) NOT NULL,
+  `status` enum('Open','Cancel','Canceled','Closed') NOT NULL,
+  `is_chem` tinyint(1) DEFAULT 0,
+  `is_rejected` tinyint(1) DEFAULT 0,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_by` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1403,6 +1420,14 @@ CREATE TABLE `uploaded_file` (
   `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `uploaded_file`
+--
+
+INSERT INTO `uploaded_file` (`id`, `ncpr_id`, `file_name`, `file_path`, `file_type`, `uploaded_at`) VALUES
+(1, 1, 'bc017aa9-b1a9-436f-a1ea-d665b83b2ff3.jpg', 'asset/img/1746553486_bc017aa9-b1a9-436f-a1ea-d665b83b2ff3.jpg', 'image', '2025-05-06 17:44:46'),
+(2, 1, 'Book2.xlsx', 'asset/excel/1746553486_Book2.xlsx', 'excel', '2025-05-06 17:44:46');
+
 -- --------------------------------------------------------
 
 --
@@ -1462,10 +1487,10 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `role_id`, `status`,
 (3, 'Superadmin', '$2y$10$nqr.jgUU5knN8gEWd1YlB.2VGLDPCH.fhNHeFiYwD3nGGeIk.W28C', '', 1, NULL, '', '2025-03-17 06:55:18', 0, 0),
 (4, 'qastaff1@ntphil.com', '$2y$10$./PMVLBHDHh05BPvTaON3.zvvvBFvD9RDhsZiC8zXeGNXGLVZoFVa', '', 4, NULL, '', '2025-03-17 07:02:11', 2, 0),
 (5, 'engr_user', '$2y$10$MKfvuNI6yfh4/IGo.QkrjOlt0vg1w1r8uOLgRmNRZdTJfz/7.Wrgu', '', 7, NULL, '', '2025-03-19 02:30:54', 8, 0),
-(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', 'mikespruce49@gmail.com', 9, NULL, '', '2025-03-23 13:38:27', 7, 0),
-(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', '', 7, NULL, '', '2025-03-23 13:38:44', 8, 0),
+(6, 'spmgr', '$2y$10$/xXtirP3bkWZzq6umDUETez9BBVjUA4n2sMcFIujHHl8m85P//JV.', 'mikespruce49@gmail.com', 9, NULL, '', '2025-03-23 13:38:27', 7, 2),
+(7, 'engineer', '$2y$10$SYEXlA9/pjtGc8003VBW0.uBWnQJhQQcer1c7/uI/FhE1p.k7Fvt2', '', 7, NULL, '', '2025-03-23 13:38:44', 8, 2),
 (8, 'admin', '$2y$10$sYkHASxQdYPQVu7GMwz1P.z21qPb6LWXPtvfLTohUNiPdqSwRzm3u', '', 4, NULL, '', '2025-03-23 13:38:50', 0, 0),
-(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', '', 10, NULL, '', '2025-03-24 02:13:14', 10, 0),
+(9, 'rep', '$2y$10$LeM2EsjR44QauokDDwRmHeEvxSGw0bGaOTOmJUPAorr7IBHj7uxF6', '', 10, NULL, '', '2025-03-24 02:13:14', 10, 2),
 (20, 'jim.rutt', '$2y$10$IxIvbZqokUAhD4JjBhQfhe1O4jZeTh00/NC55zyn9mbrAk/b.759a', 'jim.rutt@shedahl.com', 10, NULL, '', '2025-04-02 07:05:12', 0, 0),
 (21, 'bing.marte', '$2y$10$pD3DP2nB6pc9p/GQRlnC3u7BDcmIWkAT5ondiLFf.rf1LJTFW2kXW', 'bing.marte@shedahl.com', 10, NULL, '', '2025-04-02 07:05:13', 11, 0),
 (22, 'jun.marcos', '$2y$10$4CdnrSriJEDxw5l8/NeLGeWEO48tvJq1otv5esZBq1WUbq.nOnILa', 'jun.marcos@sheldahl.com', 10, NULL, '', '2025-04-02 07:05:13', 10, 0),
@@ -1578,6 +1603,13 @@ ALTER TABLE `key_person`
 ALTER TABLE `material`
   ADD PRIMARY KEY (`material_id`),
   ADD KEY `fk_ncpr_material` (`ncpr_id`);
+
+--
+-- Indexes for table `ncpr_status_table`
+--
+ALTER TABLE `ncpr_status_table`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ncpr_num` (`ncpr_num`);
 
 --
 -- Indexes for table `ncpr_table`
@@ -1720,6 +1752,12 @@ ALTER TABLE `material`
   MODIFY `material_id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `ncpr_status_table`
+--
+ALTER TABLE `ncpr_status_table`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `ncpr_table`
 --
 ALTER TABLE `ncpr_table`
@@ -1759,7 +1797,7 @@ ALTER TABLE `register`
 -- AUTO_INCREMENT for table `uploaded_file`
 --
 ALTER TABLE `uploaded_file`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `uploaded_filedispo`
