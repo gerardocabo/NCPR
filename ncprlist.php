@@ -140,10 +140,14 @@ require "config.php";
                         <tbody id="ncpr-table-body">
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, status, urgent, issue, dispo_id 
-                                    FROM ncpr_table
+                            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                                        ncpr.part_name, ncpr.date, ncpr.issue, ncpr.dispo_id, ncprstatus.status AS status,  
+                                        ncpr.urgent
+                                    FROM ncpr_table AS ncpr
+                                    LEFT JOIN ncpr_status_table AS ncprstatus
+                                            ON ncpr.ncpr_num = ncprstatus.ncpr_num
                                     ORDER BY
-                                        CASE status
+                                        CASE ncprstatus.status
                                             WHEN 'Open' THEN 1
                                             ELSE 2
                                         END,

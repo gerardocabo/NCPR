@@ -1,5 +1,9 @@
 <form id="editDispoForm" method="POST">
     <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
+    <p id="RR_display" class="d-none text-info">
+        <strong class="me-2">Rejection Reason / Note: </strong>
+        <span id="reject_reason_display"></span>
+    </p>
     <div class="form-floating mb-3">
         <textarea class="form-control lock" name="containment" id="containment" placeholder="Enter details here..." style="height: 100px;"></textarea>
         <label for="containment">This space is intended for QA verification, containment and investigation activities</label>

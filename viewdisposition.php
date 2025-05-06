@@ -10,8 +10,8 @@
 
 <p><strong class="me-2">NCPR_NUMBER: </strong><span id="modal-id"></span></p>
 <p id="RR_display" class="d-none text-info">
-  <strong class="me-2">Rejection Reason / Note: </strong>
-  <span id="reject_reason_display"></span>
+    <strong class="me-2">Rejection Reason / Note: </strong>
+    <span id="reject_reason_display"></span>
 </p>
 
 <div class="border mb-3 align-items-center p-2">
@@ -327,7 +327,8 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li class="cancel_removed"><a class="dropdown-item approval-action" href="#" data-action="approve" data-role="QA Manager" title="approve the NCPR">Approve</a></li>
-                                <li class="cancel_removed reject_reopen"><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
+                                <li class="re-approve d-none"><a class="dropdown-item approval-action" href="#" data-action="re_approve" data-role="QA Manager" title="approve the NCPR">Approve</a></li>
+                                <li class="cancel_removed"><a class="dropdown-item approval-action" href="#" data-action="full_approve" data-role="QA Manager" title="As per Absence of the Key-Person">Full Approval</a></li>
                                 <li class="cancel-approved"><a class="dropdown-item approval-action" href="#" data-action="cancel" data-role="QA Manager">Cancel</a></li>
                             </ul>
                         </div>

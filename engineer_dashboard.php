@@ -264,7 +264,6 @@ if ($row = $result->fetch_assoc()) {
                                     <th class="text-center">Part Name</th>
                                     <th class="text-center">Call Out</th>
                                     <th class="text-center">Status</th>
-                                    <th hidden>Status</th>
                                     <th class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -520,16 +519,13 @@ if ($row = $result->fetch_assoc()) {
                                     return '<span class="badge bg-success">Open</span>';
                                 } else if (data === "Close") {
                                     return '<span class="badge bg-danger">Close</span>';
+                                } else if (data === "Rejected") {
+                                    return '<span class="badge bg-warning text-black">Pending</span>';
                                 } else {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
                             }
                         },
-                        {
-                            "data": "statuses",
-                            "visible": false
-                        },
-
                         {
                             "data": "id",
                             "render": function(data, type, row) {
@@ -710,7 +706,15 @@ if ($row = $result->fetch_assoc()) {
                     },
                     success: function(response) {
                         Swal.close();
+                        let $dispoStatus = response.dispo_status;
+
                         targetForm.find('#modal-id').text(response.ncpr_num);
+
+                        if ($dispoStatus === "Rejected") {
+                            document.getElementById('RR_display').classList.remove("d-none"); // Corrected DOM manipulation
+                            $('#reject_reason_display').text(response.RR_display); // jQuery for text update
+                        }
+
                         targetForm.find('#containment').text(response.containment); // Sets the text for textarea
                         targetForm.find('input[name="corrective_action"][value="' + response.corrective_action + '"]').prop('checked', true);
                         targetForm.find('input[name="potential_failure"][value="' + response.pff + '"]').prop('checked', true);

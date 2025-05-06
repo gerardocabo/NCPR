@@ -484,11 +484,11 @@ if ($row = $result->fetch_assoc()) {
                             "className": "text-center"
                         },
                         {
-                            "data": "statuses",
+                            "data": "status",
                             "className": "text-center",
                             "render": function(data, type, row) {
-                                if (data === 'Approved') {
-                                    return '<span class="badge bg-success">Approved</span>';
+                                if (data === 'Open') {
+                                    return '<span class="badge bg-warning text-dark">Pending</span>';
                                 } else {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
@@ -615,6 +615,7 @@ if ($row = $result->fetch_assoc()) {
                         });
                     },
                     success: function(response) {
+                        console.log(response);
                         Swal.close();
                         // Populate fields with existing data
                         $('#modal-id').text(response.ncpr_num);

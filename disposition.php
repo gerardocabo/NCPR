@@ -176,7 +176,7 @@
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Repair"> Repair, Document Alert #:
                         <input type="text" name="repair_DA" class="border-0 border-bottom w-25 ms-2">
-                        <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Travedler2"> Rework Traveler
+                        <input class="locked" type="checkbox" name="product_dispo[]" value="Rework Traveler2"> Rework Traveler
                     </div>
                     <div class="d-flex align-items-center mt-2 gap-2">
                         <input class="locked" type="checkbox" name="product_dispo[]" value="Scrap"> Scrap $

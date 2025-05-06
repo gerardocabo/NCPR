@@ -24,17 +24,23 @@ $name = $_SESSION["user"];
 
         .signature-line {
             display: flex;
-            justify-content: center;
-            /* Center the inner content */
-            margin-top: 5px;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            text-align: center;
         }
 
         .signature-line span {
             display: inline-block;
             border-bottom: 1px solid #000;
-            /* Underline just the name */
             padding-bottom: 2px;
-            /* Space between text and line */
+            margin-bottom: 4px;
+        }
+
+        .signature-line p {
+            margin: 0;
+            font-size: 0.7em;
+            color: #333;
         }
     </style>
 </head>
@@ -118,10 +124,14 @@ $name = $_SESSION["user"];
                         <tbody>
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, status, urgent, issue, dispo_id 
-                                    FROM ncpr_table
+                            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                                        ncpr.part_name, ncpr.date, ncpr.issue, ncpr.dispo_id, ncprstatus.status AS status,  
+                                        ncpr.urgent
+                                    FROM ncpr_table AS ncpr
+                                    LEFT JOIN ncpr_status_table AS ncprstatus
+                                            ON ncpr.ncpr_num = ncprstatus.ncpr_num
                                     ORDER BY
-                                        CASE status
+                                        CASE ncprstatus.status
                                             WHEN 'Open' THEN 1
                                             ELSE 2
                                         END,
@@ -170,18 +180,20 @@ $name = $_SESSION["user"];
                                         ?>
                                     </td>
                                     <td>
-                                        <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
-                                            NCPR Form
-                                        </button>
-                                        <?php if (is_null($row['dispo_id']) && ($row['status'] === "Open")): ?>
-                                            <button class="btn btn-warning btn-sm edit-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
-                                                Edit
+                                        <div class="d-flex flex-wrap gap-1 justify-content-center">
+                                            <button class="btn btn-primary btn-sm view-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#viewModal">
+                                                NCPR Form
                                             </button>
-                                        <?php elseif (($row['dispo_id']) && ($row['status'] !== "Closed")): ?>
-                                            <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
-                                                Disposition Form
-                                            </button>
-                                        <?php endif; ?>
+                                            <?php if (is_null($row['dispo_id']) && ($row['status'] === "Open")): ?>
+                                                <button class="btn btn-warning btn-sm edit-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#editModal">
+                                                    Edit
+                                                </button>
+                                            <?php elseif ($row['status'] === "Closed"): ?>
+                                                <button class="btn btn-primary btn-sm dispo-btn fw-bold" data-id="<?php echo $row['ncpr_num']; ?>" data-bs-toggle="modal" data-bs-target="#dispoModal">
+                                                    Disposition
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endwhile; ?>

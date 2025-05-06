@@ -130,14 +130,18 @@ if (isset($_SESSION['page'])) {
                         <tbody>
                             <?php
                             // Fetch data from ncpr_table
-                            $query = "SELECT id, initiator, ncpr_num, process, date, part_number, part_name, issue, status, urgent 
-                        FROM ncpr_table 
-                        ORDER BY 
-                            CASE status
-                                WHEN 'Open' THEN 1
-                                ELSE 2
-                            END,
-                            ncpr_num desc";
+                            $query = "SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                                        ncpr.part_name, ncpr.date, ncpr.issue, ncpr.dispo_id, ncprstatus.status AS status,  
+                                        ncpr.urgent
+                                    FROM ncpr_table AS ncpr
+                                    LEFT JOIN ncpr_status_table AS ncprstatus
+                                            ON ncpr.ncpr_num = ncprstatus.ncpr_num
+                                    ORDER BY
+                                        CASE ncprstatus.status
+                                            WHEN 'Open' THEN 1
+                                            ELSE 2
+                                        END,
+                                        ncpr_num DESC";
                             $result = $conn->query($query);
 
                             while ($row = $result->fetch_assoc()): ?>

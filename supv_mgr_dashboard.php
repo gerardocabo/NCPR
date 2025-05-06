@@ -486,15 +486,15 @@ if ($row = $result->fetch_assoc()) {
                             "className": "text-center" // Center the initiator column
                         },
                         {
-                            "data": "statuses",
+                            "data": "status",
                             "className": "text-center",
                             "render": function(data, type, row) {
-                                if (data === "Approved") {
-                                    return '<span class="badge bg-success">Pending</span>';
-                                } else if (data === "Canceled") {
+                                if (data === "Open") {
+                                    return '<span class="badge bg-warning text-dark">Open</span>';
+                                } else if (data === "Canceled" || data === "Cancel") {
                                     return '<span class="badge bg-danger">Canceled</span>';
                                 } else if (data === "Rejected") {
-                                    return '<span class="badge bg-danger">Rejected</span>';
+                                    return '<span class="badge bg-warning text-black">Pending</span>';
                                 } else {
                                     return '<span class="badge bg-secondary">' + data + '</span>';
                                 }
@@ -623,7 +623,7 @@ if ($row = $result->fetch_assoc()) {
                         Swal.close();
                         // Populate fields with existing data
                         let $dispoStatus = response.dispo_status;
-                        if ($dispoStatus === "Canceled") {
+                        if ($dispoStatus === "Cancel") {
                             document.querySelectorAll('.cancel_removed').forEach(el => {
                                 el.style.display = "none";
                             })
@@ -631,9 +631,16 @@ if ($row = $result->fetch_assoc()) {
                             if (el) el.textContent = "Approve";
                         }
                         if ($dispoStatus === "Rejected") {
-                            document.querySelectorAll('.reject_reopen').forEach(elreject => {
+                            document.querySelectorAll('.cancel_removed').forEach(elreject => {
                                 elreject.style.display = "none";
                             })
+                            const el = document.querySelector('li.re-approve');
+                            if (el) {
+                                el.classList.remove('d-none'); // Show the element
+                                // or el.classList.add('d-none'); // Hide the element
+                            } else {
+                                console.warn('Element not found');
+                            }
                         }
 
                         $('#modal-id').text(response.ncpr_num);

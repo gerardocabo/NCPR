@@ -129,16 +129,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 break;
         }
 
-        // Insert approval record
-        $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
-                  VALUES (?, ?, ?, ?, NOW())";
-        $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
-
         // Additional processing per action
         switch ($normalized_action) {
             case 'approve':
+                // Insert approval record
+                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                            VALUES (?, ?, ?, ?, NOW())";
+                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+
                 $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+
+                if ($role === "Representative") {
+                    $query = "UPDATE ncpr_status_table SET status = ? WHERE ncpr_num = ?";
+                    executeQuery($conn, $query, ['Closed', $ncpr_num], "ss");
+                }
                 break;
 
             case 'full_approve':
@@ -147,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'user_role' => 'SHELDAHL REPRESENTATIVE',
                     'person_id' => 9
                 ];
-
+                // Insert approval record
                 $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
                           VALUES (?, ?, ?, ?, NOW())";
                 $dispo_id = executeQuery($conn, $query, [$ncpr_num, $approver->user_role, $approver->person_id, $status], "ssis");
@@ -156,35 +161,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
 
                 // Close the status if representative is last
-                $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
+                $query = "UPDATE ncpr_status_table SET status = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, ['Closed', $ncpr_num], "ss");
                 break;
 
-            case 'reject':
-                /*if ($role === 'Representative') {
-                    // Update the reason for the specific record
-                    $updateSuccess = updateReason($pdo, $ncpr_num, $reason);
-                }*/
+            case 're_approve':
 
+                $query = "UPDATE ncpr_status_table SET is_rejected = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [0, $ncpr_num], "ss");
+                break;
+
+            case 'reject':
                 $query = "UPDATE disposition_tbl SET reason = ? WHERE ncpr_num = ?";
                 executeQuery($conn, $query, [$reason, $ncpr_num], "ss");
-                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
-                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
+
+                // Close the status if representative is last
+                $query = "UPDATE ncpr_status_table SET is_rejected = ? WHERE ncpr_num = ?";
+                executeQuery($conn, $query, [1, $ncpr_num], "is");
+
+                $query = "INSERT INTO dispo_approval (ncpr_num, approver_role, approver_id, status, approval_date) 
+                VALUES (?, ?, ?, ?, NOW())";
+                $dispo_id = executeQuery($conn, $query, [$ncpr_num, $user_role, $person_id, $status], "ssis");
+
                 break;
 
             case 'cancel':
-                $query = "UPDATE ncpr_table SET dispo_id = ? WHERE ncpr_num = ?";
-                executeQuery($conn, $query, [$dispo_id, $ncpr_num], "is");
-                // Handle cancel or reject logic based on user role
-                $query = "UPDATE ncpr_table SET status = ? WHERE ncpr_num = ?";
-
-                if ($normalized_action === 'cancel' && ($user_role === 'QA SUPERVISOR' || $user_role === 'QA MANAGER')) {
-                    $final_status = 'Closed';  // If QA SUPERVISOR cancels, set status to "Closed"
-                } else {
-                    $final_status = ucfirst($status);  // Otherwise, set it to "Canceled" or "Rejected"
+                if ($role === 'QA Engineer') {
+                    $final_status = ucfirst($normalized_action);
                 }
-
-                executeQuery($conn, $query, [$final_status, $ncpr_num], "ss");
+                // If other QAE's  cancels, set status to "Canceled"
+                else {
+                    $final_status = ucfirst($status);  // Otherwise, set it to "Canceled"
+                }
+                // Handle cancel or reject logic based on user role
+                $query = "UPDATE ncpr_status_table SET status = ? WHERE ncpr_num = ?";
+                    executeQuery($conn, $query, [$final_status, $ncpr_num], "ss");
                 break;
         }
 

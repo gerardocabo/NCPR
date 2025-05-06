@@ -182,18 +182,19 @@ try {
     if (!empty($row['approver_data'])) {
         $approverEntries = explode('||', $row['approver_data']);
         foreach ($approverEntries as $entry) {
-            list($id, $role, $fname, $lname, $timestamp, $status) = explode('::', $entry);
-            $formattedDateTime = date('d/m/Y \a\t g:i A', strtotime($timestamp));
-            $disposition['approvers'][] = [
-                'approver_id' => $id,
-                'approver_role' => $role,
-                'fname' => $fname,
-                'lname' => $lname,
-                'approval_date' => $formattedDateTime
-            ];
-
-            if ($role === 'SHELDAHL REPRESENTATIVE') { // Replace 'specific_role' with the desired role
-                $disposition['dispo_status'] = $status; // Assign the value to dispoStatus
+            $parts = explode('::', $entry);
+            if (count($parts) >= 6) {
+                list($id, $role, $fname, $lname, $timestamp, $status) = $parts;
+                if (strtolower($status) === 'approved') {
+                    $formattedDateTime = date('d/m/Y \a\t g:i A', strtotime($timestamp));
+                    $disposition['approvers'][] = [
+                        'approver_id' => $id,
+                        'approver_role' => $role,
+                        'fname' => $fname,
+                        'lname' => $lname,
+                        'approval_date' => $formattedDateTime
+                    ];
+                }
             }
         }
     }
@@ -212,6 +213,13 @@ try {
             }
         }
     }
+
+    $sql = "SELECT is_rejected FROM ncpr_status_table WHERE ncpr_num = :ncpr_num";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':ncpr_num' => $ncpr_num]);
+
+    $isRejected = $stmt->fetchColumn();
+    $disposition['dispo_status'] = ($isRejected == 1) ? 'Rejected' : '';
 
     echo json_encode($disposition);
 } catch (Exception $e) {

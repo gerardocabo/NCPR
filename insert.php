@@ -257,6 +257,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
+        $query = "INSERT INTO ncpr_status_table (ncpr_num, status, is_chem) VALUES ('$ncpr_num', 'Open', '$isChem')";
+        mysqli_query($conn, $query);
+
         echo json_encode(["status" => "success", "new_ncpr_num" => $ncpr_num]);
     } else {
         echo json_encode(["status" => "error", "message" => mysqli_error($conn)]);
