@@ -56,8 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $part_name = isset($_POST['part_name']) ? $_POST['part_name'] : null;
     $process = isset($_POST['process']) ? $_POST['process'] : null;
     $urgent = $_POST['urgent']; // Will be 'on' if checked, 'off' if not
-    $isChem = isset($_POST['isChem']) && $_POST['isChem'] === '1';
-
+    $chem = isset($_POST['isChem']) && $_POST['isChem'] === '1';
 
     // New Fields (Check if they exist before assigning)
     $issue = isset($_POST['issue']) ? $_POST['issue'] : null;
@@ -69,7 +68,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $machine = isset($_POST['machine']) ? $_POST['machine'] : null;
     $ref = isset($_POST['ref']) ? $_POST['ref'] : null;
     $bg = isset($_POST['bg']) ? $_POST['bg'] : null;
-
 
     // Additional New Form Fields
     $recall = isset($_POST['recall']) ? $_POST['recall'] : NULL;
@@ -100,56 +98,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nine_one = isset($_POST['nine_one']) ? $_POST['nine_one'] : NULL;
 
 
-    $chem = $chem ?? false; // Default to false if not set
 
-    if (!empty($part_name)) {
 
-        // Handle chemical material insertion
-        if ($chem === true) {
-            // Set part_number to "N/A" if empty
-            $chem_part_number = !empty($part_number) ? $part_number : "N/A";
+    if ($chem === true) {
+        $chem_part_number = !empty($part_number) ? $part_number : "N/A";
+        $chem_uom = 'N/A';
 
-            // Check if part_name exists in chem_material_table
-            $check_chem_query = "SELECT part_name FROM chem_material_table WHERE part_name = ?";
-            $stmt = mysqli_prepare($conn, $check_chem_query);
-            mysqli_stmt_bind_param($stmt, "s", $part_name);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+        $check_chem_query = "SELECT item_description FROM chem_material_table WHERE item_description = ?";
+        $stmt = mysqli_prepare($conn, $check_chem_query);
+        mysqli_stmt_bind_param($stmt, "s", $part_name);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-            if (mysqli_num_rows($result) == 0) {
-                // Insert into chem_material_table
-                $insert_chem_query = "INSERT INTO chem_material_table (part_name, part_number) VALUES (?, ?)";
-                $stmt = mysqli_prepare($conn, $insert_chem_query);
-                mysqli_stmt_bind_param($stmt, "ss", $part_name, $chem_part_number);
-                mysqli_stmt_execute($stmt);
+        if (mysqli_num_rows($result) == 0) {
+            $insert_chem_query = "INSERT INTO chem_material_table (item_description, part_number, uom) VALUES (?, ?, ?)";
+            $stmt = mysqli_prepare($conn, $insert_chem_query);
+            mysqli_stmt_bind_param($stmt, "sss", $part_name, $chem_part_number, $chem_uom);
+            if (!mysqli_stmt_execute($stmt)) {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Error inserting into chem_material_table: ' . mysqli_error($conn)
+                ]);
+                exit;
             }
         }
+    }
 
-        // Proceed with product_list logic
-        if (!empty($part_number)) {
-            // Check if part_number exists
-            $check_query = "SELECT part_name FROM product_list WHERE part_number = ?";
-            $stmt = mysqli_prepare($conn, $check_query);
-            mysqli_stmt_bind_param($stmt, "s", $part_number);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+    if ($part_number === "N/A") {
+        $insert_query = "INSERT INTO product_list (part_number, part_name) VALUES (?, ?)";
+        $stmt = mysqli_prepare($conn, $insert_query);
+        mysqli_stmt_bind_param($stmt, "ss", $part_number, $part_name);
+        mysqli_stmt_execute($stmt);
+    } else {
+        $check_query = "SELECT part_number FROM product_list WHERE part_number = ?";
+        $stmt = mysqli_prepare($conn, $check_query);
+        mysqli_stmt_bind_param($stmt, "s", $part_number);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-            if (mysqli_num_rows($result) == 0) {
-                // Insert into product_list
-                $insert_query = "INSERT INTO product_list (part_number, part_name) VALUES (?, ?)";
-                $stmt = mysqli_prepare($conn, $insert_query);
-                mysqli_stmt_bind_param($stmt, "ss", $part_number, $part_name);
-                mysqli_stmt_execute($stmt);
-            }
-        } else {
-            // Insert with "N/A" as part_number
-            $part_number = "N/A";
+        if (mysqli_num_rows($result) == 0) {
             $insert_query = "INSERT INTO product_list (part_number, part_name) VALUES (?, ?)";
             $stmt = mysqli_prepare($conn, $insert_query);
             mysqli_stmt_bind_param($stmt, "ss", $part_number, $part_name);
             mysqli_stmt_execute($stmt);
+        } else {
+            echo json_encode(['status' => 'success']);
+            exit;
         }
     }
+
+    // Continue with JSON success if everything works
+    echo json_encode(['status' => 'success']);
+    exit;
+
 
 
 

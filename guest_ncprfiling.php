@@ -149,30 +149,25 @@ $name = $_SESSION["user"];
                                         <input type="checkbox" id="is_Chem" class="form-check-input" name="isChem" value="1">
                                         <strong><label for="is_Chem" class="form-check-label">If Chemical pls. check.</label></strong>
                                     </div>
-                                    
+                                    <script>
+                                        document.getElementById("is_Chem").addEventListener("change", function() {
+                                            if (!this.checked) {
+                                                document.getElementById("part_name").value = "";
+                                                document.getElementById("part_number").value = "";
+                                                document.getElementById("part_name").readOnly = false;
+                                                document.getElementById("part_number").readOnly = false;
+                                            }
+                                        });
+                                    </script>
+
                                     <div class="d-flex flex-wrap gap-3 mb-1">
                                         <div class="form-floating g-0 position-relative" style="flex: 1; min-width: 250px;">
                                             <input type="text" id="part_number" name="part_number" class="form-control"
                                                 style="padding-right: 40px;" placeholder="Part Number" onkeyup="liveSearch()" autocomplete="off" required>
-                                            <label for="part_number">Part Number/Model Number: </label>
-                                            <!-- Dropdown List -->
+                                            <label for="part_number">Part Number/Model Number:</label>
+                                            <!-- Dropdown List (empty on page load) -->
                                             <ul id="dropdownList" class="list-group position-absolute bg-white border rounded"
                                                 style="display: none; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; z-index: 1000;">
-                                                <?php
-                                                include 'conn.php'; // Include your existing connection file
-
-                                                // Fetch part numbers from the product_list table
-                                                $sql = "SELECT part_number FROM product_list";
-                                                $result = $conn->query($sql);
-
-                                                if ($result->num_rows > 0) {
-                                                    while ($row = $result->fetch_assoc()) {
-                                                        echo "<li class='list-group-item' style='cursor: pointer;' onclick='selectValue(this)'>" .
-                                                            htmlspecialchars($row["part_number"]) .
-                                                            "</li>";
-                                                    }
-                                                }
-                                                ?>
                                             </ul>
                                         </div>
                                         <script>
@@ -188,6 +183,9 @@ $name = $_SESSION["user"];
                                                     return;
                                                 }
 
+                                                // Get checkbox state
+                                                let isChemChecked = document.getElementById("is_Chem").checked ? 1 : 0;
+
                                                 let xhr = new XMLHttpRequest();
                                                 xhr.onreadystatechange = function() {
                                                     if (xhr.readyState === 4 && xhr.status === 200) {
@@ -197,7 +195,7 @@ $name = $_SESSION["user"];
                                                         dropdown.style.display = dropdown.innerHTML.trim() !== "" ? "block" : "none";
                                                     }
                                                 };
-                                                xhr.open("GET", "search.php?query=" + encodeURIComponent(input), true);
+                                                xhr.open("GET", "search.php?query=" + encodeURIComponent(input) + "&isChem=" + isChemChecked, true);
                                                 xhr.send();
                                             }
 
@@ -227,6 +225,7 @@ $name = $_SESSION["user"];
                                         <script>
                                             function fetchSuggestions(query) {
                                                 let suggestionsList = document.getElementById("suggestionsList");
+                                                let isChemChecked = document.getElementById("is_Chem").checked ? 1 : 0;
 
                                                 // Clear previous results
                                                 suggestionsList.innerHTML = "";
@@ -236,7 +235,7 @@ $name = $_SESSION["user"];
                                                     return;
                                                 }
 
-                                                fetch("fetch_part_names.php?query=" + encodeURIComponent(query))
+                                                fetch("fetch_part_names.php?query=" + encodeURIComponent(query) + "&isChem=" + isChemChecked)
                                                     .then(response => response.json())
                                                     .then(data => {
                                                         if (data.length > 0) {
@@ -260,6 +259,30 @@ $name = $_SESSION["user"];
                                                     })
                                                     .catch(error => console.error("Error:", error));
                                             }
+
+                                            document.getElementById("part_name").addEventListener("blur", function() {
+                                                const partName = this.value.trim();
+                                                const isChemChecked = document.getElementById("is_Chem").checked ? 1 : 0;
+
+                                                if (partName.length > 0) {
+                                                    fetch("check_part_by_name.php?part_name=" + encodeURIComponent(partName) + "&isChem=" + isChemChecked)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            const partNumberField = document.getElementById("part_number");
+                                                            if (data.exists && data.part_number) {
+                                                                partNumberField.value = data.part_number;
+                                                                partNumberField.readOnly = true;
+                                                            } else {
+                                                                partNumberField.value = "N/A";
+                                                                partNumberField.readOnly = false;
+                                                            }
+                                                        })
+                                                        .catch(error => console.error("Error:", error));
+                                                } else {
+                                                    document.getElementById("part_number").value = "";
+                                                    document.getElementById("part_number").readOnly = false;
+                                                }
+                                            });
 
                                             // Hide suggestions when clicking outside
                                             document.addEventListener("click", function(event) {
