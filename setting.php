@@ -9,15 +9,11 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Join users, key_person, and users_role to get full user info including role
+// Join with key_person to fetch fname and lname
 $stmt = $conn->prepare("
-    SELECT 
-        users.id, users.username, users.email, 
-        key_person.fname, key_person.lname,
-        users_roles.role_name
+    SELECT users.id, users.username, users.email, key_person.fname, key_person.lname 
     FROM users 
     INNER JOIN key_person ON users.person_id = key_person.id 
-    INNER JOIN users_roles ON users.role_id = users_roles.id 
     WHERE users.id = ?
 ");
 $stmt->bind_param("i", $user_id);
@@ -27,27 +23,7 @@ $user = $result->fetch_assoc();
 
 if (!$user) {
     echo "<script>alert('User not found.'); window.location.href='loginform.php';</script>";
-    exit();
 }
-
-// Save user data into session
-$_SESSION['user_role'] = $user['role_name'];
-$_SESSION['username'] = $user['username'];
-$_SESSION['fullname'] = $user['fname'] . ' ' . $user['lname'];
-
-// Determine dashboard route
-$dashboardPage = '#'; // default
-
-$role = $_SESSION['user_role'];
-
-if ($role === 'PCO' || $role === 'QA ENGINEER') {
-    $dashboardPage = 'engineer_dashboard.php';
-} elseif ($role === 'QA SUPERVISOR' || $role === 'QA MANAGER') {
-    $dashboardPage = 'supv_mgr_dashboard.php';
-} elseif ($role === 'SHELDAHL REPRESENTATIVE') {
-    $dashboardPage = 'representative_Dashboard.php';
-}
-
 ?>
 
 
@@ -77,7 +53,7 @@ if ($role === 'PCO' || $role === 'QA ENGINEER') {
             </div>
             <ul class="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="<?php echo $dashboardPage; ?>" class="sidebar-link">
+                    <a href="representative_Dashboard.php" class="sidebar-link">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
                     </a>
