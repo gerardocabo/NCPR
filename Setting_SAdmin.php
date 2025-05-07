@@ -83,51 +83,56 @@ try {
 
             <div class="card">
                 <div class="card-body">
-                    <header class="py-3 shadow-sm" style="background-color: #0e2238">
-                        <div class="container d-flex align-items-center">
-                            <a class="navbar-brand text-white" href="#">
-                                <span class="fs-4 fw-bold ms-2">NCPR</span>
-                            </a>
-                        </div>
-                    </header>
-
+                    <!-- Upper-right aligned button -->
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary p-2" data-bs-toggle="modal" data-bs-target="#viewAccountsModal">
+                            <span class="fs-6 fw-bold text-white">View All Accounts</span>
+                        </button>
+                    </div>
                     <div class="container d-flex flex-grow-1 justify-content-center align-items-center">
                         <div class="login-form bg-light p-4 rounded shadow" style="width: 500px;">
-                            <h2 class="text-center">ADD ACCESS ACCOUNTS</h2>
-                            <form id="accessForm">
-                                <div class="mb-3">
-                                    <label class="form-label">EMAIL/USERNAME</label>
-                                    <input type="text" class="form-control p-2 fs-6" name="username" placeholder="Enter email" required>
+                            <h5 class="text-center"><span class="text-primary fw-bold">Register</span> Account</h5>
+                            <form id="accessForm" autocomplete="off">
+                                <div class="mb-2 form-floating">
+                                    <input type="text" class="form-control" name="fname" id="fname" placeholder="Enter first name" autocomplete="off" required>
+                                    <label for="fname" class="form-label">First Name</label>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">PASSWORD</label>
-                                    <div class="position-relative">
-                                        <input type="password" class="form-control p-2 fs-6 pe-5" id="password" name="password" placeholder="Enter password" required>
-                                        <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y p-0 border-0 bg-transparent shadow-none me-2" id="togglePassword">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
+                                <div class="mb-2 form-floating">
+                                    <input type="text" class="form-control" name="lname" id="lname" placeholder="Enter last name" autocomplete="off" required>
+                                    <label for="lname" class="form-label">Last Name</label>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">ROLE</label>
-                                    <select class="form-control p-2 fs-6" id="role" name="role" required>
-                                        <option value="" disabled selected>Select a role</option>
+                                <div class="mb-2 form-floating">
+                                    <input type="text" class="form-control" name="username" id="username" placeholder="Enter username" autocomplete="nope" required>
+                                    <label for="username" class="form-label">Username</label>
+                                </div>
+                                <div class="mb-2 form-floating">
+                                    <input type="text" class="form-control" name="email" id="email" placeholder="Enter email" autocomplete="nope" required>
+                                    <label for="email" class="form-label">Email</label>
+                                </div>
+                                <div class="mb-2 position-relative form-floating">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" autocomplete="new-password" required>
+                                    <label for="password" class="form-label">Password</label>
+                                    <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y p-0 border-0 bg-transparent shadow-none me-2" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="mb-3 form-floating">
+                                    <select class="form-select" id="role" name="role" required>
+                                        <option value="" disabled selected hidden>Select a role</option>
                                         <?php foreach ($roles as $role): ?>
                                             <option value="<?= htmlspecialchars($role['id']) ?>"><?= htmlspecialchars($role['role_name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                    <label for="role">Role</label>
                                 </div>
-                                <button type="submit" class="btn btn-success w-100 p-2"><span class="fs-5 fw-bold text-dark">ADD NEW</span></button>
-                                <button type="button" class="btn btn-primary w-100 p-2 mt-2" data-bs-toggle="modal" data-bs-target="#viewAccountsModal">
-                                    <span class="fs-5 fw-bold text-white">VIEW ALL ACCOUNTS</span>
-                                </button>
+                                <button type="submit" class="btn btn-success btn-sm w-100"><span class="fs-5 fw-bold text-dark">Create Account</span></button>
                             </form>
                         </div>
                     </div>
 
                     <!-- Modal for Viewing Accounts -->
                     <div class="modal fade" id="viewAccountsModal" tabindex="-1" aria-labelledby="viewAccountsModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
+                        <div class="modal-dialog modal-xl">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="viewAccountsModalLabel">All Access Accounts</h5>
@@ -136,14 +141,18 @@ try {
                                 <div class="modal-body">
                                     <table class="table table-bordered">
                                         <thead>
-                                            <tr>
-                                                <th>ID</th>
+                                            <tr class="text-center">
+                                                <th hidden>ID</th>
+                                                <th>#</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
                                                 <th>Username</th>
+                                                <th>Email</th>
                                                 <th>Role</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="accountList">
+                                        <tbody id="accountList" class="text-center">
                                             <tr>
                                                 <td colspan="4" class="text-center">Loading...</td>
                                             </tr>
@@ -258,7 +267,6 @@ try {
                         }
                     });
 
-                    // Load accounts when the 'View Accounts' modal is shown
                     $('#viewAccountsModal').on('show.bs.modal', function() {
                         $.ajax({
                             url: 'Setting_register.php',
@@ -268,18 +276,22 @@ try {
                                 let rows = "";
 
                                 if (response.length > 0) {
-                                    response.forEach(function(user) {
+                                    response.forEach(function(user, index) { // The index should be the second argument in the callback
                                         let buttonLabel = user.status === 'blocked' ? 'Unblock' : 'Block';
 
                                         rows += `<tr>
-                        <td>${user.id}</td>
+                        <td>${index + 1}</td> <!-- Add sequence number here -->
+                        <td hidden>${user.id}</td>
+                        <td>${user.fname}</td>
+                        <td>${user.lname}</td>
                         <td>${user.username}</td>
+                        <td>${user.email}</td>
                         <td>${user.role}</td>
                         <td>
                             <button class="btn btn-warning btn-sm change-password" 
                                 data-userid="${user.id}" 
                                 data-username="${user.username}">
-                                Change Password
+                                Change Pass
                             </button>
 
                             <button class="btn btn-secondary btn-sm block-user" 
@@ -298,7 +310,7 @@ try {
                     </tr>`;
                                     });
                                 } else {
-                                    rows = `<tr><td colspan="4" class="text-center">No accounts found.</td></tr>`;
+                                    rows = `<tr><td colspan="8" class="text-center">No accounts found.</td></tr>`;
                                 }
 
                                 $('#accountList').html(rows);
@@ -308,6 +320,7 @@ try {
                             }
                         });
                     });
+
 
 
                     // Remove lingering modal backdrop when 'View Accounts' modal is closed

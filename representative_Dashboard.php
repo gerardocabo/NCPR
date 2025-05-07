@@ -481,7 +481,11 @@ if ($row = $result->fetch_assoc()) {
                         },
                         {
                             "data": "issue",
-                            "className": "text-center"
+                            "className": "text-center",
+                            "render": function(data, type, row, meta) {
+                                console.log("Issue value:", data); // This logs the value in the console
+                                return data; // Return the value so it still displays in the table
+                            }
                         },
                         {
                             "data": "status",
