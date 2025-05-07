@@ -1521,15 +1521,13 @@ CREATE TABLE `users_roles` (
 
 INSERT INTO `users_roles` (`id`, `role_name`) VALUES
 (1, 'SUPERADMIN'),
-(2, 'ADMIN'),
-(3, 'GUEST'),
-(4, 'QA STAFF'),
-(5, 'PCO'),
-(6, 'QEMS OFFICER'),
-(7, 'QA ENGINEER'),
-(8, 'QA MANAGER'),
-(9, 'QA SUPERVISOR'),
-(10, 'SHELDAHL REPRESENTATIVE');
+(2, 'QA STAFF'),
+(3, 'PCO'),
+(4, 'QEMS OFFICER'),
+(5, 'QA ENGINEER'),
+(6, 'QA MANAGER'),
+(7, 'QA SUPERVISOR'),
+(8, 'SHELDAHL REPRESENTATIVE');
 
 --
 -- Indexes for dumped tables
