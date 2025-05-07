@@ -109,10 +109,13 @@ function getPendingApprovals($user_role)
 
         default:
             $query = "
-                SELECT id, ncpr_num, process, part_number, part_name, issue, initiator, 
-                       status, `date`, urgent, created_at
-                FROM ncpr_table 
-                WHERE status = 'Open' 
+                SELECT ncpr.id, ncpr.ncpr_num, ncpr.initiator, ncpr.process, ncpr.part_number, 
+                       ncpr.part_name, ncpr.issue, ncpr.status AS status, ncpr.date, 
+                       ncpr.urgent
+                FROM ncpr_table AS ncpr
+                LEFT JOIN ncpr_status_table AS ncprstatus
+                        ON ncpr.ncpr_num = ncprstatus.ncpr_num
+                WHERE ncprstatus.status = 'Open' 
                       AND dispo_id IS NULL
                 ORDER BY ncpr_num DESC";
             break;
