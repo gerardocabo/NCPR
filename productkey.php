@@ -2,8 +2,8 @@
 require "config.php";
 include 'conn.php'; // Ensure your database connection is included
 
-// Fetch data from the database
-$sql = "SELECT part_number, part_name FROM product_list LIMIT 100";
+// Fetch data from the database with latest first
+$sql = "SELECT part_number, part_name FROM product_list ORDER BY product_id DESC";
 $result = $conn->query($sql);
 
 $products = [];
@@ -14,6 +14,7 @@ if ($result->num_rows > 0) {
 }
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,8 +61,14 @@ $conn->close();
                 </li>
                 <li class="sidebar-item active">
                     <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
+                        <i class="fa-solid fa-toolbox"></i>
                         <span>Product Key</span>
+                    </a>
+                </li>
+                <li class="sidebar-item ">
+                    <a href="chemicalproduct.php" class="sidebar-link">
+                        <i class="fa-solid fa-flask"></i>
+                        <span>Chemical Product</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -109,9 +116,10 @@ $conn->close();
                         </button>
                     </div>
 
-                    <table id="productKey" class="table table-bordered table-striped text-center">
+                    <table id="productKey" class="table table-bordered text-center">
                         <thead class="table-secondary">
                             <tr>
+                                <th class="text-center">#</th> <!-- Sequence number column -->
                                 <th class="text-center">Part Number</th>
                                 <th class="text-center">Part Name</th>
                                 <th class="text-center">Action</th>
@@ -132,10 +140,10 @@ $conn->close();
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="add_product.php" method="POST">
+                            <form id="addProductForm" method="POST">
                                 <div class="mb-3">
                                     <label for="part_number" class="form-label">Part Number</label>
-                                    <input type="text" class="form-control" id="part_number" name="part_number" required>
+                                    <input type="text" class="form-control" id="part_number" name="part_number" placeholder="Enter N/A if the product does not have a part number" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="part_name" class="form-label">Part Name</label>
@@ -149,6 +157,7 @@ $conn->close();
                 </div>
             </div>
 
+
             <!-- Edit Product Modal -->
             <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -158,7 +167,10 @@ $conn->close();
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="update_product.php" method="POST">
+                            <form id="editProductForm" method="POST">
+                                <!-- Add this hidden input -->
+                                <input type="hidden" name="product_id" id="edit_product_id">
+
                                 <div class="mb-3">
                                     <label for="edit_part_number" class="form-label">Part Number</label>
                                     <input type="text" class="form-control" id="edit_part_number" name="part_number" required>
@@ -169,6 +181,7 @@ $conn->close();
                                 </div>
                                 <button type="submit" class="btn btn-success">Save Changes</button>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -182,64 +195,257 @@ $conn->close();
     <script src="assets/DataTables/datatables.min.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".edit-btn").forEach(button => {
-                button.addEventListener("click", function() {
-                    let partNumber = this.getAttribute("data-id");
-                    let partName = this.getAttribute("data-name");
+        $(document).ready(function() {
+            // Handle Add Product Form
+            $("#addProductForm").on("submit", function(e) {
+                e.preventDefault();
 
-                    // Populate modal fields
-                    document.getElementById("edit_part_number").value = partNumber;
-                    document.getElementById("edit_part_name").value = partName;
+                const form = $(this);
+                const data = form.serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "add_product.php",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.status === "exists") {
+                            Swal.fire({
+                                icon: "info",
+                                title: "Duplicate",
+                                text: response.message
+                            });
+                        } else if (response.status === "success") {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Success",
+                                text: response.message
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: response.message
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "AJAX request failed."
+                        });
+                    }
                 });
             });
 
             $(document).ready(function() {
-                var table = $('#productKey').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: "productKey_fetch.php",
-                        type: "GET",
-                        dataSrc: function(json) {
-                            return json.data;
-                        }
-                    },
-                    columns: [{
-                            data: "part_number"
-                        },
-                        {
-                            data: "part_name"
-                        },
-                        {
-                            data: null,
-                            orderable: false,
-                            render: function(data, type, row) {
-                                return `
-                        <button class="btn btn-warning btn-sm edit-btn text-light fw-bold"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editProductModal"
-                            data-id="${row.part_number}"
-                            data-name="${row.part_name}">
-                            Edit
-                        </button>
-                    `;
+                $("#editProductModal form").on("submit", function(e) {
+                    e.preventDefault();
+
+                    const form = $(this);
+                    const data = form.serialize();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "update_product.php",
+                        data: data,
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.status === "exists") {
+                                Swal.fire({
+                                    icon: "info",
+                                    title: "Duplicate",
+                                    text: response.message
+                                });
+                            } else if (response.status === "success") {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Updated",
+                                    text: response.message
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: response.message
+                                });
                             }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: "AJAX request failed for update."
+                            });
                         }
-                    ],
-                    order: [], // ✅ This line disables default ordering
-                    pagingType: "full_numbers" // Optional: shows First/Prev/Next/Last buttons
+                    });
                 });
             });
-        });
-    </script>
-    <script>
-        const hamBurger = document.querySelector(".toggle-btn");
 
-        hamBurger.addEventListener("click", function() {
-            document.querySelector("#sidebar").classList.toggle("expand");
+
+            // DataTable setup
+            var table = $('#productKey').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "productKey_fetch.php",
+                    type: "GET",
+                    dataSrc: function(json) {
+                        return json.data;
+                    }
+                },
+                columns: [{
+                        data: null, // sequence number
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: "part_number"
+                    },
+                    {
+                        data: "part_name"
+                    },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return `
+                <button class="btn btn-warning btn-sm edit-btn text-light fw-bold"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editProductModal"
+                    data-id="${row.product_id}"
+                    data-number="${row.part_number}"
+                    data-name="${row.part_name}">
+                    Edit
+                </button>
+                <button class="btn btn-danger btn-sm delete-btn fw-bold ms-2"
+                    data-id="${row.product_id}">
+                    Delete
+                </button>
+            `;
+                        }
+
+                    }
+                ],
+                order: [],
+                pagingType: "full_numbers",
+                drawCallback: function() {
+                    document.querySelectorAll(".edit-btn").forEach(button => {
+                        button.addEventListener("click", function() {
+                            let productId = this.getAttribute("data-id");
+                            let partNumber = this.getAttribute("data-number");
+                            let partName = this.getAttribute("data-name");
+
+                            document.getElementById("edit_product_id").value = productId;
+                            document.getElementById("edit_part_number").value = partNumber;
+                            document.getElementById("edit_part_name").value = partName;
+                        });
+                    });
+                }
+            });
+
+            // Part Number validation for Add Form
+            document.getElementById("part_number").addEventListener("blur", function() {
+                const partNumber = this.value.trim();
+
+                if (partNumber.toUpperCase() === "N/A" || partNumber.toUpperCase() === "NA") {
+                    if (partNumber !== "N/A") {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Invalid Input',
+                            text: 'Please enter exactly "N/A" (capitalized and with a slash) for products without a part number.',
+                        }).then(() => {
+                            this.value = '';
+                            this.focus();
+                        });
+                    }
+                }
+            });
+
+
+
+            // URL param status messages
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+
+            if (status === 'exists') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Changes Made',
+                    text: 'This part number and name already exist.'
+                });
+            } else if (status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated',
+                    text: 'Product updated successfully.'
+                });
+            } else if (status === 'error') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'There was an error updating the product.'
+                });
+            }
+            $(document).on("click", ".delete-btn", function() {
+                const productId = $(this).data("id");
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Are you sure?',
+                    text: 'This product will be permanently deleted.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "delete_product.php",
+                            data: {
+                                product_id: productId
+                            },
+                            dataType: "json",
+                            success: function(response) {
+                                if (response.status === "success") {
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Deleted",
+                                        text: response.message
+                                    }).then(() => {
+                                        $('#productKey').DataTable().ajax.reload(null, false); // Reload table without full refresh
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Error",
+                                        text: response.message
+                                    });
+                                }
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "AJAX request failed during delete."
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
         });
     </script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

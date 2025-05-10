@@ -43,10 +43,16 @@ include "config.php"
                         <span>NCPR List</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item ">
                     <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
+                        <i class="fa-solid fa-toolbox"></i>
                         <span>Product Key</span>
+                    </a>
+                </li>
+                <li class="sidebar-item ">
+                    <a href="chemicalproduct.php" class="sidebar-link">
+                        <i class="fa-solid fa-flask"></i>
+                        <span>Chemical Product</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -229,31 +235,6 @@ include "config.php"
                                                     .catch(error => console.error("Error:", error));
                                             }
 
-                                            document.getElementById("part_name").addEventListener("input", function() {
-                                                let partName = this.value.trim();
-                                                let isChemChecked = document.getElementById("is_Chem").checked ? 1 : 0;
-
-                                                if (partName.length > 0) {
-                                                    fetch("check_part_by_name.php?part_name=" + encodeURIComponent(partName) + "&isChem=" + isChemChecked)
-                                                        .then(response => response.json())
-                                                        .then(data => {
-                                                            const partNumberField = document.getElementById("part_number");
-                                                            if (data.exists && data.part_number) {
-                                                                partNumberField.value = data.part_number;
-                                                                partNumberField.readOnly = true;
-                                                            } else {
-                                                                partNumberField.value = "N/A";
-                                                                partNumberField.readOnly = false;
-                                                            }
-                                                        })
-                                                        .catch(error => console.error("Error:", error));
-                                                } else {
-                                                    document.getElementById("part_number").value = "";
-                                                    document.getElementById("part_number").readOnly = false;
-                                                }
-                                            });
-
-
                                             // Hide suggestions when clicking outside
                                             document.addEventListener("click", function(event) {
                                                 let suggestionsList = document.getElementById("suggestionsList");
@@ -261,6 +242,24 @@ include "config.php"
 
                                                 if (!inputField.contains(event.target) && !suggestionsList.contains(event.target)) {
                                                     suggestionsList.style.display = "none";
+                                                }
+                                            });
+                                        </script>
+                                        <script>
+                                            document.getElementById("part_name").addEventListener("blur", function() {
+                                                let partNumberInput = document.getElementById("part_number");
+                                                let partNameInput = document.getElementById("part_name");
+
+                                                // Check if part name has a value and part number is empty
+                                                if (partNameInput.value.trim() !== "" && partNumberInput.value.trim() === "") {
+                                                    partNumberInput.value = "N/A";
+                                                }
+                                            });
+
+                                            // Optional: Prevent 'N/A' from being erased accidentally if already set
+                                            document.getElementById("part_number").addEventListener("input", function() {
+                                                if (this.value.trim() !== "" && this.value.trim().toUpperCase() !== "N/A") {
+                                                    // User is typing a real value; keep it
                                                 }
                                             });
                                         </script>

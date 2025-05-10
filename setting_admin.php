@@ -48,7 +48,7 @@ if (!$user) {
                     <i class="fa-solid fa-bars"></i>
                 </button>
                 <div class="sidebar-logo">
-                    <a href="#">LOGO</a>
+                    <a href="#">MENU</a>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -58,7 +58,7 @@ if (!$user) {
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item ">
                     <a href="ncprfiling.php" class="sidebar-link">
                         <i class="fa-regular fa-folder-open"></i>
                         <span>NCPR Filing</span>
@@ -70,10 +70,16 @@ if (!$user) {
                         <span>NCPR List</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item ">
                     <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
+                        <i class="fa-solid fa-toolbox"></i>
                         <span>Product Key</span>
+                    </a>
+                </li>
+                <li class="sidebar-item ">
+                    <a href="chemicalproduct.php" class="sidebar-link">
+                        <i class="fa-solid fa-flask"></i>
+                        <span>Chemical Product</span>
                     </a>
                 </li>
                 <li class="sidebar-item active">

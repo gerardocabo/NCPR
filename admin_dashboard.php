@@ -92,8 +92,8 @@ if ($row = $result->fetch_assoc()) {
                     <a href="#">MENU</a>
                 </div>
             </div>
-            <ul class="sidebar-nav">
-                <li class="sidebar-item active">
+            <ul class="sidebar-nav active">
+                <li class="sidebar-item">
                     <a href="admin_dashboard.php" class="sidebar-link">
                         <i class="fa-solid fa-house"></i>
                         <span>Dashboard</span>
@@ -111,10 +111,16 @@ if ($row = $result->fetch_assoc()) {
                         <span>NCPR List</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item ">
                     <a href="productkey.php" class="sidebar-link">
-                        <i class="fa-solid fa-helmet-safety"></i>
+                        <i class="fa-solid fa-toolbox"></i>
                         <span>Product Key</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="chemicalproduct.php" class="sidebar-link">
+                        <i class="fa-solid fa-flask"></i>
+                        <span>Chemical Product</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
